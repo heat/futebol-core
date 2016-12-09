@@ -6,25 +6,22 @@ import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import repositories.CampeonatoRepository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 public class CampeonatoController extends Controller {
 
-    JPAApi jpaApi;
 
-    @Inject
-    public CampeonatoController(JPAApi jpaApi) {
-        this.jpaApi = jpaApi;
-    }
 
     @Transactional
     public Result todos() {
-        EntityManager em = jpaApi.em();
 
-        List todos = em.createQuery("select c from Campeonato c")
-                .getResultList();
+
+        Long empresa = 0L;
+        List todos = CampeonatoRepository.of(empresa)
+                .todos();
 
         return ok(Json.toJson(todos));
     }
