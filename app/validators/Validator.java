@@ -30,6 +30,9 @@ public abstract class Validator<E> implements Serializable {
     @Column(name ="valor_texto")
     private String valorTexto;
 
+    @Column(name="regra")
+    private String regra;
+
     protected Validator(){
 
     }
@@ -70,8 +73,11 @@ public abstract class Validator<E> implements Serializable {
         return valorTexto;
     }
 
-    abstract public void validate(E entity);
+    public String getRegra() {
+        return regra;
+    }
 
+    abstract public void validate(E entity);
 
     @Override
     public boolean equals(Object o) {

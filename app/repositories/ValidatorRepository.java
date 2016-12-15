@@ -6,12 +6,12 @@ import play.db.jpa.JPAApi;
 import validators.Validator;
 
 import javax.inject.Inject;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class ValidatorRepository implements Repository<Long, Validator> {
 
@@ -21,6 +21,11 @@ public class ValidatorRepository implements Repository<Long, Validator> {
     @Inject
     public ValidatorRepository(JPAApi jpaApi) {
         this.jpaApi = jpaApi;
+    }
+
+    public List<Validator> todos(Tenant tenant, String regra) {
+        List<Validator> validators = todos(tenant);
+        return validators.stream().filter( v -> regra.equals(v.getRegra())).collect(Collectors.toList());
     }
 
     @Override
