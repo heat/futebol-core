@@ -3,6 +3,13 @@
 # ~~~~
 
 GET     /campeonatos                controllers.CampeonatoController.todos
+
+POST    /token                       api.rest.UsuarioRest.authenticar
+
+GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
+
+GET     /usuarios/0                  api.rest.UsuarioRest.usuario
+
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 # An example controller showing how to use dependency injection
