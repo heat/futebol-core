@@ -35,7 +35,7 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     }
 
     @Override
-    public CompletableFuture<Campeonato> inserir(Tenant tenant, Long id, Campeonato novo) {
+    public CompletableFuture<Campeonato> inserir(Tenant tenant, Campeonato novo) {
         return null;
     }
 

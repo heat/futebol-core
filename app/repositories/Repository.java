@@ -15,7 +15,7 @@ public interface Repository <K, E> {
 
     CompletableFuture<E> atualizar(Tenant tenant, K id, E updetable);
 
-    CompletableFuture<E> inserir(Tenant tenant, K id, E novo);
+    CompletableFuture<E> inserir(Tenant tenant, E novo);
 
     CompletableFuture<Confirmacao> excluir(Tenant tenant, K id);
 }
