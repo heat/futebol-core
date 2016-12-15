@@ -4,14 +4,16 @@
 
 CREATE TABLE "times" (
   idtime integer NOT NULL,
-  nome character varying(200) NOT NULL
+  nome character varying(200) NOT NULL,
+  tenant_id integer NOT NULL
 );
 
 COMMENT ON TABLE "times" IS 'tabela de times';
 
 CREATE TABLE campeonatos (
   idcampeonato integer NOT NULL,
-  nome character varying(200) NOT NULL
+  nome character varying(200) NOT NULL,
+  tenant_id integer NOT NULL
 );
 
 COMMENT ON TABLE campeonatos IS 'Registro dos campeonatos';
@@ -20,7 +22,8 @@ CREATE TABLE resultados (
   eventos_idevento integer NOT NULL,
   times_idtime integer NOT NULL,
   momento character(2) NOT NULL,
-  pontos integer NOT NULL
+  pontos integer NOT NULL,
+  tenant_id integer NOT NULL
 );
 
 COMMENT ON TABLE resultados IS 'tabela de resultados';
@@ -90,7 +93,7 @@ ALTER TABLE ONLY "eventos"
 
 DROP TABLE resultados;
 
-DROP TABLE evento;
+DROP TABLE eventos;
 
 DROP TABLE times;
 

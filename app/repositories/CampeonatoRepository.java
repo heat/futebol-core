@@ -1,29 +1,46 @@
 package repositories;
 
-import com.google.inject.Inject;
 import models.eventos.Campeonato;
+import models.vo.Confirmacao;
+import models.vo.Tenant;
 import play.db.jpa.JPAApi;
 
-import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-public class CampeonatoRepository {
+public class CampeonatoRepository implements Repository<Long, Campeonato> {
 
-    private Long empresa;
-
-    @Inject
     JPAApi jpaApi;
 
-    private CampeonatoRepository(Long empresa) {
-        this.empresa = empresa;
+    @javax.inject.Inject
+    public CampeonatoRepository(JPAApi jpaApi) {
+        this.jpaApi = jpaApi;
     }
 
-    public List<Campeonato> todos() {
+    @Override
+    public List<Campeonato> todos(Tenant tenant) {
         return jpaApi.em().createQuery("select c from Campeonato c")
                 .getResultList();
     }
 
-    public static CampeonatoRepository of(Long empresa) {
-        return new CampeonatoRepository(empresa);
+    @Override
+    public Optional<Campeonato> registro(Tenant tenant, Long id) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Campeonato> atualizar(Tenant tenant, Long id, Campeonato updetable) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Campeonato> inserir(Tenant tenant, Long id, Campeonato novo) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
+        return null;
     }
 }

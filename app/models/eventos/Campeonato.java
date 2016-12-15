@@ -12,6 +12,9 @@ public class Campeonato {
     @Column(name = "idcampeonato",updatable = false)
     private Long id;
 
+    @Column(name="tenant_id")
+    private Long tenant;
+
     @Column
     private String nome;
 
