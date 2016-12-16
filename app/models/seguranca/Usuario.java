@@ -1,8 +1,11 @@
 package models.seguranca;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import models.seguranca.Permissao;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity(name="Usuario")
@@ -92,5 +95,9 @@ public class Usuario {
 
     public void setPerfil(Perfil perfil) {
         this.perfil = perfil;
+    }
+
+    public List<Permissao> getPermissoes() {
+        return getPapel().getPermissoes();
     }
 }

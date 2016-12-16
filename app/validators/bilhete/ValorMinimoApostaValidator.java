@@ -13,8 +13,10 @@ public class ValorMinimoApostaValidator extends Validator<Bilhete> {
 
 
     protected ValorMinimoApostaValidator() {
+
         super();
     }
+
     public ValorMinimoApostaValidator(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
         super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }

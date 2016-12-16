@@ -7,18 +7,19 @@ import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Created by nuvemhost on 15/12/2016.
- */
 public class UsuarioRepository implements Repository<Long,Usuario>{
 
-    @Inject
     JPAApi jpaApi;
+
+    @Inject
+    public UsuarioRepository(JPAApi jpaApi) {
+        this.jpaApi = jpaApi;
+    }
 
     @Override
     public List<Usuario> todos(Tenant tenant) {
@@ -26,7 +27,7 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
     }
 
     @Override
-    public Optional<Usuario> registro(Tenant tenant, Long id) {
+    public Optional<Usuario> buscar(Tenant tenant, Long id) {
         return null;
     }
 
@@ -36,7 +37,7 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
     }
 
     @Override
-    public CompletableFuture<Usuario> inserir(Tenant tenant, Long id, Usuario novo) {
+    public CompletableFuture<Usuario> inserir(Tenant tenant, Usuario novo) {
         return null;
     }
 
@@ -45,22 +46,23 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
         return null;
     }
 
-    public Usuario validarLoginSenha(String login, String senha) {
 
+
+    public Optional<Usuario> registro(Tenant sysbet, String login, String senha) {
         try {
             return jpaApi.withTransaction((em) -> {
 
-                Query query = em.createNamedQuery("validarLoginSenha", Usuario.class);
+                TypedQuery<Usuario> query = em.createNamedQuery("validarLoginSenha", Usuario.class);
                 query.setParameter("login", login);
                 query.setParameter("senha", senha);
-                return (Usuario) query.getSingleResult();
+
+                return Optional.of(query.getSingleResult());
             });
         } catch (NoResultException e) {
             e.printStackTrace();
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return Optional.empty();
     }
 }

@@ -38,7 +38,7 @@ public class ValidatorRepository implements Repository<Long, Validator> {
     }
 
     @Override
-    public Optional<Validator> registro(Tenant tenant, Long id) {
+    public Optional<Validator> buscar(Tenant tenant, Long id) {
         return null;
     }
 
@@ -50,6 +50,7 @@ public class ValidatorRepository implements Repository<Long, Validator> {
     @Override
     public CompletableFuture<Validator> inserir(Tenant tenant, Validator novo) {
         EntityManager em = jpaApi.em();
+        novo.setIdTenant(tenant.get());
         em.persist(novo);
         return CompletableFuture.completedFuture(novo);
     }

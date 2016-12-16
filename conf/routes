@@ -2,7 +2,14 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /campeonatos                controllers.CampeonatoController.todos
+GET      /campeonatos                api.rest.CampeonatoRest.todos
+
+GET      /campeonatos/:id            api.rest.CampeonatoRest.buscar(id: Long)
+
+POST     /campeonatos                api.rest.CampeonatoRest.inserir
+
+DELETE   /campeonatos/:id            api.rest.CampeonatoRest.excluir(id: Long)
+
 
 POST    /token                       api.rest.UsuarioRest.authenticar
 

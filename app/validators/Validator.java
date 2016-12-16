@@ -1,5 +1,7 @@
 package validators;
 
+import validators.exceptions.ValidadorExcpetion;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -77,7 +79,13 @@ public abstract class Validator<E> implements Serializable {
         return regra;
     }
 
-    abstract public void validate(E entity);
+    public void setIdTenant(Long idTenant) {
+        this.idTenant = idTenant;
+    }
+
+
+
+    abstract public void validate(E entity) throws ValidadorExcpetion;
 
     @Override
     public boolean equals(Object o) {

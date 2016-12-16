@@ -1,7 +1,7 @@
 package models.seguranca;
 
 
-import models.Permissao;
+import models.seguranca.Permissao;
 
 import javax.persistence.*;
 import java.util.List;
@@ -19,7 +19,7 @@ public class Papel {
     @Column
     private String nome;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="papel_has_permissoes",
             joinColumns= {@JoinColumn(name="idpapel", foreignKey = @ForeignKey(name = "fk_idpapel"))},
             inverseJoinColumns={@JoinColumn(name="idpermissao", foreignKey = @ForeignKey(name = "fk_idpermissao"))})

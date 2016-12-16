@@ -11,7 +11,7 @@ public interface Repository <K, E> {
 
     List<E> todos(Tenant tenant);
 
-    Optional<E> registro(Tenant tenant, K id);
+    Optional<E> buscar(Tenant tenant, K id);
 
     CompletableFuture<E> atualizar(Tenant tenant, K id, E updetable);
 
