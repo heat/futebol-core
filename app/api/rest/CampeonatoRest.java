@@ -49,19 +49,17 @@ public class CampeonatoRest extends Controller {
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
-        Optional<CommonProfile> commonProfile = getProfile();
-        if (!commonProfile.isPresent()) {
+        if (!getProfile().isPresent()) {
             return forbidden();
         }
-        CommonProfile profile = commonProfile.get();
 
         Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
 
-        List<Validator> validators = validatorRepository.todos(Tenant.of((Long) profile.getAttribute("TENANT_ID")), CampeonatoInserirProcessador.REGRA);
+        List<Validator> validators = validatorRepository.todos(getTenant().get(), CampeonatoInserirProcessador.REGRA);
         CampeonatoInserirProcessador processadorInserir = new CampeonatoInserirProcessador(campeonatoRepository);
 
         try {
-            processadorInserir.executar(Tenant.of((Long) profile.getAttribute("TENANT_ID")), campeonato, validators);
+            processadorInserir.executar(getTenant().get(), campeonato, validators);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -74,19 +72,17 @@ public class CampeonatoRest extends Controller {
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) {
 
-        Optional<CommonProfile> commonProfile = getProfile();
-        if (!commonProfile.isPresent()) {
+        if (!getProfile().isPresent()) {
             return forbidden();
         }
-        CommonProfile profile = commonProfile.get();
 
         Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
 
-        List<Validator> validators = validatorRepository.todos(Tenant.of((Long) profile.getAttribute("TENANT_ID")), CampeonatoInserirProcessador.REGRA);
+        List<Validator> validators = validatorRepository.todos(getTenant().get(), CampeonatoAtualizarProcessador.REGRA);
         CampeonatoAtualizarProcessador processadorAtualizar = new CampeonatoAtualizarProcessador(campeonatoRepository, id);
 
         try {
-            processadorAtualizar.executar(Tenant.of((Long) profile.getAttribute("TENANT_ID")), campeonato, validators);
+            processadorAtualizar.executar(getTenant().get(), campeonato, validators);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -98,12 +94,10 @@ public class CampeonatoRest extends Controller {
     @Transactional
     public Result todos() {
 
-        Optional<CommonProfile> commonProfile = getProfile();
-        if (!commonProfile.isPresent()) {
+        if (!getProfile().isPresent()) {
             return forbidden();
         }
-        CommonProfile profile = commonProfile.get();
-        List todos = campeonatoRepository.todos(Tenant.of((Long) profile.getAttribute("TENANT_ID")));
+        List todos = campeonatoRepository.todos(getTenant().get());
 
         return ok(Json.toJson(todos));
     }
@@ -114,11 +108,10 @@ public class CampeonatoRest extends Controller {
 
         Optional<CommonProfile> commonProfile = getProfile();
 
-        if (!commonProfile.isPresent()) {
+        if (!getProfile().isPresent()) {
             return forbidden();
         }
-        CommonProfile profile = commonProfile.get();
-        Optional<Campeonato> todos = (Optional<Campeonato>) campeonatoRepository.buscar(Tenant.of((Long) profile.getAttribute("TENANT_ID")), id);
+        Optional<Campeonato> todos = (Optional<Campeonato>) campeonatoRepository.buscar(getTenant().get(), id);
 
         if (!todos.isPresent()) {
             return notFound("Campeonato não encontrado!");
@@ -132,17 +125,22 @@ public class CampeonatoRest extends Controller {
 
         try {
 
-            Optional<CommonProfile> commonProfile = getProfile();
-            if (!commonProfile.isPresent()) {
+            if (!getProfile().isPresent()) {
                 return forbidden();
             }
-            CommonProfile profile = commonProfile.get();
 
-            campeonatoRepository.excluir(Tenant.of((Long) profile.getAttribute("TENANT_ID")), id);
+            campeonatoRepository.excluir(getTenant().get(), id);
             return ok("Campeonado excluído!");
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }
+    }
+
+    private Optional<Tenant> getTenant() {
+
+        Optional<CommonProfile> commonProfile = getProfile();
+        CommonProfile profile = commonProfile.get();
+        return Optional.ofNullable(Tenant.of((Long) profile.getAttribute("TENANT_ID")));
     }
 
     private Optional<CommonProfile> getProfile() {
