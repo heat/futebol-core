@@ -1,5 +1,6 @@
 package api.rest;
 
+import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
 import dominio.processadores.eventos.CampeonatoInserirProcessador;
 import models.eventos.Campeonato;
 import models.vo.Tenant;
@@ -19,6 +20,7 @@ import validators.Validator;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +66,32 @@ public class CampeonatoRest extends Controller {
             return ok(validadorExcpetion.getMessage());
         }
 
-        return ok("Campeonato " + campeonato.getNome() + " cadastrado com suscesso! ");
+        return ok("Campeonato " + campeonato.getNome() + " cadastrado! ");
+    }
+
+    @Secure(clients = "headerClient")
+    @Transactional
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result atualizar(Long id) {
+
+        Optional<CommonProfile> commonProfile = getProfile();
+        if (!commonProfile.isPresent()) {
+            return forbidden();
+        }
+        CommonProfile profile = commonProfile.get();
+
+        Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
+
+        List<Validator> validators = validatorRepository.todos(Tenant.of((Long) profile.getAttribute("TENANT_ID")), CampeonatoInserirProcessador.REGRA);
+        CampeonatoAtualizarProcessador processadorAtualizar = new CampeonatoAtualizarProcessador(campeonatoRepository, id);
+
+        try {
+            processadorAtualizar.executar(Tenant.of((Long) profile.getAttribute("TENANT_ID")), campeonato, validators);
+        } catch (ValidadorExcpetion validadorExcpetion) {
+            return ok(validadorExcpetion.getMessage());
+        }
+
+        return ok("Campeonato " + campeonato.getNome() + " atualizado! ");
     }
 
     @Secure(clients = "headerClient")
@@ -93,7 +120,7 @@ public class CampeonatoRest extends Controller {
         CommonProfile profile = commonProfile.get();
         Optional<Campeonato> todos = (Optional<Campeonato>) campeonatoRepository.buscar(Tenant.of((Long) profile.getAttribute("TENANT_ID")), id);
 
-        if (todos == null) {
+        if (!todos.isPresent()) {
             return notFound("Campeonato não encontrado!");
         }
         return ok(Json.toJson(todos));
@@ -112,12 +139,11 @@ public class CampeonatoRest extends Controller {
             CommonProfile profile = commonProfile.get();
 
             campeonatoRepository.excluir(Tenant.of((Long) profile.getAttribute("TENANT_ID")), id);
-            return ok("Campeonado excluído com sucesso!");
-        } catch (Exception e) {
-            return internalServerError(e.getMessage());
+            return ok("Campeonado excluído!");
+        } catch (NoResultException e) {
+            return notFound(e.getMessage());
         }
     }
-
 
     private Optional<CommonProfile> getProfile() {
         final PlayWebContext context = new PlayWebContext(ctx(), playSessionStore);

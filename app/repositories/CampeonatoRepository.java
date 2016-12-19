@@ -31,7 +31,6 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
         return query.getResultList();
     }
 
-    //Tratar exceção
     @Override
     public Optional<Campeonato> buscar(Tenant tenant, Long id) {
 
@@ -40,11 +39,11 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
             TypedQuery<Campeonato> query = em.createQuery("SELECT c FROM Campeonato c WHERE c.tenant = :tenant and c.id = :id", Campeonato.class);
             query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
-            return Optional.of(query.getSingleResult());
+            return Optional.ofNullable(query.getSingleResult());
 
         } catch (NoResultException e) {
             e.printStackTrace();
-            return null;
+            return Optional.ofNullable(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,8 +51,14 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     }
 
     @Override
-    public CompletableFuture<Campeonato> atualizar(Tenant tenant, Long id, Campeonato updetable) {
-        return null;
+    public CompletableFuture<Campeonato> atualizar(Tenant tenant, Long id, Campeonato c) {
+
+        EntityManager em = jpaApi.em();
+        Optional<Campeonato> campeonato = buscar(tenant, id);
+        Campeonato cp = campeonato.get();
+        cp.setNome(c.getNome());
+        em.merge(cp);
+        return CompletableFuture.completedFuture(cp);
     }
 
     @Override
@@ -67,12 +72,17 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     }
 
     @Override
-    public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
+    public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) throws NoResultException{
 
         EntityManager em = jpaApi.em();
         Optional<Campeonato> campeonato = buscar(tenant, id);
-        Campeonato c = campeonato.get();
-        em.remove(c);
+        if(!campeonato.isPresent()){
+            throw new NoResultException("Campeonato não encontrado");
+        }
+        else{
+            Campeonato c = campeonato.get();
+            em.remove(c);
+        }
 
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }

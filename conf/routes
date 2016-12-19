@@ -8,6 +8,8 @@ GET      /campeonatos/:id            api.rest.CampeonatoRest.buscar(id: Long)
 
 POST     /campeonatos                api.rest.CampeonatoRest.inserir
 
+POST     /campeonatos/:id            api.rest.CampeonatoRest.atualizar(id: Long)
+
 DELETE   /campeonatos/:id            api.rest.CampeonatoRest.excluir(id: Long)
 
 

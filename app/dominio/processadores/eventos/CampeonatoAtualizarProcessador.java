@@ -11,16 +11,18 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CampeonatoInserirProcessador implements Processador<Campeonato> {
+public class CampeonatoAtualizarProcessador implements Processador<Campeonato> {
 
 
-    public static final String REGRA = "campeonato.inserir";
+    public static final String REGRA = "campeonato.atualizar";
+    private final Long idCampeonato;
 
     CampeonatoRepository repository;
 
     @Inject
-    public CampeonatoInserirProcessador(CampeonatoRepository repository) {
+    public CampeonatoAtualizarProcessador(CampeonatoRepository repository, Long idCampeonato) {
         this.repository = repository;
+        this.idCampeonato = idCampeonato;
     }
 
     public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato, List<Validator> validators) throws ValidadorExcpetion {
@@ -29,7 +31,9 @@ public class CampeonatoInserirProcessador implements Processador<Campeonato> {
             validator.validate(campeonato);
         }
 
-        repository.inserir(tenant, campeonato);
+        repository.atualizar(tenant, idCampeonato, campeonato);
+
+
         return CompletableFuture.completedFuture(campeonato);
     }
 }
