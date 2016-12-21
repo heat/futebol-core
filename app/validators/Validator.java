@@ -12,9 +12,9 @@ import java.math.BigDecimal;
 public abstract class Validator<E> implements Serializable {
 
     @Id
-    @SequenceGenerator(name="campeonatos_idcampeonato_seq", sequenceName = "campeonatos_idcampeonato_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "campeonatos_idcampeonato_seq")
-    @Column(name = "idvalidator",updatable = false)
+    @SequenceGenerator(name="validators_validator_id_seq", sequenceName = "validators_validator_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "validators_validator_id_seq")
+    @Column(name = "validator_id",updatable = false)
     private Long id;
 
     @Column(name="tenant_id")
