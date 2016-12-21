@@ -1,7 +1,6 @@
 package validators.eventos;
 
 import com.google.common.base.Strings;
-import javassist.bytecode.ExceptionsAttribute;
 import models.eventos.Campeonato;
 import validators.Validator;
 import validators.exceptions.ValidadorExcpetion;

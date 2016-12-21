@@ -2,6 +2,7 @@ package models.eventos;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "campeonatos")
@@ -10,7 +11,7 @@ public class Campeonato implements Serializable{
     @Id
     @SequenceGenerator(name="campeonatos_idcampeonato_seq", sequenceName = "campeonatos_idcampeonato_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "campeonatos_idcampeonato_seq")
-    @Column(name = "idcampeonato",updatable = false)
+    @Column(name = "campeonato_id",updatable = false)
     private Long id;
 
     @Column(name="tenant_id")
@@ -18,6 +19,10 @@ public class Campeonato implements Serializable{
 
     @Column
     private String nome;
+
+    @OneToMany(fetch=FetchType.EAGER)
+    @JoinColumn(name="eventos_campeonato_id", foreignKey = @ForeignKey(name = "fk_eventos_campeonato_id"))
+    private List<Evento> eventos;
 
     protected Campeonato() {
     }
@@ -44,6 +49,14 @@ public class Campeonato implements Serializable{
 
     public void setTenant(Long tenant) {
         this.tenant = tenant;
+    }
+
+    public List<Evento> getEventos() {
+        return eventos;
+    }
+
+    public void setEventos(List<Evento> eventos) {
+        this.eventos = eventos;
     }
 
     @Override

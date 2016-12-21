@@ -2,6 +2,13 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+POST    /token                       api.rest.UsuarioRest.authenticar
+
+GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
+
+GET     /usuarios/0                  api.rest.UsuarioRest.usuario
+
+# ------ CRUD de campeonatos
 GET      /campeonatos                api.rest.CampeonatoRest.todos
 
 GET      /campeonatos/:id            api.rest.CampeonatoRest.buscar(id: Long)
@@ -11,6 +18,20 @@ POST     /campeonatos                api.rest.CampeonatoRest.inserir
 POST     /campeonatos/:id            api.rest.CampeonatoRest.atualizar(id: Long)
 
 DELETE   /campeonatos/:id            api.rest.CampeonatoRest.excluir(id: Long)
+
+# ------- CRUD de eventos
+GET      /eventos                    api.rest.EventoRest.todos
+
+GET      /eventos/:id                api.rest.EventoRest.buscar(id: Long)
+
+POST     /eventos                    api.rest.EventoRest.inserir
+
+POST     /eventos/:id                api.rest.EventoRest.atualizar(id: Long)
+
+DELETE   /eventos/:id                api.rest.EventoRest.excluir(id: Long)
+
+# -------- CRUD de Validators
+POST     /validators                 api.rest.ValidatorRest.inserir
 
 
 POST    /token                       api.rest.UsuarioRest.authenticar
