@@ -2,6 +2,10 @@ package models.eventos;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import util.CalendarDeserializer;
+import util.CalendarSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -70,11 +74,12 @@ public class Evento implements Serializable{
         this.fora = fora;
     }
 
-    @JsonIgnore
+    @JsonDeserialize(using= CalendarDeserializer.class)
     public Calendar getDataEvento() {
         return dataEvento;
     }
 
+    @JsonSerialize(using= CalendarSerializer.class)
     public void setDataEvento(Calendar dataEvento) {
         this.dataEvento = dataEvento;
     }

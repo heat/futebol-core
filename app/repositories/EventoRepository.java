@@ -58,6 +58,10 @@ public class EventoRepository implements Repository<Long, Evento>{
 
         EntityManager em = jpaApi.em();
         Optional<Evento> evento = buscar(tenant, id);
+        if(!evento.isPresent()){
+            throw new NoResultException("Evento não encontrado");
+        }
+
         Evento ev = evento.get();
         ev.setCasa(e.getCasa());
         ev.setFora(e.getFora());
@@ -71,9 +75,7 @@ public class EventoRepository implements Repository<Long, Evento>{
 
         EntityManager em = jpaApi.em();
         evento.setTenant(tenant.get());
-        evento.setDataEvento(Calendar.getInstance());
         em.persist(evento);
-
         return CompletableFuture.completedFuture(evento);
     }
 
@@ -83,12 +85,11 @@ public class EventoRepository implements Repository<Long, Evento>{
         EntityManager em = jpaApi.em();
         Optional<Evento> evento = buscar(tenant, id);
         if(!evento.isPresent()){
-            throw new NoResultException("Campeonato não encontrado");
+            throw new NoResultException("Evento não encontrado");
         }
-        else{
-            Evento e = evento.get();
-            em.remove(e);
-        }
+        Evento e = evento.get();
+        em.remove(e);
+
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

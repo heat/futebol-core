@@ -2,17 +2,20 @@ package dominio.processadores.eventos;
 
 import models.eventos.Evento;
 import models.vo.Tenant;
+import org.omg.CORBA.NO_RESOURCES;
 import repositories.EventoRepository;
 import validators.Validator;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class EventoAtualizarProcessador {
 
-    public static final String REGRA = "evento.atualizar";
+    public static final String REGRA = "evento";
     private final Long idEvento;
 
     EventoRepository repository;
@@ -23,15 +26,40 @@ public class EventoAtualizarProcessador {
         this.idEvento = idEvento;
     }
 
-    public CompletableFuture<Evento> executar(Tenant tenant, Evento evento, List<Validator> validators) throws ValidadorExcpetion {
+    public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validator> validators) throws ValidadorExcpetion {
 
         for (Validator validator : validators) {
-            validator.validate(evento);
+            validator.validate(eventoNovo);
         }
 
-        repository.atualizar(tenant, idEvento, evento);
+        Optional<Evento> eventoAtual = repository.buscar(tenant, idEvento);
 
+        if(eventoAtual.isPresent()){
+            validate(eventoAtual.get(), eventoNovo);
+        }
 
-        return CompletableFuture.completedFuture(evento);
+        try{
+            repository.atualizar(tenant, idEvento, eventoNovo);
+        }
+        catch (NoResultException e){
+            throw new ValidadorExcpetion(e.getMessage());
+        }
+
+        return CompletableFuture.completedFuture(eventoNovo);
+    }
+
+    private void validate(Evento eventoAtual, Evento eventoNovo) throws ValidadorExcpetion {
+
+        if(!eventoNovo.getCasa().equals(eventoAtual.getCasa())){
+            throw new ValidadorExcpetion("O nome do time da casa não pode ser alterado! ");
+        }
+
+        if(!eventoNovo.getFora().equals(eventoAtual.getFora())){
+            throw new ValidadorExcpetion("O nome do time de fora não pode ser alterado! ");
+        }
+
+        if(!eventoNovo.getCampeonato().equals(eventoAtual.getCampeonato())){
+            throw new ValidadorExcpetion("O campeonato não pode ser alterado! ");
+        }
     }
 }

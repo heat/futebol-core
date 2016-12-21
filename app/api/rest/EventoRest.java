@@ -34,16 +34,16 @@ public class EventoRest extends Controller{
 
     PlaySessionStore playSessionStore;
 
-    EventoInserirProcessador eventoInserirProcessador;
+    EventoInserirProcessador inserirProcessador;
 
     ValidatorRepository validatorRepository;
 
     @Inject
     public EventoRest(EventoRepository eventoRepository, PlaySessionStore playSessionStore,
-                      EventoInserirProcessador eventoInserirProcessador, ValidatorRepository validatorRepository) {
+                      EventoInserirProcessador inserirProcessador, ValidatorRepository validatorRepository) {
         this.eventoRepository = eventoRepository;
         this.playSessionStore = playSessionStore;
-        this.eventoInserirProcessador = eventoInserirProcessador;
+        this.inserirProcessador = inserirProcessador;
         this.validatorRepository = validatorRepository;
     }
 
@@ -57,13 +57,12 @@ public class EventoRest extends Controller{
         }
 
         Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
-        Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
 
         List<Validator> validators = validatorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
-        EventoInserirProcessador processadorInserir = new EventoInserirProcessador(eventoRepository);
+        inserirProcessador = new EventoInserirProcessador(eventoRepository);
 
         try {
-            processadorInserir.executar(getTenant().get(), evento, validators);
+            inserirProcessador.executar(getTenant().get(), evento, validators);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -83,10 +82,10 @@ public class EventoRest extends Controller{
         Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
 
         List<Validator> validators = validatorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
-        EventoAtualizarProcessador processadorAtualizar = new EventoAtualizarProcessador(eventoRepository, id);
+        EventoAtualizarProcessador atualizarProcessador = new EventoAtualizarProcessador(eventoRepository, id);
 
         try {
-            processadorAtualizar.executar(getTenant().get(), evento, validators);
+            atualizarProcessador.executar(getTenant().get(), evento, validators);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -132,7 +131,7 @@ public class EventoRest extends Controller{
                 return forbidden();
             }
             eventoRepository.excluir(getTenant().get(), id);
-            return ok("Campeonado excluído!");
+            return ok("Evento excluído!");
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }

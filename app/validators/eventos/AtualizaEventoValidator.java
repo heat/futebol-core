@@ -52,4 +52,5 @@ public class AtualizaEventoValidator extends Validator<Evento> {
             throw new ValidadorExcpetion("Campeonato não selecionado! ");
         }
     }
+
 }

@@ -1,5 +1,7 @@
 package models.eventos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -51,6 +53,7 @@ public class Campeonato implements Serializable{
         this.tenant = tenant;
     }
 
+    @JsonIgnore
     public List<Evento> getEventos() {
         return eventos;
     }

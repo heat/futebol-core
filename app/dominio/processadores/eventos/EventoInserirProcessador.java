@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 public class EventoInserirProcessador implements Processador<Evento>{
 
 
-    public static final String REGRA = "evento.inserir";
+    public static final String REGRA = "evento";
 
     EventoRepository repository;
 

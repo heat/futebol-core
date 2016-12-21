@@ -16,13 +16,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "validadores")
-public class CadastroEventoValidator extends Validator<Evento> {
+public class InsereEventoValidator extends Validator<Evento> {
 
-    protected CadastroEventoValidator() {
+    protected InsereEventoValidator() {
 
     }
 
-    public CadastroEventoValidator(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+    public InsereEventoValidator(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
         super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 
@@ -46,9 +46,9 @@ public class CadastroEventoValidator extends Validator<Evento> {
                 throw new ValidadorExcpetion("Times casa e fora não podem ter o mesmo nome! ");
         }
 
-/*        if(evento.getDataEvento()== null || evento.getDataEvento().before(Calendar.getInstance()) ){
-               throw new ValidadorExcpetion("Data do evento deve ser após a partir da data atual ");
-        }*/
+        if(evento.getDataEvento()== null || evento.getDataEvento().before(Calendar.getInstance()) ){
+               throw new ValidadorExcpetion("Data do evento deve ser após a data atual ");
+        }
 
         Optional<Campeonato> campeonato = Optional.ofNullable(evento.getCampeonato());
         if (!campeonato.isPresent() ||
