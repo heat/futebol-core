@@ -22,8 +22,8 @@ public class Campeonato implements Serializable{
     @Column
     private String nome;
 
-    @OneToMany(fetch=FetchType.EAGER)
-    @JoinColumn(name="eventos_campeonato_id", foreignKey = @ForeignKey(name = "fk_eventos_campeonato_id"))
+    @OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name="campeonato_id")
     private List<Evento> eventos;
 
     protected Campeonato() {
