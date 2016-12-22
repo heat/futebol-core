@@ -28,6 +28,8 @@ POST     /eventos                    api.rest.EventoRest.inserir
 
 POST     /eventos/:id                api.rest.EventoRest.atualizar(id: Long)
 
+POST     /eventos/:id/resultados     api.rest.EventoRest.inserirResultados(idEvento: Long)
+
 DELETE   /eventos/:id                api.rest.EventoRest.excluir(id: Long)
 
 # -------- CRUD de Validators

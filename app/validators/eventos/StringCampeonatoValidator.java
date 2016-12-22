@@ -2,7 +2,7 @@ package validators.eventos;
 
 import com.google.common.base.Strings;
 import models.eventos.Campeonato;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "validadores")
-public class StringCampeonatoValidator extends Validator<Campeonato> {
+public class StringCampeonatoValidator extends Validador<Campeonato> {
 
 
     protected StringCampeonatoValidator() {

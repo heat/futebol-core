@@ -15,8 +15,8 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import repositories.CampeonatoRepository;
-import repositories.ValidatorRepository;
-import validators.Validator;
+import repositories.ValidadorRepository;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
@@ -33,11 +33,11 @@ public class CampeonatoRest extends Controller {
 
     CampeonatoInserirProcessador campeonatoInserirProcessador;
 
-    ValidatorRepository validatorRepository;
+    ValidadorRepository validatorRepository;
 
     @Inject
     public CampeonatoRest(CampeonatoRepository campeonatoRepository, PlaySessionStore playSessionStore,
-                          CampeonatoInserirProcessador campeonatoInserirProcessador, ValidatorRepository validatorRepository) {
+                          CampeonatoInserirProcessador campeonatoInserirProcessador, ValidadorRepository validatorRepository) {
         this.campeonatoRepository = campeonatoRepository;
         this.playSessionStore = playSessionStore;
         this.campeonatoInserirProcessador = campeonatoInserirProcessador;
@@ -55,7 +55,7 @@ public class CampeonatoRest extends Controller {
 
         Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
 
-        List<Validator> validators = validatorRepository.todos(getTenant().get(), CampeonatoInserirProcessador.REGRA);
+        List<Validador> validators = validatorRepository.todos(getTenant().get(), CampeonatoInserirProcessador.REGRA);
         CampeonatoInserirProcessador processadorInserir = new CampeonatoInserirProcessador(campeonatoRepository);
 
         try {
@@ -78,7 +78,7 @@ public class CampeonatoRest extends Controller {
 
         Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
 
-        List<Validator> validators = validatorRepository.todos(getTenant().get(), CampeonatoAtualizarProcessador.REGRA);
+        List<Validador> validators = validatorRepository.todos(getTenant().get(), CampeonatoAtualizarProcessador.REGRA);
         CampeonatoAtualizarProcessador processadorAtualizar = new CampeonatoAtualizarProcessador(campeonatoRepository, id);
 
         try {

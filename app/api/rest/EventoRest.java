@@ -1,10 +1,7 @@
 package api.rest;
 
-import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
-import dominio.processadores.eventos.CampeonatoInserirProcessador;
 import dominio.processadores.eventos.EventoAtualizarProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
-import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
@@ -17,10 +14,9 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import repositories.CampeonatoRepository;
 import repositories.EventoRepository;
-import repositories.ValidatorRepository;
-import validators.Validator;
+import repositories.ValidadorRepository;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
@@ -36,11 +32,11 @@ public class EventoRest extends Controller{
 
     EventoInserirProcessador inserirProcessador;
 
-    ValidatorRepository validatorRepository;
+    ValidadorRepository validatorRepository;
 
     @Inject
     public EventoRest(EventoRepository eventoRepository, PlaySessionStore playSessionStore,
-                      EventoInserirProcessador inserirProcessador, ValidatorRepository validatorRepository) {
+                      EventoInserirProcessador inserirProcessador, ValidadorRepository validatorRepository) {
         this.eventoRepository = eventoRepository;
         this.playSessionStore = playSessionStore;
         this.inserirProcessador = inserirProcessador;
@@ -58,7 +54,7 @@ public class EventoRest extends Controller{
 
         Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
 
-        List<Validator> validators = validatorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
+        List<Validador> validators = validatorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
         inserirProcessador = new EventoInserirProcessador(eventoRepository);
 
         try {
@@ -81,7 +77,7 @@ public class EventoRest extends Controller{
 
         Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
 
-        List<Validator> validators = validatorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
+        List<Validador> validators = validatorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
         EventoAtualizarProcessador atualizarProcessador = new EventoAtualizarProcessador(eventoRepository, id);
 
         try {

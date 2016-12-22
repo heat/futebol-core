@@ -2,7 +2,7 @@ package validators.eventos;
 
 import models.eventos.Campeonato;
 import models.eventos.Evento;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import java.math.BigDecimal;
@@ -16,7 +16,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "validadores")
-public class InsereEventoValidator extends Validator<Evento> {
+public class InsereEventoValidator extends Validador<Evento> {
 
     protected InsereEventoValidator() {
 

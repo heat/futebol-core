@@ -2,9 +2,8 @@ package dominio.processadores.eventos;
 
 import models.eventos.Evento;
 import models.vo.Tenant;
-import org.omg.CORBA.NO_RESOURCES;
 import repositories.EventoRepository;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
@@ -26,9 +25,9 @@ public class EventoAtualizarProcessador {
         this.idEvento = idEvento;
     }
 
-    public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validator> validators) throws ValidadorExcpetion {
+    public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validador> validators) throws ValidadorExcpetion {
 
-        for (Validator validator : validators) {
+        for (Validador validator : validators) {
             validator.validate(eventoNovo);
         }
 

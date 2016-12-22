@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "validadores")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Validator<E> implements Serializable {
+public abstract class Validador<E> implements Serializable {
 
     @Id
     @SequenceGenerator(name="validators_validator_id_seq", sequenceName = "validators_validator_id_seq", allocationSize = 1)
@@ -35,11 +35,11 @@ public abstract class Validator<E> implements Serializable {
     @Column(name="regra")
     private String regra;
 
-    protected Validator(){
+    protected Validador(){
 
     }
 
-    public Validator(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+    public Validador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
         this.idTenant = idTenant;
         this.valorInteiro = valorInteiro;
         this.valorLogico = valorLogico;
@@ -92,7 +92,7 @@ public abstract class Validator<E> implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Validator<?> validator = (Validator<?>) o;
+        Validador<?> validator = (Validador<?>) o;
 
         if (!id.equals(validator.id)) return false;
         return idTenant.equals(validator.idTenant);

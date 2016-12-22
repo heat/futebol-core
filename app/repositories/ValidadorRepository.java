@@ -3,7 +3,7 @@ package repositories;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
-import validators.Validator;
+import validators.Validador;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -13,42 +13,42 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class ValidatorRepository implements Repository<Long, Validator> {
+public class ValidadorRepository implements Repository<Long, Validador> {
 
 
     JPAApi jpaApi;
 
     @Inject
-    public ValidatorRepository(JPAApi jpaApi) {
+    public ValidadorRepository(JPAApi jpaApi) {
         this.jpaApi = jpaApi;
     }
 
-    public List<Validator> todos(Tenant tenant, String regra) {
-        List<Validator> validators = todos(tenant);
+    public List<Validador> todos(Tenant tenant, String regra) {
+        List<Validador> validators = todos(tenant);
         return validators.stream().filter( v -> regra.equals(v.getRegra())).collect(Collectors.toList());
     }
 
     @Override
-    public List<Validator> todos(Tenant tenant) {
+    public List<Validador> todos(Tenant tenant) {
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("SELECT v FROM Validator v WHERE v.idTenant = :idtenant");
+        Query query = em.createQuery("SELECT v FROM Validador v WHERE v.idTenant = :idtenant");
         query.setParameter("idtenant", tenant.get());
-        List<Validator> validadores = query.getResultList();
+        List<Validador> validadores = query.getResultList();
         return validadores;
     }
 
     @Override
-    public Optional<Validator> buscar(Tenant tenant, Long id) {
+    public Optional<Validador> buscar(Tenant tenant, Long id) {
         return null;
     }
 
     @Override
-    public CompletableFuture<Validator> atualizar(Tenant tenant, Long id, Validator updetable) {
+    public CompletableFuture<Validador> atualizar(Tenant tenant, Long id, Validador updetable) {
         return null;
     }
 
     @Override
-    public CompletableFuture<Validator> inserir(Tenant tenant, Validator novo) {
+    public CompletableFuture<Validador> inserir(Tenant tenant, Validador novo) {
         EntityManager em = jpaApi.em();
         novo.setIdTenant(tenant.get());
         em.persist(novo);

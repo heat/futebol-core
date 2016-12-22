@@ -4,7 +4,7 @@ import dominio.processadores.Processador;
 import models.eventos.Campeonato;
 import models.vo.Tenant;
 import repositories.CampeonatoRepository;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
@@ -23,9 +23,9 @@ public class CampeonatoInserirProcessador implements Processador<Campeonato> {
         this.repository = repository;
     }
 
-    public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato, List<Validator> validators) throws ValidadorExcpetion {
+    public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato, List<Validador> validators) throws ValidadorExcpetion {
 
-        for (Validator validator : validators) {
+        for (Validador validator : validators) {
             validator.validate(campeonato);
         }
 
