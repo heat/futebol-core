@@ -1,7 +1,7 @@
 package validators.bilhete;
 
 import models.bilhetes.Bilhete;
-import validators.Validator;
+import validators.Validador;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name="validadores")
-public class ValorMinimoApostaValidator extends Validator<Bilhete> {
+public class ValorMinimoApostaValidator extends Validador<Bilhete> {
 
 
     protected ValorMinimoApostaValidator() {

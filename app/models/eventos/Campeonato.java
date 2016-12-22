@@ -11,8 +11,8 @@ import java.util.List;
 public class Campeonato implements Serializable{
 
     @Id
-    @SequenceGenerator(name="campeonatos_idcampeonato_seq", sequenceName = "campeonatos_idcampeonato_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "campeonatos_idcampeonato_seq")
+    @SequenceGenerator(name="campeonatos_campeonato_id_seq", sequenceName = "campeonatos_campeonato_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "campeonatos_campeonato_id_seq")
     @Column(name = "campeonato_id",updatable = false)
     private Long id;
 
@@ -22,8 +22,8 @@ public class Campeonato implements Serializable{
     @Column
     private String nome;
 
-    @OneToMany(fetch=FetchType.EAGER)
-    @JoinColumn(name="eventos_campeonato_id", foreignKey = @ForeignKey(name = "fk_eventos_campeonato_id"))
+    @OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name="campeonato_id")
     private List<Evento> eventos;
 
     protected Campeonato() {

@@ -12,8 +12,8 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import repositories.CampeonatoRepository;
-import repositories.ValidatorRepository;
-import validators.Validator;
+import repositories.ValidadorRepository;
+import validators.Validador;
 import validators.eventos.InsereEventoValidator;
 
 import javax.inject.Inject;
@@ -29,11 +29,11 @@ public class ValidatorRest extends Controller {
 
     CampeonatoInserirProcessador campeonatoInserirProcessador;
 
-    ValidatorRepository validatorRepository;
+    ValidadorRepository validatorRepository;
 
     @Inject
     public ValidatorRest(CampeonatoRepository campeonatoRepository, PlaySessionStore playSessionStore,
-                          CampeonatoInserirProcessador campeonatoInserirProcessador, ValidatorRepository validatorRepository) {
+                          CampeonatoInserirProcessador campeonatoInserirProcessador, ValidadorRepository validatorRepository) {
         this.campeonatoRepository = campeonatoRepository;
         this.playSessionStore = playSessionStore;
         this.campeonatoInserirProcessador = campeonatoInserirProcessador;
@@ -44,7 +44,7 @@ public class ValidatorRest extends Controller {
     @Transactional
     public Result inserir() {
 
-        Validator validator = new InsereEventoValidator(100L, 10L, true, new BigDecimal(0.2), EventoInserirProcessador.REGRA);
+        Validador validator = new InsereEventoValidator(100L, 10L, true, new BigDecimal(0.2), EventoInserirProcessador.REGRA);
 //        Validator validator = new AtualizaEventoValidator(100L, 10L, true, new BigDecimal(0.2), EventoAtualizarProcessador.REGRA);
         validatorRepository.inserir(getTenant().get(), validator);
         return ok("Validator cadastrado! ");

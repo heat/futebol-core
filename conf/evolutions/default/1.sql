@@ -2,94 +2,117 @@
 
 # --- !Ups
 
-CREATE TABLE "times" (
-  idtime integer NOT NULL,
-  nome character varying(200) NOT NULL,
-  tenant_id integer NOT NULL
+CREATE SEQUENCE public.times_time_id_seq;
+
+CREATE TABLE public.times (
+                time_id INTEGER NOT NULL DEFAULT nextval('public.times_time_id_seq'),
+                nome VARCHAR(200) NOT NULL,
+                tenant_id INTEGER NOT NULL,
+                CONSTRAINT times_pk PRIMARY KEY (time_id)
+);
+COMMENT ON TABLE public.times IS 'tabela de times';
+
+
+ALTER SEQUENCE public.times_time_id_seq OWNED BY public.times.time_id;
+
+CREATE SEQUENCE public.campeonatos_campeonato_id_seq;
+
+CREATE TABLE public.campeonatos (
+                campeonato_id INTEGER NOT NULL DEFAULT nextval('public.campeonatos_campeonato_id_seq'),
+                nome VARCHAR(200) NOT NULL,
+                tenant_id INTEGER NOT NULL,
+                CONSTRAINT campeonatos_pk PRIMARY KEY (campeonato_id)
+);
+COMMENT ON TABLE public.campeonatos IS 'Registro dos campeonatos';
+
+
+ALTER SEQUENCE public.campeonatos_campeonato_id_seq OWNED BY public.campeonatos.campeonato_id;
+
+CREATE UNIQUE INDEX campeonatos_nome_idx
+ ON public.campeonatos
+ ( nome, tenant_id );
+
+CREATE SEQUENCE public.eventos_evento_id_seq;
+
+CREATE TABLE public.eventos (
+                evento_id INTEGER NOT NULL DEFAULT nextval('public.eventos_evento_id_seq'),
+                tenant_id INTEGER NOT NULL,
+                campeonato_id INTEGER NOT NULL,
+                time_id_casa INTEGER NOT NULL,
+                time_id_fora INTEGER NOT NULL,
+                casa VARCHAR(255),
+                data_evento TIMESTAMP NOT NULL,
+                fora VARCHAR(255),
+                CONSTRAINT eventos_pk PRIMARY KEY (evento_id)
 );
 
-COMMENT ON TABLE "times" IS 'tabela de times';
 
-CREATE TABLE campeonatos (
-  idcampeonato integer NOT NULL,
-  nome character varying(200) NOT NULL,
-  tenant_id integer NOT NULL
+ALTER SEQUENCE public.eventos_evento_id_seq OWNED BY public.eventos.evento_id;
+
+CREATE SEQUENCE public.resultados_resultado_id_seq;
+
+CREATE TABLE public.resultados (
+                resultado_id INTEGER NOT NULL DEFAULT nextval('public.resultados_resultado_id_seq'),
+                tenant_id INTEGER NOT NULL,
+                evento_id INTEGER NOT NULL,
+                time_id INTEGER NOT NULL,
+                momento CHAR(2) NOT NULL,
+                pontos INTEGER NOT NULL,
+                CONSTRAINT resultados_pk PRIMARY KEY (resultado_id)
 );
-
-COMMENT ON TABLE campeonatos IS 'Registro dos campeonatos';
-
-CREATE TABLE resultados (
-  eventos_idevento integer NOT NULL,
-  times_idtime integer NOT NULL,
-  momento character(2) NOT NULL,
-  pontos integer NOT NULL,
-  tenant_id integer NOT NULL
-);
-
-COMMENT ON TABLE resultados IS 'tabela de resultados';
-
-COMMENT ON COLUMN resultados.eventos_idevento IS 'tabela de eventos';
-
-COMMENT ON COLUMN resultados.momento IS 'Momento do registro do resultado
+COMMENT ON TABLE public.resultados IS 'tabela de resultados';
+COMMENT ON COLUMN public.resultados.momento IS 'Momento do registro do resultado
 - FT primeiro tempo do futebol
 - FR resultado final do futebol';
+COMMENT ON COLUMN public.resultados.pontos IS 'quantidade de pontos marcados';
 
-COMMENT ON COLUMN resultados.pontos IS 'quantidade de pontos marcados';
 
-CREATE TABLE eventos
-(
-  idevento integer NOT NULL,
-  casa character varying(255),
-  dataevento bytea,
-  fora character varying(255)
-);
+ALTER SEQUENCE public.resultados_resultado_id_seq OWNED BY public.resultados.resultado_id;
 
-CREATE SEQUENCE campeonatos_idcampeonato_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+ALTER TABLE public.eventos ADD CONSTRAINT times_eventos_fk
+FOREIGN KEY (time_id_casa)
+REFERENCES public.times (time_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
 
-ALTER SEQUENCE campeonatos_idcampeonato_seq OWNED BY campeonatos.idcampeonato;
+ALTER TABLE public.eventos ADD CONSTRAINT times_eventos_fk1
+FOREIGN KEY (time_id_fora)
+REFERENCES public.times (time_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
 
-CREATE SEQUENCE eventos_idevento_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+ALTER TABLE public.resultados ADD CONSTRAINT times_resultados_fk
+FOREIGN KEY (time_id)
+REFERENCES public.times (time_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
 
-ALTER SEQUENCE eventos_idevento_seq OWNED BY eventos.idevento;
+ALTER TABLE public.eventos ADD CONSTRAINT campeonatos_eventos_fk
+FOREIGN KEY (campeonato_id)
+REFERENCES public.campeonatos (campeonato_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
 
-CREATE SEQUENCE times_idtime_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
-
-ALTER SEQUENCE times_idtime_seq OWNED BY "times".idtime;
-
-ALTER TABLE ONLY "times" ALTER COLUMN idtime SET DEFAULT nextval('times_idtime_seq'::regclass);
-
-ALTER TABLE ONLY campeonatos ALTER COLUMN idcampeonato SET DEFAULT nextval('campeonatos_idcampeonato_seq'::regclass);
-
-ALTER TABLE ONLY eventos ALTER COLUMN idevento SET DEFAULT nextval('eventos_idevento_seq'::regclass);
-
-ALTER TABLE ONLY campeonatos
-  ADD CONSTRAINT campeonatos_pk PRIMARY KEY (idcampeonato);
-
-ALTER TABLE ONLY resultados
-  ADD CONSTRAINT resultados_pk PRIMARY KEY (eventos_idevento, times_idtime);
-
-ALTER TABLE ONLY "times"
-  ADD CONSTRAINT times_pk PRIMARY KEY (idtime);
-
-ALTER TABLE ONLY "eventos"
-  ADD CONSTRAINT eventos_pk PRIMARY KEY (idevento);
+ALTER TABLE public.resultados ADD CONSTRAINT eventos_resultados_fk
+FOREIGN KEY (evento_id)
+REFERENCES public.eventos (evento_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
 
 # --- !Downs
+
+DROP SEQUENCE public.resultados_resultado_id_seq;
+
+DROP SEQUENCE public.eventos_evento_id_seq;
+
+DROP SEQUENCE public.campeonatos_campeonato_id_seq;
+
+DROP SEQUENCE public.times_time_id_seq;
 
 DROP TABLE resultados;
 

@@ -41,11 +41,11 @@ public class Evento implements Serializable{
     private Calendar dataEvento;
 
     @OneToMany(fetch=FetchType.EAGER)
-    @JoinColumn(name="resultados_evento_id", foreignKey = @ForeignKey(name = "fk_resultados_evento_id"))
+    @JoinColumn(name="evento_id")
     private List<Resultado> resultados;
 
     @ManyToOne
-    @JoinColumn(name="eventos_campeonato_id")
+    @JoinColumn(name="campeonato_id")
     private Campeonato campeonato;
 
     public Long getId() {

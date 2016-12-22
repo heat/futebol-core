@@ -16,6 +16,9 @@ public class Time implements Serializable{
     @Column
     String nome;
 
+    @Column(name="tenant_id")
+    Long tenant;
+
     public void Time(String nome){
         this.nome = nome;
     }

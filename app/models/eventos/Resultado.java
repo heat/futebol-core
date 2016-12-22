@@ -25,7 +25,7 @@ public class Resultado implements Serializable{
     private Long pontos;
 
     @OneToOne
-    @JoinColumn(name = "times_time_id", foreignKey = @ForeignKey(name = "fk_times_time_id"))
+    @JoinColumn(name = "time_id")
     private Time time;
 
     @ManyToOne

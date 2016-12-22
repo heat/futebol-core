@@ -3,7 +3,7 @@ package validators.eventos;
 import com.google.common.base.Strings;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Entity
 @Table(name = "validadores")
-public class AtualizaEventoValidator extends Validator<Evento> {
+public class AtualizaEventoValidator extends Validador<Evento> {
 
     public AtualizaEventoValidator() {
     }
