@@ -1,6 +1,6 @@
 package repositories;
 
-import models.eventos.Evento;
+import models.eventos.Resultado;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
@@ -14,30 +14,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class EventoRepository implements Repository<Long, Evento>{
 
+public class ResultadoRepository implements Repository<Long, Resultado> {
 
     JPAApi jpaApi;
 
     @Inject
-    public EventoRepository(JPAApi jpaApi) {
+    public ResultadoRepository(JPAApi jpaApi) {
         this.jpaApi = jpaApi;
     }
 
     @Override
-    public List<Evento> todos(Tenant tenant) {
-
+    public List<Resultado> todos(Tenant tenant) {
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("FROM Evento as e WHERE e.tenant = :tenant");
+        Query query = em.createQuery("FROM Resultado as r WHERE r.tenant = :tenant");
         query.setParameter("tenant", tenant.get());
         return query.getResultList();
     }
 
     @Override
-    public Optional<Evento> buscar(Tenant tenant, Long id) {
+    public Optional<Resultado> buscar(Tenant tenant, Long id) {
         try {
             EntityManager em = jpaApi.em();
-            TypedQuery<Evento> query = em.createQuery("SELECT e FROM Evento e WHERE e.tenant = :tenant and e.id = :id", Evento.class);
+            TypedQuery<Resultado> query = em.createQuery("SELECT r FROM Resultado r WHERE r.tenant = :tenant and r.id = :id", Resultado.class);
             query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
             return Optional.ofNullable(query.getSingleResult());
@@ -52,41 +51,38 @@ public class EventoRepository implements Repository<Long, Evento>{
     }
 
     @Override
-    public CompletableFuture<Evento> atualizar(Tenant tenant, Long id, Evento e) {
-
+    public CompletableFuture<Resultado> atualizar(Tenant tenant, Long id, Resultado result) {
         EntityManager em = jpaApi.em();
-        Optional<Evento> evento = buscar(tenant, id);
-        if(!evento.isPresent()){
-            throw new NoResultException("Evento não encontrado");
+        Optional<Resultado> resultado = buscar(tenant, id);
+        if(!resultado.isPresent()){
+            throw new NoResultException("Resultado não encontrado");
         }
-
-        Evento ev = evento.get();
-        ev.setCasa(e.getCasa());
-        ev.setFora(e.getFora());
-        ev.setDataEvento(e.getDataEvento());
-        em.merge(ev);
-        return CompletableFuture.completedFuture(ev);
+        Resultado rs = resultado.get();
+        rs.setMomento(result.getMomento());
+        rs.setPontos(result.getPontos());
+        em.merge(rs);
+        return CompletableFuture.completedFuture(rs);
     }
 
     @Override
-    public CompletableFuture<Evento> inserir(Tenant tenant, Evento evento) {
+    public CompletableFuture<Resultado> inserir(Tenant tenant, Resultado resultado) {
 
         EntityManager em = jpaApi.em();
-        evento.setTenant(tenant.get());
-        em.persist(evento);
-        return CompletableFuture.completedFuture(evento);
+        resultado.setTenant(tenant.get());
+        em.persist(resultado);
+        return CompletableFuture.completedFuture(resultado);
     }
 
     @Override
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
 
         EntityManager em = jpaApi.em();
-        Optional<Evento> evento = buscar(tenant, id);
-        if(!evento.isPresent()){
-            throw new NoResultException("Evento não encontrado");
+        Optional<Resultado> resultado = buscar(tenant, id);
+        if(!resultado.isPresent()){
+            throw new NoResultException("Resultado não encontrado");
         }
-        Evento e = evento.get();
-        em.remove(e);
+        Resultado r = resultado.get();
+        em.remove(r);
 
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }

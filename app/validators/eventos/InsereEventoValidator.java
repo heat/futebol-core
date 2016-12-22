@@ -34,11 +34,11 @@ public class InsereEventoValidator extends Validator<Evento> {
             throw new ValidadorExcpetion("Evento não informado! ");
         }
 
-        if ( Strings.isNullOrEmpty(evento.getCasa()) || Strings.isNullOrEmpty(evento.getCasa().trim())) {
+        if ( Strings.isNullOrEmpty(evento.getCasa().getNome()) || Strings.isNullOrEmpty(evento.getCasa().getNome().trim())) {
             throw new ValidadorExcpetion("Nome time casa inválido! ");
         }
 
-        if ( Strings.isNullOrEmpty(evento.getFora()) || Strings.isNullOrEmpty(evento.getFora().trim())) {
+        if ( Strings.isNullOrEmpty(evento.getFora().getNome()) || Strings.isNullOrEmpty(evento.getFora().getNome().trim())) {
             throw new ValidadorExcpetion("Nome time fora inválido! ");
         }
 
