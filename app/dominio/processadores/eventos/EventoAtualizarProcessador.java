@@ -1,5 +1,6 @@
 package dominio.processadores.eventos;
 
+import dominio.processadores.Processador;
 import models.eventos.Evento;
 import models.vo.Tenant;
 import org.omg.CORBA.NO_RESOURCES;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class EventoAtualizarProcessador {
+public class EventoAtualizarProcessador implements Processador<Evento>{
 
     public static final String REGRA = "evento";
     private final Long idEvento;
@@ -26,6 +27,7 @@ public class EventoAtualizarProcessador {
         this.idEvento = idEvento;
     }
 
+    @Override
     public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validator> validators) throws ValidadorExcpetion {
 
         for (Validator validator : validators) {
