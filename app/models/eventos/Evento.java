@@ -28,11 +28,13 @@ public class Evento implements Serializable{
     @Column(name="tenant_id")
     private Long tenant;
 
-    @Column(name = "times_casa")
-    private String casa;
+    @OneToOne
+    @JoinColumn(name = "times_casa", foreignKey = @ForeignKey(name = "fk_times_casa"))
+    private Time casa;
 
-    @Column(name = "times_fora")
-    private String fora;
+    @OneToOne
+    @JoinColumn(name = "times_fora", foreignKey = @ForeignKey(name = "fk_times_fora"))
+    private Time fora;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_evento")
@@ -58,19 +60,19 @@ public class Evento implements Serializable{
         this.tenant = tenant;
     }
 
-    public String getCasa() {
+    public Time getCasa() {
         return casa;
     }
 
-    public void setCasa(String casa) {
+    public void setCasa(Time casa) {
         this.casa = casa;
     }
 
-    public String getFora() {
+    public Time getFora() {
         return fora;
     }
 
-    public void setFora(String fora) {
+    public void setFora(Time fora) {
         this.fora = fora;
     }
 

@@ -1,5 +1,6 @@
 package dominio.processadores.eventos;
 
+import dominio.processadores.ProcessadorAtualizar;
 import models.eventos.Evento;
 import models.vo.Tenant;
 import repositories.EventoRepository;
@@ -12,23 +13,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class EventoAtualizarProcessador {
+public class EventoAtualizarProcessador implements ProcessadorAtualizar<Evento> {
 
     public static final String REGRA = "evento";
-    private final Long idEvento;
-
     EventoRepository repository;
 
     @Inject
-    public EventoAtualizarProcessador(EventoRepository repository, Long idEvento) {
+    public EventoAtualizarProcessador(EventoRepository repository) {
         this.repository = repository;
-        this.idEvento = idEvento;
     }
 
-    public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validador> validators) throws ValidadorExcpetion {
+    @Override
+    public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validador> validadores, Long idEvento) throws ValidadorExcpetion {
 
-        for (Validador validator : validators) {
-            validator.validate(eventoNovo);
+        for (Validador validador : validadores) {
+            validador.validate(eventoNovo);
         }
 
         Optional<Evento> eventoAtual = repository.buscar(tenant, idEvento);

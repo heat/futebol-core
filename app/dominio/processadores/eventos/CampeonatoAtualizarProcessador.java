@@ -1,6 +1,6 @@
 package dominio.processadores.eventos;
 
-import dominio.processadores.Processador;
+import dominio.processadores.ProcessadorAtualizar;
 import models.eventos.Campeonato;
 import models.vo.Tenant;
 import repositories.CampeonatoRepository;
@@ -11,28 +11,24 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CampeonatoAtualizarProcessador implements Processador<Campeonato> {
-
+public class CampeonatoAtualizarProcessador implements ProcessadorAtualizar<Campeonato> {
 
     public static final String REGRA = "campeonato.atualizar";
-    private final Long idCampeonato;
 
     CampeonatoRepository repository;
-
     @Inject
-    public CampeonatoAtualizarProcessador(CampeonatoRepository repository, Long idCampeonato) {
+    public CampeonatoAtualizarProcessador(CampeonatoRepository repository) {
         this.repository = repository;
-        this.idCampeonato = idCampeonato;
     }
 
-    public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato, List<Validador> validators) throws ValidadorExcpetion {
+    public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato,
+                                                  List<Validador> validadores, Long idCampeonato) throws ValidadorExcpetion {
 
-        for (Validador validator : validators) {
-            validator.validate(campeonato);
+        for (Validador validador : validadores) {
+            validador.validate(campeonato);
         }
 
         repository.atualizar(tenant, idCampeonato, campeonato);
-
 
         return CompletableFuture.completedFuture(campeonato);
     }

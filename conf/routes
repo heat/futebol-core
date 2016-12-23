@@ -30,6 +30,15 @@ POST     /eventos/:id                api.rest.EventoRest.atualizar(id: Long)
 
 DELETE   /eventos/:id                api.rest.EventoRest.excluir(id: Long)
 
+# ------- CRUD de resultados
+GET      /resultados                    api.rest.ResultadoRest.todos
+
+GET      /resultados/:id                api.rest.ResultadoRest.buscar(id: Long)
+
+POST     /resultados/:id                api.rest.ResultadoRest.inserir(id: Long)
+
+DELETE   /resultados/:id                api.rest.ResultadoRest.excluir(id: Long)
+
 # -------- CRUD de Validators
 POST     /validators                 api.rest.ValidatorRest.inserir
 

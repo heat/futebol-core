@@ -1,6 +1,5 @@
 package repositories;
 
-import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
@@ -11,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

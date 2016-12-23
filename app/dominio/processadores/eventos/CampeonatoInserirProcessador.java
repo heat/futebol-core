@@ -1,6 +1,6 @@
 package dominio.processadores.eventos;
 
-import dominio.processadores.Processador;
+import dominio.processadores.ProcessadorInserir;
 import models.eventos.Campeonato;
 import models.vo.Tenant;
 import repositories.CampeonatoRepository;
@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CampeonatoInserirProcessador implements Processador<Campeonato> {
+public class CampeonatoInserirProcessador implements ProcessadorInserir<Campeonato> {
 
 
     public static final String REGRA = "campeonato.inserir";
@@ -23,10 +23,10 @@ public class CampeonatoInserirProcessador implements Processador<Campeonato> {
         this.repository = repository;
     }
 
-    public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato, List<Validador> validators) throws ValidadorExcpetion {
+    public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato, List<Validador> validadores) throws ValidadorExcpetion {
 
-        for (Validador validator : validators) {
-            validator.validate(campeonato);
+        for (Validador validador : validadores) {
+            validador.validate(campeonato);
         }
 
         repository.inserir(tenant, campeonato);
