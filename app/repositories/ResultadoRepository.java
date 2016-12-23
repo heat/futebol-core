@@ -52,16 +52,8 @@ public class ResultadoRepository implements Repository<Long, Resultado> {
 
     @Override
     public CompletableFuture<Resultado> atualizar(Tenant tenant, Long id, Resultado result) {
-        EntityManager em = jpaApi.em();
-        Optional<Resultado> resultado = buscar(tenant, id);
-        if(!resultado.isPresent()){
-            throw new NoResultException("Resultado não encontrado");
-        }
-        Resultado rs = resultado.get();
-        rs.setMomento(result.getMomento());
-        rs.setPontos(result.getPontos());
-        em.merge(rs);
-        return CompletableFuture.completedFuture(rs);
+
+        return CompletableFuture.completedFuture(result);
     }
 
     @Override

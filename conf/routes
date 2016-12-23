@@ -37,8 +37,6 @@ GET      /resultados/:id                api.rest.ResultadoRest.buscar(id: Long)
 
 POST     /resultados/:id                api.rest.ResultadoRest.inserir(id: Long)
 
-POST     /resultados/atualizar/:id      api.rest.ResultadoRest.atualizar(id: Long)
-
 DELETE   /resultados/:id                api.rest.ResultadoRest.excluir(id: Long)
 
 # -------- CRUD de Validators

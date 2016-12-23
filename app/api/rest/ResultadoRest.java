@@ -2,7 +2,6 @@ package api.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dominio.processadores.eventos.ResultadoAtualizarProcessador;
 import dominio.processadores.eventos.ResultadoInserirProcessador;
 import models.eventos.Evento;
 import models.eventos.Resultado;
@@ -34,18 +33,16 @@ public class ResultadoRest extends Controller{
     ResultadoRepository resultadoRepository;
     PlaySessionStore playSessionStore;
     ResultadoInserirProcessador inserirProcessador;
-    ResultadoAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
 
     @Inject
     public ResultadoRest(ResultadoRepository resultadoRepository, PlaySessionStore playSessionStore,
-                         ResultadoInserirProcessador inserirProcessador, ResultadoAtualizarProcessador atualizarProcessador,
+                         ResultadoInserirProcessador inserirProcessador,
                          ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
         this.resultadoRepository = resultadoRepository;
         this.playSessionStore = playSessionStore;
         this.inserirProcessador = inserirProcessador;
-        this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
 
@@ -83,25 +80,6 @@ public class ResultadoRest extends Controller{
         }
 
         return ok("Resultado cadastrado! ");
-    }
-
-    @Secure(clients = "headerClient")
-    @Transactional
-    @BodyParser.Of(BodyParser.Json.class)
-    public Result atualizar(Long id) {
-
-        if (!getProfile().isPresent()) return forbidden();
-
-        Resultado resultado = Json.fromJson(Controller.request().body().asJson(), Resultado.class);
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), ResultadoInserirProcessador.REGRA);
-
-        try {
-            atualizarProcessador.executar(getTenant().get(), resultado, validadores, id);
-        } catch (ValidadorExcpetion validadorExcpetion) {
-            return ok(validadorExcpetion.getMessage());
-        }
-
-        return ok("Resultado atualizado! ");
     }
 
     @Secure(clients = "headerClient")
