@@ -5,6 +5,7 @@ import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -17,7 +18,7 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
 
     JPAApi jpaApi;
 
-    @javax.inject.Inject
+    @Inject
     public CampeonatoRepository(JPAApi jpaApi) {
         this.jpaApi = jpaApi;
     }
@@ -55,6 +56,9 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
 
         EntityManager em = jpaApi.em();
         Optional<Campeonato> campeonato = buscar(tenant, id);
+        if(!campeonato.isPresent()){
+            throw new NoResultException("Campeonato não encontrado");
+        }
         Campeonato cp = campeonato.get();
         cp.setNome(c.getNome());
         em.merge(cp);
