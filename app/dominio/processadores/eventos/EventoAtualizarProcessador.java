@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class EventoAtualizarProcessador implements ProcessadorAtualizar<Evento> {
 
-    public static final String REGRA = "evento";
+    public static final String REGRA = "evento.atualizar";
     EventoRepository repository;
 
     @Inject
@@ -32,9 +32,7 @@ public class EventoAtualizarProcessador implements ProcessadorAtualizar<Evento> 
 
         Optional<Evento> eventoAtual = repository.buscar(tenant, idEvento);
 
-        if(eventoAtual.isPresent()){
-            validate(eventoAtual.get(), eventoNovo);
-        }
+        if(eventoAtual.isPresent()) validate(eventoAtual.get(), eventoNovo);
 
         try{
             repository.atualizar(tenant, idEvento, eventoNovo);
@@ -46,14 +44,20 @@ public class EventoAtualizarProcessador implements ProcessadorAtualizar<Evento> 
         return CompletableFuture.completedFuture(eventoNovo);
     }
 
+    /**
+     * Validar se o nome de pelo menos um dos times foi alterado
+     * @param eventoAtual
+     * @param eventoNovo
+     * @throws ValidadorExcpetion
+     */
     private void validate(Evento eventoAtual, Evento eventoNovo) throws ValidadorExcpetion {
 
         if(!eventoNovo.getCasa().equals(eventoAtual.getCasa())){
-            throw new ValidadorExcpetion("O nome do time da casa não pode ser alterado! ");
+            throw new ValidadorExcpetion("O nome dos times não podem ser alterados! ");
         }
 
         if(!eventoNovo.getFora().equals(eventoAtual.getFora())){
-            throw new ValidadorExcpetion("O nome do time de fora não pode ser alterado! ");
+            throw new ValidadorExcpetion("O nome dos times não podem ser alterados! ");
         }
 
         if(!eventoNovo.getCampeonato().equals(eventoAtual.getCampeonato())){

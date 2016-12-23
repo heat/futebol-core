@@ -11,14 +11,14 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "validadores")
-public class StringCampeonatoValidator extends Validador<Campeonato> {
+public class CampeonatoStringValidador extends Validador<Campeonato> {
 
 
-    protected StringCampeonatoValidator() {
+    protected CampeonatoStringValidador() {
 
     }
 
-    public StringCampeonatoValidator(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+    public CampeonatoStringValidador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
         super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 

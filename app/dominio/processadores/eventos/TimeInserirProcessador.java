@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class TimeInserirProcessador implements ProcessadorInserir<Time> {
 
-    public static final String REGRA = "time.atualizar";
+    public static final String REGRA = "time.inserir";
     TimeRepository repository;
 
     @Inject

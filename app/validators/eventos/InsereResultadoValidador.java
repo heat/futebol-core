@@ -1,7 +1,7 @@
 package validators.eventos;
 
 import models.eventos.Resultado;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
@@ -10,12 +10,12 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "validadores")
-public class InsereResultadoValidator extends Validator<Resultado> {
+public class InsereResultadoValidador extends Validador<Resultado> {
 
-    public InsereResultadoValidator() {
+    public InsereResultadoValidador() {
     }
 
-    public InsereResultadoValidator(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+    public InsereResultadoValidador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
         super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 
