@@ -13,11 +13,11 @@ public class Time implements Serializable{
     @Column(name = "time_id",updatable = false)
     Long id;
 
+    @Column(name = "tenant_id")
+    Long tenant;
+
     @Column
     String nome;
-
-    @Column(name="tenant_id")
-    Long tenant;
 
     public void Time(String nome){
         this.nome = nome;
@@ -27,12 +27,16 @@ public class Time implements Serializable{
         return id;
     }
 
-    public String getNome() {
-        return nome;
+    public Long getTenant() {
+        return tenant;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
+    }
+
+    public String getNome() {
+        return nome;
     }
 
     public void setNome(String nome) {

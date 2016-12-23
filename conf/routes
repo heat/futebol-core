@@ -39,6 +39,17 @@ POST     /resultados/:id                api.rest.ResultadoRest.inserir(id: Long)
 
 DELETE   /resultados/:id                api.rest.ResultadoRest.excluir(id: Long)
 
+# ------- CRUD de times
+GET      /times                         api.rest.TimeRest.todos
+
+GET      /times/:id                     api.rest.TimeRest.buscar(id: Long)
+
+POST     /times                         api.rest.TimeRest.inserir
+
+POST     /times/:id                     api.rest.TimeRest.atualizar(id: Long)
+
+DELETE   /times/:id                     api.rest.TimeRest.excluir(id: Long)
+
 # -------- CRUD de Validators
 POST     /validators                 api.rest.ValidatorRest.inserir
 
