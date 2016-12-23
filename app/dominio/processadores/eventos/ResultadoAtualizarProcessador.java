@@ -1,10 +1,10 @@
 package dominio.processadores.eventos;
 
-import dominio.processadores.Processador;
+import dominio.processadores.ProcessadorAtualizar;
 import models.eventos.Resultado;
 import models.vo.Tenant;
 import repositories.ResultadoRepository;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
@@ -14,29 +14,22 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 
-public class ResultadoAtualizarProcessador implements Processador<Resultado> {
+public class ResultadoAtualizarProcessador implements ProcessadorAtualizar<Resultado> {
 
     public static final String REGRA = "resultado.atualizar";
-    Long idResultado;
-
     ResultadoRepository repository;
 
     @Inject
     public ResultadoAtualizarProcessador(ResultadoRepository repository) {
 
         this.repository = repository;
-        this.idResultado = idResultado;
     }
 
     @Override
-    public CompletableFuture<Resultado> executar(Tenant tenant, Resultado resultadoNovo, List<Validator> validators) throws ValidadorExcpetion {
-        return null;
-    }
+    public CompletableFuture<Resultado> executar(Tenant tenant, Resultado resultadoNovo, List<Validador> validadores, Long idResultado) throws ValidadorExcpetion {
 
-    public CompletableFuture<Resultado> executar(Tenant tenant, Resultado resultadoNovo, List<Validator> validators, Long idResultado) throws ValidadorExcpetion {
-
-        for (Validator validator : validators) {
-            validator.validate(resultadoNovo);
+        for (Validador validador : validadores) {
+            validador.validate(resultadoNovo);
         }
 
         Optional<Resultado> resultadoAtual = repository.buscar(tenant, idResultado);

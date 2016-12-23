@@ -1,11 +1,10 @@
 package dominio.processadores.eventos;
 
-import dominio.processadores.Processador;
+import dominio.processadores.ProcessadorAtualizar;
 import models.eventos.Evento;
 import models.vo.Tenant;
-import org.omg.CORBA.NO_RESOURCES;
 import repositories.EventoRepository;
-import validators.Validator;
+import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
@@ -14,24 +13,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class EventoAtualizarProcessador implements Processador<Evento>{
+public class EventoAtualizarProcessador implements ProcessadorAtualizar<Evento> {
 
     public static final String REGRA = "evento";
-    private final Long idEvento;
-
     EventoRepository repository;
 
     @Inject
-    public EventoAtualizarProcessador(EventoRepository repository, Long idEvento) {
+    public EventoAtualizarProcessador(EventoRepository repository) {
         this.repository = repository;
-        this.idEvento = idEvento;
     }
 
     @Override
-    public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validator> validators) throws ValidadorExcpetion {
+    public CompletableFuture<Evento> executar(Tenant tenant, Evento eventoNovo, List<Validador> validadores, Long idEvento) throws ValidadorExcpetion {
 
-        for (Validator validator : validators) {
-            validator.validate(eventoNovo);
+        for (Validador validador : validadores) {
+            validador.validate(eventoNovo);
         }
 
         Optional<Evento> eventoAtual = repository.buscar(tenant, idEvento);

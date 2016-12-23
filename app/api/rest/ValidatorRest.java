@@ -24,20 +24,17 @@ public class ValidatorRest extends Controller {
 
 
     CampeonatoRepository campeonatoRepository;
-
     PlaySessionStore playSessionStore;
-
     CampeonatoInserirProcessador campeonatoInserirProcessador;
-
-    ValidadorRepository validatorRepository;
+    ValidadorRepository validadorRepository;
 
     @Inject
     public ValidatorRest(CampeonatoRepository campeonatoRepository, PlaySessionStore playSessionStore,
-                          CampeonatoInserirProcessador campeonatoInserirProcessador, ValidadorRepository validatorRepository) {
+                         CampeonatoInserirProcessador campeonatoInserirProcessador, ValidadorRepository validadorRepository) {
         this.campeonatoRepository = campeonatoRepository;
         this.playSessionStore = playSessionStore;
         this.campeonatoInserirProcessador = campeonatoInserirProcessador;
-        this.validatorRepository = validatorRepository;
+        this.validadorRepository = validadorRepository;
     }
 
     @Secure(clients = "headerClient")
@@ -46,7 +43,7 @@ public class ValidatorRest extends Controller {
 
         Validador validator = new InsereEventoValidator(100L, 10L, true, new BigDecimal(0.2), EventoInserirProcessador.REGRA);
 //        Validator validator = new AtualizaEventoValidator(100L, 10L, true, new BigDecimal(0.2), EventoAtualizarProcessador.REGRA);
-        validatorRepository.inserir(getTenant().get(), validator);
+        validadorRepository.inserir(getTenant().get(), validator);
         return ok("Validator cadastrado! ");
     }
 
