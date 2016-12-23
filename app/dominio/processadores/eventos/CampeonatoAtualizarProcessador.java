@@ -8,6 +8,7 @@ import validators.Validador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,7 +29,13 @@ public class CampeonatoAtualizarProcessador implements ProcessadorAtualizar<Camp
             validador.validate(campeonato);
         }
 
-        repository.atualizar(tenant, idCampeonato, campeonato);
+        try{
+            repository.atualizar(tenant, idCampeonato, campeonato);
+        }
+        catch(NoResultException e){
+            throw new ValidadorExcpetion(e.getMessage());
+        }
+
 
         return CompletableFuture.completedFuture(campeonato);
     }
