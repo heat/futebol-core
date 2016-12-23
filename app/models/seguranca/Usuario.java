@@ -19,10 +19,10 @@ public class Usuario {
     @Id
     @SequenceGenerator(name="usuarios_idusuario_seq", sequenceName = "usuarios_idusuario_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_idusuario_seq")
-    @Column(name = "idusuario",updatable = false)
+    @Column(name = "usuario_id",updatable = false)
     private Long id;
 
-    @Column(name="idtenant")
+    @Column(name="tenant_id")
     private Long idTenant;
 
     @Column(name="login")
@@ -32,11 +32,11 @@ public class Usuario {
     private String senha;
 
     @OneToOne
-    @JoinColumn(name="papeis_idpapel", foreignKey = @ForeignKey(name = "fk_papeis_idpapel"))
+    @JoinColumn(name="papel_id")
     private Papel papel;
 
     @OneToOne
-    @JoinColumn(name="perfis_idperfil", foreignKey = @ForeignKey(name = "fk_perfis_idperfil"))
+    @JoinColumn(name="perfil_id")
     private Perfil perfil;
 
     public Usuario(){
