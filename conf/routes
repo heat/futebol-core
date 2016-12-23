@@ -50,10 +50,6 @@ POST     /times/:id                     api.rest.TimeRest.atualizar(id: Long)
 
 DELETE   /times/:id                     api.rest.TimeRest.excluir(id: Long)
 
-# -------- CRUD de Validators
-POST     /validators                 api.rest.ValidatorRest.inserir
-
-
 POST    /token                       api.rest.UsuarioRest.authenticar
 
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
