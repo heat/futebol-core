@@ -10,7 +10,7 @@ CREATE TABLE public.times (
                 tenant_id INTEGER NOT NULL,
                 CONSTRAINT times_pk PRIMARY KEY (time_id)
 );
-COMMENT ON TABLE public.times IS 'tabela de times';
+COMMENT ON TABLE public.times IS 'tabela de times disponiveis';
 
 
 ALTER SEQUENCE public.times_time_id_seq OWNED BY public.times.time_id;
@@ -23,7 +23,7 @@ CREATE TABLE public.campeonatos (
                 tenant_id INTEGER NOT NULL,
                 CONSTRAINT campeonatos_pk PRIMARY KEY (campeonato_id)
 );
-COMMENT ON TABLE public.campeonatos IS 'Registro dos campeonatos';
+COMMENT ON TABLE public.campeonatos IS 'Lista de campeonatos';
 
 
 ALTER SEQUENCE public.campeonatos_campeonato_id_seq OWNED BY public.campeonatos.campeonato_id;
@@ -106,18 +106,18 @@ NOT DEFERRABLE;
 
 # --- !Downs
 
-DROP SEQUENCE public.resultados_resultado_id_seq;
+DROP TABLE IF EXISTS resultados CASCADE;
 
-DROP SEQUENCE public.eventos_evento_id_seq;
+DROP TABLE IF EXISTS eventos CASCADE;
 
-DROP SEQUENCE public.campeonatos_campeonato_id_seq;
+DROP TABLE IF EXISTS times CASCADE;
 
-DROP SEQUENCE public.times_time_id_seq;
+DROP TABLE IF EXISTS campeonatos CASCADE;
 
-DROP TABLE resultados;
+DROP SEQUENCE IF EXISTS public.resultados_resultado_id_seq CASCADE;
 
-DROP TABLE eventos;
+DROP SEQUENCE IF EXISTS public.eventos_evento_id_seq CASCADE;
 
-DROP TABLE times;
+DROP SEQUENCE IF EXISTS public.campeonatos_campeonato_id_seq CASCADE;
 
-DROP TABLE campeonatos;
+DROP SEQUENCE IF EXISTS public.times_time_id_seq CASCADE;

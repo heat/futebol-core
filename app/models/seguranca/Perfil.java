@@ -12,11 +12,11 @@ public class Perfil {
     }
 
     @Id
-    @Column(name = "usuario_id",updatable = false)
+    @Column(name = "usuario_id",updatable = false, insertable = false)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name="usuario_id", insertable = false, updatable =  false)
+    @JoinColumn(name="usuario_id")
     private Usuario usuario;
 
     @Column(name = "email")
@@ -125,5 +125,13 @@ public class Perfil {
 
     public void setLocalizacao(String localizacao) {
         this.localizacao = localizacao;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

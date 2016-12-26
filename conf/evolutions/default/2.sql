@@ -2,40 +2,7 @@
 
 # --- !Ups
 
-CREATE SEQUENCE public.usuarios_usuario_id_seq;
-
-CREATE TABLE public.usuarios (
-                usuario_id INTEGER NOT NULL DEFAULT nextval('public.usuarios_usuario_id_seq'),
-                login VARCHAR(255) NOT NULL,
-                senha VARCHAR(255) NOT NULL,
-                CONSTRAINT usuario_id_pk PRIMARY KEY (usuario_id)
-);
-COMMENT ON TABLE usuarios IS 'tabela de usuarios';
-
-CREATE TABLE public."Perfis"
-(
-  usuario_id integer NOT NULL,
-  email character varying(255) NOT NULL,
-  primeiro_nome character varying(255) NOT NULL,
-  sobre_nome character varying(255) NOT NULL,
-  exibicao_nome character varying(255) NOT NULL,
-  genero integer NOT NULL,
-  localidade character(255) NOT NULL,
-  localizacao character varying(255) NOT NULL,
-  imagem_url character varying(255) NOT NULL,
-  perfil_url character varying(255) NOT NULL,
-  CONSTRAINT perfis_perfil_id_pk PRIMARY KEY (usuario_id),
-  CONSTRAINT usuarios_perfis_fk FOREIGN KEY (usuario_id)
-      REFERENCES public.usuarios (usuario_id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-COMMENT ON TABLE public."Perfis"
-  IS 'tabela de perfis';
-
-CREATE TABLE public.papeis
+CREATE TABLE public.papeis -- papeis de acesso ao sistema
 (
   papel_id integer NOT NULL,
   nome character varying(255) NOT NULL,
@@ -59,7 +26,7 @@ WITH (
 ALTER TABLE public.permissoes
   OWNER TO kb5w;
 COMMENT ON COLUMN public.permissoes.nome IS 'nome da permissao';
-COMMENT ON COLUMN public.permissoes.descricao IS 'descricao infromação da permissao';
+COMMENT ON COLUMN public.permissoes.descricao IS 'descricão infromação da permissao';
 
 -- tabela de relacionamento dos papeis e permissoes
 CREATE TABLE public.papeis_has_permissoes
@@ -78,27 +45,88 @@ WITH (
   OIDS=FALSE
 );
 
-COPY papeis (papel_id, nome) FROM stdin;
-1	administrador
-2	revendedor
-3	operador
-4	supervisor
-5	usuario
-\.
+CREATE SEQUENCE public.usuarios_usuario_id_seq;
+
+CREATE TABLE public.usuarios (
+                usuario_id INTEGER NOT NULL DEFAULT nextval('public.usuarios_usuario_id_seq'),
+                tenant_id INTEGER NOT NULL,
+                login VARCHAR(255) NOT NULL,
+                senha VARCHAR(255) NOT NULL,
+                papel_id integer NOT NULL, -- papel de acesso do usuario
+                CONSTRAINT usuario_id_pk PRIMARY KEY (usuario_id),
+                CONSTRAINT papeis_usuarios_fk FOREIGN KEY (papel_id)
+                  REFERENCES public.papeis (papel_id) MATCH SIMPLE
+                  ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+COMMENT ON TABLE usuarios IS 'tabela de usuarios';
+
+CREATE TABLE public.perfis -- perfis informacoes usuario
+(
+  usuario_id integer NOT NULL,
+  email character varying(255) NOT NULL,
+  primeiro_nome character varying(255) NOT NULL,
+  sobre_nome character varying(255) NOT NULL,
+  exibicao_nome character varying(255) NOT NULL,
+  genero integer NOT NULL,
+  localidade character(255) NOT NULL,
+  localizacao character varying(255),
+  imagem_url character varying(255),
+  perfil_url character varying(255),
+  CONSTRAINT perfis_perfil_id_pk PRIMARY KEY (usuario_id),
+  CONSTRAINT usuarios_perfis_fk FOREIGN KEY (usuario_id)
+      REFERENCES public.usuarios (usuario_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+COMMENT ON TABLE public.perfis
+  IS 'tabela de perfis';
+
+INSERT INTO papeis (papel_id,
+                    nome) -- papeis padrão do sistema
+VALUES (1,'administrador'), (2,'supervisor'), (3,'operador'), (4,'revendedor'), (5,'usuario');
+
+insert into usuarios (tenant_id,
+                    login,
+                    papel_id,
+                    senha,
+                    usuario_id) -- inclui administrador padrao
+VALUES (2, 'admin.demo', 1, '123456', 1),
+       (2, 'supervisor.demo', 2, '123456', 2),
+       (2, 'operador.demo', 3, '123456', 3),
+       (2, 'revendedor.demo', 4, '12456', 4),
+       (2, 'usuario.demo', 5, '123456', 5);
+
+insert into perfis (email,
+                    genero,
+                    imagem_url,
+                    localidade,
+                    localizacao,
+                    exibicao_nome,
+                    perfil_url,
+                    primeiro_nome,
+                    sobre_nome,
+                    usuario_id)
+    values ('admin@sysbet.in', 0, null, 'pt_BR', 'Aracaju', 'Administrador Demo', null, 'Administrador', 'Sysbet', 1),
+    ('supervisor@sysbet.in', 0, null, 'pt_BR', 'Aracaju', 'Supervisor Demo', null, 'Supervisor', 'Sysbet', 2),
+    ('operador@sysbet.in', 0, null, 'pt_BR', 'Aracaju', 'Operador Demo', null, 'Operador', 'Sysbet', 3),
+    ('revendedor@sysbet.in', 0, null, 'pt_BR', 'Aracaju', 'Revendedor Demo', null, 'Revendedor', 'Sysbet', 4),
+    ('usuario@sysbet.in', 0, null, 'pt_BR', 'Aracaju', 'Usuario Demo', null, 'Usuario', 'Sysbet', 5);
 
 # --- !Downs
 
-DROP TABLE public.perfis;
+DROP TABLE IF EXISTS public.usuarios CASCADE;
 
-DROP SEQUENCE public.usuarios_idusuario_seq;
+DROP TABLE IF EXISTS public.perfis CASCADE;
 
-DROP TABLE public.usuarios;
+DROP SEQUENCE IF EXISTS public.usuarios_usuario_id_seq CASCADE;
 
-DROP TABLE public.papeis_has_permissoes;
+DROP TABLE IF EXISTS public.papeis_has_permissoes CASCADE;
 
-DROP TABLE public.papeis;
+DROP TABLE IF EXISTS public.papeis CASCADE;
 
-DROP TABLE public.permissoes;
+DROP TABLE IF EXISTS  public.permissoes CASCADE;
 
 
 
