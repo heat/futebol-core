@@ -4,6 +4,7 @@ import authenticators.UsernamePasswordDatabaseAuthenticator;
 import be.objectify.deadbolt.java.cache.HandlerCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
@@ -20,6 +21,7 @@ import org.pac4j.play.store.PlayCacheStore;
 import org.pac4j.play.store.PlaySessionStore;
 import play.Configuration;
 import play.Environment;
+import play.db.jpa.JPAApi;
 
 public class SecurityModule  extends AbstractModule {
 
@@ -34,19 +36,14 @@ public class SecurityModule  extends AbstractModule {
         this.configuration = configuration;
     }
 
-    @Provides
-    UsernamePasswordDatabaseAuthenticator getDataBaseAuthenticator(Injector injector) {
-        return injector.getInstance(UsernamePasswordDatabaseAuthenticator.class);
-    }
     @Override
     protected void configure() {
         bind(PlaySessionStore.class).to(PlayCacheStore.class);
         //deadbolt configuration
         bind(HandlerCache.class).to(Pac4jHandlerCache.class);
 
-        UsernamePasswordDatabaseAuthenticator dbauth = new UsernamePasswordDatabaseAuthenticator();
 
-        requestInjection(dbauth);
+       UsernamePasswordDatabaseAuthenticator dbauth = new UsernamePasswordDatabaseAuthenticator(getProvider(JPAApi.class));
 
         final DirectBasicAuthClient directBasicAuthClient =
                 new DirectBasicAuthClient(dbauth);

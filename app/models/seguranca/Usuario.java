@@ -17,8 +17,8 @@ import java.util.List;
 public class Usuario {
 
     @Id
-    @SequenceGenerator(name="usuarios_idusuario_seq", sequenceName = "usuarios_idusuario_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_idusuario_seq")
+    @SequenceGenerator(name="usuarios_usuario_id_seq", sequenceName = "usuarios_usuario_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_usuario_id_seq")
     @Column(name = "usuario_id",updatable = false)
     private Long id;
 
@@ -35,8 +35,7 @@ public class Usuario {
     @JoinColumn(name="papel_id")
     private Papel papel;
 
-    @OneToOne
-    @JoinColumn(name="perfil_id")
+    @OneToOne(mappedBy = "usuario")
     private Perfil perfil;
 
     public Usuario(){

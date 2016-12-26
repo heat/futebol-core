@@ -1,11 +1,13 @@
 package repositories;
 
+import models.seguranca.Papel;
 import models.seguranca.Usuario;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -38,7 +40,15 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
 
     @Override
     public CompletableFuture<Usuario> inserir(Tenant tenant, Usuario novo) {
-        return null;
+        EntityManager em = jpaApi.em();
+
+        Papel admin = em.find(Papel.class, 1L);
+
+        novo.setIdTenant(tenant.get());
+        novo.setPapel(admin);
+        jpaApi.em()
+                .persist(novo);
+        return CompletableFuture.completedFuture(novo);
     }
 
     @Override

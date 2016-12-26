@@ -22,7 +22,7 @@ public class Campeonato implements Serializable{
     @Column
     private String nome;
 
-    @OneToMany(fetch=FetchType.LAZY)
+    @OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="campeonato_id")
     private List<Evento> eventos;
 

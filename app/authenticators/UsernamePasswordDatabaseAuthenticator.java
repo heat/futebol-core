@@ -11,15 +11,24 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.CommonHelper;
+import play.db.jpa.DefaultJPAApi;
+import play.db.jpa.JPAApi;
+import play.db.jpa.JPAEntityManagerContext;
+import play.inject.ApplicationLifecycle;
 import repositories.UsuarioRepository;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.Optional;
 
 public class UsernamePasswordDatabaseAuthenticator extends AbstractUsernamePasswordAuthenticator{
 
+    Provider<JPAApi> jpaApiProvider;
+
     @Inject
-    UsuarioRepository rep;
+    public UsernamePasswordDatabaseAuthenticator(Provider<JPAApi> jpaApiProvider) {
+        this.jpaApiProvider = jpaApiProvider;
+    }
 
     @Override
     public void validate(UsernamePasswordCredentials credentials, WebContext context) throws HttpAction {
@@ -38,14 +47,15 @@ public class UsernamePasswordDatabaseAuthenticator extends AbstractUsernamePassw
             throwsException("Password cannot be blank");
         }
 
-        Optional<Usuario> u = rep.registro(Tenant.SYSBET, username, password);
+        JPAApi jpaApi = jpaApiProvider.get();
 
-        if(!u.isPresent()){
-            throwsException("Login e/ou senha inválido(s)");
+        Optional<Usuario> u = Optional.empty();
+        UsuarioRepository usuarioRepository = new UsuarioRepository(jpaApi);
+        u = usuarioRepository.registro(Tenant.SYSBET, username, password );
+        if(!u.isPresent()) {
+            throwsException("Usuário não encontrado");
         }
-
         Usuario usuario = u.get();
-
         final CommonProfile profile = new CommonProfile();
         profile.setId(usuario.getId());
 

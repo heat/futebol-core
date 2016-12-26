@@ -1,8 +1,5 @@
 package models.seguranca;
 
-
-import models.seguranca.Permissao;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,18 +8,16 @@ import java.util.List;
 public class Papel {
 
     @Id
-    @SequenceGenerator(name="papeis_idpapel_seq", sequenceName = "papeis_idpapel_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "papeis_idpapel_seq")
-    @Column(name = "idpapel",updatable = false)
+    @Column(name = "papel_id",updatable = false)
     private Long id;
 
     @Column
     private String nome;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="papel_has_permissoes",
-            joinColumns= {@JoinColumn(name="idpapel", foreignKey = @ForeignKey(name = "fk_idpapel"))},
-            inverseJoinColumns={@JoinColumn(name="idpermissao", foreignKey = @ForeignKey(name = "fk_idpermissao"))})
+    @JoinTable(name="papeis_has_permissoes",
+            joinColumns= {@JoinColumn(name="papel_id")},
+            inverseJoinColumns={@JoinColumn(name="permissao_id")})
     private List<Permissao> permissoes;
 
 

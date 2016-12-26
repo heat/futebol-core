@@ -8,9 +8,7 @@ import javax.persistence.*;
 public class Permissao {
 
     @Id
-    @SequenceGenerator(name="permissoes_idpermissao_seq", sequenceName = "permissoes_idpermissao_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permissoes_idpermissao_seq")
-    @Column(name = "idpermissao",updatable = false)
+    @Column(name = "permissao_id",updatable = false)
     private Long id;
 
     @Column(name="nome")
