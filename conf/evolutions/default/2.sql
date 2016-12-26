@@ -45,7 +45,7 @@ WITH (
   OIDS=FALSE
 );
 
-CREATE SEQUENCE public.usuarios_usuario_id_seq;
+CREATE SEQUENCE public.usuarios_usuario_id_seq START WITH 100;
 
 CREATE TABLE public.usuarios (
                 usuario_id INTEGER NOT NULL DEFAULT nextval('public.usuarios_usuario_id_seq'),
