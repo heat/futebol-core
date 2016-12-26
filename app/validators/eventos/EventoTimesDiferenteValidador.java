@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @Entity
-@Table(name = "validadores")
 public class EventoTimesDiferenteValidador extends Validador<Evento> {
 
     public EventoTimesDiferenteValidador() {

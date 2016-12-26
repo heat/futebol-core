@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Optional;
 
 @Entity
-@Table(name = "validadores")
 public class EventoDataValidador extends Validador<Evento>{
 
     public EventoDataValidador() {

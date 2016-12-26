@@ -11,7 +11,6 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity
-@Table (name = "validadores")
 public class TimeStringValidador extends Validador<Time> {
 
     public TimeStringValidador() {

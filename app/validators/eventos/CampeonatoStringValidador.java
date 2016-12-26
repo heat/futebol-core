@@ -10,7 +10,6 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "validadores")
 public class CampeonatoStringValidador extends Validador<Campeonato> {
 
 
