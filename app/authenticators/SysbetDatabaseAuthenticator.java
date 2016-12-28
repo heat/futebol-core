@@ -21,12 +21,12 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Optional;
 
-public class UsernamePasswordDatabaseAuthenticator extends AbstractUsernamePasswordAuthenticator{
+public class SysbetDatabaseAuthenticator extends AbstractUsernamePasswordAuthenticator{
 
     Provider<JPAApi> jpaApiProvider;
 
     @Inject
-    public UsernamePasswordDatabaseAuthenticator(Provider<JPAApi> jpaApiProvider) {
+    public SysbetDatabaseAuthenticator(Provider<JPAApi> jpaApiProvider) {
         this.jpaApiProvider = jpaApiProvider;
     }
 

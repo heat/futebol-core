@@ -1,13 +1,12 @@
-package validators.eventos;
+package dominio.validadores.eventos;
 
 
 import com.google.common.base.Strings;
 import models.eventos.Time;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity

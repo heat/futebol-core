@@ -7,10 +7,10 @@ import models.vo.Tenant;
 import play.Application;
 import play.GlobalSettings;
 import play.db.jpa.JPAApi;
-import validators.eventos.CampeonatoNomeValidator;
-import validators.eventos.EventoDataValidador;
-import validators.eventos.EventoTimesDiferenteValidador;
-import validators.eventos.TimeStringValidador;
+import dominio.validadores.eventos.CampeonatoNomeValidator;
+import dominio.validadores.eventos.EventoDataValidador;
+import dominio.validadores.eventos.EventoTimesDiferenteValidador;
+import dominio.validadores.eventos.TimeStringValidador;
 
 import javax.persistence.EntityManager;
 

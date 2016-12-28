@@ -1,11 +1,8 @@
 package modules;
 
-import authenticators.UsernamePasswordDatabaseAuthenticator;
+import authenticators.SysbetDatabaseAuthenticator;
 import be.objectify.deadbolt.java.cache.HandlerCache;
 import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.Provider;
-import com.google.inject.Provides;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
@@ -43,7 +40,7 @@ public class SecurityModule  extends AbstractModule {
         bind(HandlerCache.class).to(Pac4jHandlerCache.class);
 
 
-       UsernamePasswordDatabaseAuthenticator dbauth = new UsernamePasswordDatabaseAuthenticator(getProvider(JPAApi.class));
+       SysbetDatabaseAuthenticator dbauth = new SysbetDatabaseAuthenticator(getProvider(JPAApi.class));
 
         final DirectBasicAuthClient directBasicAuthClient =
                 new DirectBasicAuthClient(dbauth);

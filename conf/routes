@@ -2,59 +2,59 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-POST    /token                       api.rest.UsuarioRest.authenticar
+POST    /token                       api.rest.UsuarioController.authenticar
 
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
 
-GET     /usuarios/0                  api.rest.UsuarioRest.usuario
+GET     /usuarios/0                  api.rest.UsuarioController.usuario
 
 # ------ CRUD de campeonatos
-GET      /campeonatos                api.rest.CampeonatoRest.todos
+GET      /campeonatos                api.rest.CampeonatoController.todos
 
-GET      /campeonatos/:id            api.rest.CampeonatoRest.buscar(id: Long)
+GET      /campeonatos/:id            api.rest.CampeonatoController.buscar(id: Long)
 
-POST     /campeonatos                api.rest.CampeonatoRest.inserir
+POST     /campeonatos                api.rest.CampeonatoController.inserir
 
-POST     /campeonatos/:id            api.rest.CampeonatoRest.atualizar(id: Long)
+POST     /campeonatos/:id            api.rest.CampeonatoController.atualizar(id: Long)
 
-DELETE   /campeonatos/:id            api.rest.CampeonatoRest.excluir(id: Long)
+DELETE   /campeonatos/:id            api.rest.CampeonatoController.excluir(id: Long)
 
 # ------- CRUD de eventos
-GET      /eventos                    api.rest.EventoRest.todos
+GET      /eventos                    api.rest.EventoController.todos
 
-GET      /eventos/:id                api.rest.EventoRest.buscar(id: Long)
+GET      /eventos/:id                api.rest.EventoController.buscar(id: Long)
 
-POST     /eventos                    api.rest.EventoRest.inserir
+POST     /eventos                    api.rest.EventoController.inserir
 
-POST     /eventos/:id                api.rest.EventoRest.atualizar(id: Long)
+POST     /eventos/:id                api.rest.EventoController.atualizar(id: Long)
 
-DELETE   /eventos/:id                api.rest.EventoRest.excluir(id: Long)
+DELETE   /eventos/:id                api.rest.EventoController.excluir(id: Long)
 
 # ------- CRUD de resultados
-GET      /resultados                    api.rest.ResultadoRest.todos
+GET      /resultados                    api.rest.ResultadoController.todos
 
-GET      /resultados/:id                api.rest.ResultadoRest.buscar(id: Long)
+GET      /resultados/:id                api.rest.ResultadoController.buscar(id: Long)
 
-POST     /resultados/:id                api.rest.ResultadoRest.inserir(id: Long)
+POST     /resultados/:id                api.rest.ResultadoController.inserir(id: Long)
 
-DELETE   /resultados/:id                api.rest.ResultadoRest.excluir(id: Long)
+DELETE   /resultados/:id                api.rest.ResultadoController.excluir(id: Long)
 
 # ------- CRUD de times
-GET      /times                         api.rest.TimeRest.todos
+GET      /times                         api.rest.TimeController.todos
 
-GET      /times/:id                     api.rest.TimeRest.buscar(id: Long)
+GET      /times/:id                     api.rest.TimeController.buscar(id: Long)
 
-POST     /times                         api.rest.TimeRest.inserir
+POST     /times                         api.rest.TimeController.inserir
 
-POST     /times/:id                     api.rest.TimeRest.atualizar(id: Long)
+POST     /times/:id                     api.rest.TimeController.atualizar(id: Long)
 
-DELETE   /times/:id                     api.rest.TimeRest.excluir(id: Long)
+DELETE   /times/:id                     api.rest.TimeController.excluir(id: Long)
 
-POST    /token                       api.rest.UsuarioRest.authenticar
+POST    /token                       api.rest.UsuarioController.authenticar
 
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
 
-GET     /usuarios/0                  api.rest.UsuarioRest.usuario
+GET     /usuarios/0                  api.rest.UsuarioController.usuario
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index

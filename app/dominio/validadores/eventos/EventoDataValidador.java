@@ -1,9 +1,9 @@
-package validators.eventos;
+package dominio.validadores.eventos;
 
 import models.eventos.Evento;
-import validators.Validador;
-import validators.comuns.DataValidador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.comuns.DataValidador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
 import java.math.BigDecimal;

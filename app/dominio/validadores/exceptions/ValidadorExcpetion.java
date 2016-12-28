@@ -1,4 +1,4 @@
-package validators.exceptions;
+package dominio.validadores.exceptions;
 
 public class ValidadorExcpetion extends Exception {
 

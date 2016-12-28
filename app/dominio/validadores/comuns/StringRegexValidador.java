@@ -1,7 +1,7 @@
-package validators.comuns;
+package dominio.validadores.comuns;
 
-import validators.IValidador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.IValidador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import java.util.Optional;
 import java.util.regex.Matcher;

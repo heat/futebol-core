@@ -5,8 +5,8 @@ import models.eventos.Evento;
 import models.eventos.Resultado;
 import models.vo.Tenant;
 import repositories.ResultadoRepository;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
 import java.util.List;

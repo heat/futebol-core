@@ -1,12 +1,11 @@
-package validators.eventos;
+package dominio.validadores.eventos;
 
 import models.eventos.Campeonato;
 import models.eventos.Evento;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Optional;
 

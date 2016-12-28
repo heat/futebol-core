@@ -1,8 +1,10 @@
 package api.rest;
 
-import dominio.processadores.eventos.TimeAtualizarProcessador;
-import dominio.processadores.eventos.TimeInserirProcessador;
-import models.eventos.Time;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dominio.processadores.eventos.ResultadoInserirProcessador;
+import models.eventos.Evento;
+import models.eventos.Resultado;
 import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -15,10 +17,10 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import repositories.EventoRepository;
-import repositories.TimeRepository;
+import repositories.ResultadoRepository;
 import repositories.ValidadorRepository;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -26,23 +28,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class TimeRest extends Controller{
+public class ResultadoController extends Controller{
 
-    TimeRepository timeRepository;
+    ResultadoRepository resultadoRepository;
     PlaySessionStore playSessionStore;
-    TimeInserirProcessador inserirProcessador;
-    TimeAtualizarProcessador atualizarProcessador;
+    ResultadoInserirProcessador inserirProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
 
     @Inject
-    public TimeRest(TimeRepository timeRepository, PlaySessionStore playSessionStore,
-                    TimeInserirProcessador inserirProcessador, TimeAtualizarProcessador atualizarProcessador,
-                    ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
-        this.timeRepository = timeRepository;
+    public ResultadoController(ResultadoRepository resultadoRepository, PlaySessionStore playSessionStore,
+                               ResultadoInserirProcessador inserirProcessador,
+                               ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
+        this.resultadoRepository = resultadoRepository;
         this.playSessionStore = playSessionStore;
         this.inserirProcessador = inserirProcessador;
-        this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
 
@@ -51,41 +51,35 @@ public class TimeRest extends Controller{
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir() throws IOException {
+    public Result inserir(Long idEvento) throws IOException {
 
         if (!getProfile().isPresent()) return forbidden();
 
-        Time time = Json.fromJson(Controller.request().body().asJson(), Time.class);
+        JsonNode json = Controller.request().body().asJson();
+        ObjectMapper mapper = new ObjectMapper();
 
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), TimeInserirProcessador.REGRA);
+        Resultado[] resultado = mapper.readValue(json.toString(), Resultado[].class);
 
+        //Melhorar
+        if(resultado.length == 0)
+        {
+            return notFound("Lista de resultados não pode ser vazia!");
+        }
+
+        List<Validador> validadores = validadorRepository.todos(getTenant().get(), ResultadoInserirProcessador.REGRA);
+        inserirProcessador = new ResultadoInserirProcessador(resultadoRepository);
+
+        Optional<Evento> evento = eventoRepository.buscar(getTenant().get(), idEvento);
+        if(!evento.isPresent()){
+            return notFound("Evento não encontrado");
+        }
         try {
-            inserirProcessador.executar(getTenant().get(), time,  validadores);
+            inserirProcessador.executar(getTenant().get(), resultado, evento.get(), validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
 
-        return ok("Time cadastrado! ");
-    }
-
-    @Secure(clients = "headerClient")
-    @Transactional
-    @BodyParser.Of(BodyParser.Json.class)
-    public Result atualizar(Long id) {
-
-        if (!getProfile().isPresent()) return forbidden();
-
-        Time Time = Json.fromJson(Controller.request().body().asJson(), Time.class);
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), TimeAtualizarProcessador.REGRA);
-        atualizarProcessador = new TimeAtualizarProcessador(timeRepository);
-
-        try {
-            atualizarProcessador.executar(getTenant().get(), Time, validadores, id);
-        } catch (ValidadorExcpetion validadorExcpetion) {
-            return ok(validadorExcpetion.getMessage());
-        }
-
-        return ok("Time atualizado! ");
+        return ok("Resultado cadastrado! ");
     }
 
     @Secure(clients = "headerClient")
@@ -94,7 +88,7 @@ public class TimeRest extends Controller{
 
         if (!getProfile().isPresent()) return forbidden();
 
-        List todos = timeRepository.todos(getTenant().get());
+        List todos = resultadoRepository.todos(getTenant().get());
 
         return ok(Json.toJson(todos));
     }
@@ -105,10 +99,10 @@ public class TimeRest extends Controller{
 
         if (!getProfile().isPresent()) return forbidden();
 
-        Optional<Time> todos = timeRepository.buscar(getTenant().get(), id);
+        Optional<Resultado> todos = (Optional<Resultado>) resultadoRepository.buscar(getTenant().get(), id);
 
         if (!todos.isPresent()) {
-            return notFound("Time não encontrado!");
+            return notFound("Resultado não encontrado!");
         }
         return ok(Json.toJson(todos));
     }
@@ -121,8 +115,8 @@ public class TimeRest extends Controller{
 
             if (!getProfile().isPresent()) return forbidden();
 
-            timeRepository.excluir(getTenant().get(), id);
-            return ok("Time excluído!");
+            resultadoRepository.excluir(getTenant().get(), id);
+            return ok("Resultado excluído!");
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }

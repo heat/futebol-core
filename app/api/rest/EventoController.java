@@ -16,15 +16,15 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import repositories.EventoRepository;
 import repositories.ValidadorRepository;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
-public class EventoRest extends Controller{
+public class EventoController extends Controller{
 
     EventoRepository eventoRepository;
     PlaySessionStore playSessionStore;
@@ -33,9 +33,9 @@ public class EventoRest extends Controller{
     ValidadorRepository validadorRepository;
 
     @Inject
-    public EventoRest(EventoRepository eventoRepository, PlaySessionStore playSessionStore,
-                      EventoInserirProcessador inserirProcessador, EventoAtualizarProcessador atualizarProcessador,
-                      ValidadorRepository validadorRepository) {
+    public EventoController(EventoRepository eventoRepository, PlaySessionStore playSessionStore,
+                            EventoInserirProcessador inserirProcessador, EventoAtualizarProcessador atualizarProcessador,
+                            ValidadorRepository validadorRepository) {
         this.eventoRepository = eventoRepository;
         this.playSessionStore = playSessionStore;
         this.inserirProcessador = inserirProcessador;

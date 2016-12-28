@@ -1,4 +1,4 @@
-package validators;
+package dominio.validadores;
 
 import javax.persistence.*;
 import java.io.Serializable;

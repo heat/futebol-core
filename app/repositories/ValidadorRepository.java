@@ -3,7 +3,7 @@ package repositories;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
-import validators.Validador;
+import dominio.validadores.Validador;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

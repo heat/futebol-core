@@ -1,10 +1,9 @@
-package validators.eventos;
+package dominio.validadores.eventos;
 
-import com.google.common.base.Strings;
 import models.eventos.Campeonato;
-import validators.Validador;
-import validators.comuns.StringRegexValidador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.comuns.StringRegexValidador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
 import java.math.BigDecimal;

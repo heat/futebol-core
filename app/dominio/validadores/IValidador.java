@@ -1,6 +1,6 @@
-package validators;
+package dominio.validadores;
 
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 public interface IValidador<E> {
 

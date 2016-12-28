@@ -4,8 +4,8 @@ import dominio.processadores.ProcessadorInserir;
 import models.eventos.Campeonato;
 import models.vo.Tenant;
 import repositories.CampeonatoRepository;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
 import java.util.List;

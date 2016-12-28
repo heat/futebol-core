@@ -1,11 +1,10 @@
 package models.eventos;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import util.CalendarDeserializer;
-import util.CalendarSerializer;
+import models.serializacoes.CalendarDeserializer;
+import models.serializacoes.CalendarSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -1,8 +1,8 @@
 package dominio.processadores;
 
 import models.vo.Tenant;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

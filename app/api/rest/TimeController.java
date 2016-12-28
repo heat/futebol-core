@@ -1,8 +1,8 @@
 package api.rest;
 
-import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
-import dominio.processadores.eventos.CampeonatoInserirProcessador;
-import models.eventos.Campeonato;
+import dominio.processadores.eventos.TimeAtualizarProcessador;
+import dominio.processadores.eventos.TimeInserirProcessador;
+import models.eventos.Time;
 import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -14,54 +14,58 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import repositories.CampeonatoRepository;
+import repositories.EventoRepository;
+import repositories.TimeRepository;
 import repositories.ValidadorRepository;
-import validators.Validador;
-import validators.exceptions.ValidadorExcpetion;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class CampeonatoRest extends Controller {
+public class TimeController extends Controller{
 
-
-    CampeonatoRepository campeonatoRepository;
+    TimeRepository timeRepository;
     PlaySessionStore playSessionStore;
-    CampeonatoInserirProcessador inserirProcessador;
-    CampeonatoAtualizarProcessador atualizarProcessador;
+    TimeInserirProcessador inserirProcessador;
+    TimeAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
+    EventoRepository eventoRepository;
 
     @Inject
-    public CampeonatoRest(CampeonatoRepository campeonatoRepository, PlaySessionStore playSessionStore,
-                          CampeonatoInserirProcessador inserirProcessador, CampeonatoAtualizarProcessador atualizarProcessador,
-                          ValidadorRepository validadorRepository) {
-        this.campeonatoRepository = campeonatoRepository;
+    public TimeController(TimeRepository timeRepository, PlaySessionStore playSessionStore,
+                          TimeInserirProcessador inserirProcessador, TimeAtualizarProcessador atualizarProcessador,
+                          ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
+        this.timeRepository = timeRepository;
         this.playSessionStore = playSessionStore;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
+        this.eventoRepository = eventoRepository;
+
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir() {
+    public Result inserir() throws IOException {
 
         if (!getProfile().isPresent()) return forbidden();
 
-        Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
+        Time time = Json.fromJson(Controller.request().body().asJson(), Time.class);
 
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), CampeonatoInserirProcessador.REGRA);
+        List<Validador> validadores = validadorRepository.todos(getTenant().get(), TimeInserirProcessador.REGRA);
 
         try {
-            inserirProcessador.executar(getTenant().get(), campeonato, validadores);
+            inserirProcessador.executar(getTenant().get(), time,  validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
 
-        return ok("Campeonato " + campeonato.getNome() + " cadastrado! ");
+        return ok("Time cadastrado! ");
     }
 
     @Secure(clients = "headerClient")
@@ -71,17 +75,17 @@ public class CampeonatoRest extends Controller {
 
         if (!getProfile().isPresent()) return forbidden();
 
-        Campeonato campeonato = Json.fromJson(Controller.request().body().asJson(), Campeonato.class);
-
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), CampeonatoAtualizarProcessador.REGRA);
+        Time Time = Json.fromJson(Controller.request().body().asJson(), Time.class);
+        List<Validador> validadores = validadorRepository.todos(getTenant().get(), TimeAtualizarProcessador.REGRA);
+        atualizarProcessador = new TimeAtualizarProcessador(timeRepository);
 
         try {
-            atualizarProcessador.executar(getTenant().get(), campeonato, validadores, id);
+            atualizarProcessador.executar(getTenant().get(), Time, validadores, id);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
 
-        return ok("Campeonato " + campeonato.getNome() + " atualizado! ");
+        return ok("Time atualizado! ");
     }
 
     @Secure(clients = "headerClient")
@@ -90,7 +94,7 @@ public class CampeonatoRest extends Controller {
 
         if (!getProfile().isPresent()) return forbidden();
 
-        List todos = campeonatoRepository.todos(getTenant().get());
+        List todos = timeRepository.todos(getTenant().get());
 
         return ok(Json.toJson(todos));
     }
@@ -101,10 +105,10 @@ public class CampeonatoRest extends Controller {
 
         if (!getProfile().isPresent()) return forbidden();
 
-        Optional<Campeonato> todos = campeonatoRepository.buscar(getTenant().get(), id);
+        Optional<Time> todos = timeRepository.buscar(getTenant().get(), id);
 
         if (!todos.isPresent()) {
-            return notFound("Campeonato não encontrado!");
+            return notFound("Time não encontrado!");
         }
         return ok(Json.toJson(todos));
     }
@@ -117,14 +121,14 @@ public class CampeonatoRest extends Controller {
 
             if (!getProfile().isPresent()) return forbidden();
 
-            campeonatoRepository.excluir(getTenant().get(), id);
-            return ok("Campeonado excluído!");
+            timeRepository.excluir(getTenant().get(), id);
+            return ok("Time excluído!");
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }
     }
 
-    private Optional<Tenant> getTenant() {
+    private Optional<Tenant> getTenant(){
 
         Optional<CommonProfile> commonProfile = getProfile();
         CommonProfile profile = commonProfile.get();

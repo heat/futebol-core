@@ -1,10 +1,9 @@
-package validators.bilhete;
+package dominio.validadores.bilhete;
 
 import models.bilhetes.Bilhete;
-import validators.Validador;
+import dominio.validadores.Validador;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity

@@ -14,12 +14,12 @@ import play.mvc.Result;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class UsuarioRest extends Controller {
+public class UsuarioController extends Controller {
 
     private final PlaySessionStore playSessionStore;
 
     @Inject
-    public UsuarioRest(PlaySessionStore playSessionStore) {
+    public UsuarioController(PlaySessionStore playSessionStore) {
         this.playSessionStore = playSessionStore;
     }
 
