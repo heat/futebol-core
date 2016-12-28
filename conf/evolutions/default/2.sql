@@ -92,11 +92,11 @@ insert into usuarios (tenant_id,
                     papel_id,
                     senha,
                     usuario_id) -- inclui administrador padrao
-VALUES (2, 'admin.demo', 1, '123456', 1),
-       (2, 'supervisor.demo', 2, '123456', 2),
-       (2, 'operador.demo', 3, '123456', 3),
-       (2, 'revendedor.demo', 4, '12456', 4),
-       (2, 'usuario.demo', 5, '123456', 5);
+VALUES (1, 'admin.demo', 1, '123456', 1),
+       (1, 'supervisor.demo', 2, '123456', 2),
+       (1, 'operador.demo', 3, '123456', 3),
+       (1, 'revendedor.demo', 4, '12456', 4),
+       (1, 'usuario.demo', 5, '123456', 5);
 
 insert into perfis (email,
                     genero,
