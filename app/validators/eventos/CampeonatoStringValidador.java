@@ -12,13 +12,14 @@ import java.math.BigDecimal;
 @Entity
 public class CampeonatoStringValidador extends Validador<Campeonato> {
 
+    private static final String NOME_VALIDADOR = "campeonato.nome";
 
     protected CampeonatoStringValidador() {
 
     }
 
     public CampeonatoStringValidador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
-        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto);
+        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto, NOME_VALIDADOR);
     }
 
     @Override

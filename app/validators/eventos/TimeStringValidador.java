@@ -13,11 +13,13 @@ import java.math.BigDecimal;
 @Entity
 public class TimeStringValidador extends Validador<Time> {
 
+    private static final String NOME_VALIDADOR = "time.nome";
+
     public TimeStringValidador() {
     }
 
     public TimeStringValidador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
-        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto);
+        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto, NOME_VALIDADOR);
     }
 
     @Override

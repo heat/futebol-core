@@ -29,11 +29,11 @@ public class Evento implements Serializable{
     private Long tenant;
 
     @OneToOne
-    @JoinColumn(name = "times_casa", foreignKey = @ForeignKey(name = "fk_times_casa"))
+    @JoinColumn(name = "time_casa")
     private Time casa;
 
     @OneToOne
-    @JoinColumn(name = "times_fora", foreignKey = @ForeignKey(name = "fk_times_fora"))
+    @JoinColumn(name = "time_fora")
     private Time fora;
 
     @Temporal(TemporalType.TIMESTAMP)

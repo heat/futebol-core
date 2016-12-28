@@ -39,12 +39,13 @@ public abstract class Validador<E> implements Serializable {
 
     }
 
-    public Validador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+    public Validador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto, String regra) {
         this.idTenant = idTenant;
         this.valorInteiro = valorInteiro;
         this.valorLogico = valorLogico;
         this.valorDecimal = valorDecimal;
         this.valorTexto = valorTexto;
+        this.regra = regra;
     }
 
     public Long getId() {
