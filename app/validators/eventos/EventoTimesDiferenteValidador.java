@@ -12,14 +12,12 @@ import java.util.Optional;
 @Entity
 public class EventoTimesDiferenteValidador extends Validador<Evento> {
 
-    private static final String NOME_VALIDADOR = "evento.times";
-
     public EventoTimesDiferenteValidador() {
 
     }
 
-    public EventoTimesDiferenteValidador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
-        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto, NOME_VALIDADOR);
+    public EventoTimesDiferenteValidador(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+        super(idTenant, regra, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 
     @Override

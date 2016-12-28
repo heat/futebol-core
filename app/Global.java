@@ -1,3 +1,5 @@
+import dominio.processadores.eventos.CampeonatoInserirProcessador;
+import dominio.processadores.eventos.TimeInserirProcessador;
 import models.vo.Tenant;
 import play.Application;
 import play.GlobalSettings;
@@ -25,12 +27,14 @@ public class Global extends GlobalSettings {
 
             em.createQuery("DELETE FROM Validador v").executeUpdate();
             CampeonatoStringValidador campeonatoStringValidador = new CampeonatoStringValidador(Tenant.SYSBET.get(),
+                    CampeonatoInserirProcessador.REGRA,
                     null,
                     true,
                     null,
                     ".+");
             em.persist(campeonatoStringValidador);
             TimeStringValidador timeStringValidador = new TimeStringValidador(Tenant.SYSBET.get(),
+                    TimeInserirProcessador.REGRA,
                     null,
                     true,
                     null,

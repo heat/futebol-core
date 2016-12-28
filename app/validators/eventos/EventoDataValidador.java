@@ -13,13 +13,11 @@ import java.util.Optional;
 @Entity
 public class EventoDataValidador extends Validador<Evento>{
 
-    private static final String NOME_VALIDADOR = "evento.inserir.data";
-
     public EventoDataValidador() {
     }
 
-    public EventoDataValidador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
-        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto, NOME_VALIDADOR);
+    public EventoDataValidador(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+        super(idTenant, regra, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 
     @Override

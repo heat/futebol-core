@@ -11,13 +11,11 @@ import java.math.BigDecimal;
 @Entity
 public class InsereResultadoValidador extends Validador<Resultado> {
 
-    private static final String NOME_VALIDADOR = "resultado.pontos";
-
     public InsereResultadoValidador() {
     }
 
-    public InsereResultadoValidador(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
-        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto, NOME_VALIDADOR);
+    public InsereResultadoValidador(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+        super(idTenant, regra, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 
     @Override
