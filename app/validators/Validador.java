@@ -1,7 +1,5 @@
 package validators;
 
-import validators.exceptions.ValidadorExcpetion;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -9,7 +7,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "validadores")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Validador<E> implements Serializable {
+public abstract class Validador<E> implements Serializable, IValidador<E> {
 
     @Id
     @SequenceGenerator(name="validadores_validador_id_seq", sequenceName = "validadores_validador_id_seq", allocationSize = 1)
@@ -83,10 +81,6 @@ public abstract class Validador<E> implements Serializable {
     public void setIdTenant(Long idTenant) {
         this.idTenant = idTenant;
     }
-
-
-
-    abstract public void validate(E entity) throws ValidadorExcpetion;
 
     @Override
     public boolean equals(Object o) {

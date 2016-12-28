@@ -4,14 +4,8 @@ import models.vo.Tenant;
 import play.Application;
 import play.GlobalSettings;
 import play.db.jpa.JPAApi;
-import validators.Validador;
-import validators.eventos.CampeonatoStringValidador;
-import validators.eventos.EventoCampeonatoValidador;
+import validators.eventos.CampeonatoNomeValidator;
 import validators.eventos.TimeStringValidador;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 
 public class Global extends GlobalSettings {
 
@@ -26,13 +20,13 @@ public class Global extends GlobalSettings {
         jpaApi.withTransaction((em) -> {
 
             em.createQuery("DELETE FROM Validador v").executeUpdate();
-            CampeonatoStringValidador campeonatoStringValidador = new CampeonatoStringValidador(Tenant.SYSBET.get(),
+            CampeonatoNomeValidator campeonatoNomeValidator = new CampeonatoNomeValidator(Tenant.SYSBET.get(),
                     CampeonatoInserirProcessador.REGRA,
                     null,
                     true,
                     null,
                     ".+");
-            em.persist(campeonatoStringValidador);
+            em.persist(campeonatoNomeValidator);
             TimeStringValidador timeStringValidador = new TimeStringValidador(Tenant.SYSBET.get(),
                     TimeInserirProcessador.REGRA,
                     null,

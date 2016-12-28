@@ -10,17 +10,14 @@ import java.math.BigDecimal;
 @Entity
 public class ValorMinimoApostaValidator extends Validador<Bilhete> {
 
-    private static final String NOME_VALIDADOR = "bilhete.valor";
-
     protected ValorMinimoApostaValidator() {
 
         super();
     }
 
-    public ValorMinimoApostaValidator(Long idTenant, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
-        super(idTenant, valorInteiro, valorLogico, valorDecimal, valorTexto, NOME_VALIDADOR);
+    public ValorMinimoApostaValidator(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+        super(idTenant, regra, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
-
 
     @Override
     public void validate(Bilhete entity) {
