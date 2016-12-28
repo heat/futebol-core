@@ -2,13 +2,13 @@ package validators.eventos;
 
 import models.eventos.Evento;
 import validators.Validador;
+import validators.comuns.DataValidador;
 import validators.exceptions.ValidadorExcpetion;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Optional;
+
 
 @Entity
 public class EventoDataValidador extends Validador<Evento>{
@@ -20,16 +20,15 @@ public class EventoDataValidador extends Validador<Evento>{
         super(idTenant, regra, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 
+    /**
+     * Valida se a data de realizacao do evento é anterior a data atual do sistema
+     * @param evento
+     * @throws ValidadorExcpetion
+     */
     @Override
     public void validate(Evento evento) throws ValidadorExcpetion {
-
-        Optional<Evento> eventoOptional = Optional.ofNullable(evento);
-
-        if (!eventoOptional.isPresent()){
-            throw new ValidadorExcpetion("Evento não informado! ");
-        }
-        if(evento.getDataEvento()== null || evento.getDataEvento().before(Calendar.getInstance()) ){
-            throw new ValidadorExcpetion("Data do evento deve ser após a data atual ");
-        }
+        Calendar agora = Calendar.getInstance();
+        DataValidador validador = DataValidador.anterior(agora);
+        validador.validate(evento.getDataEvento());
     }
 }

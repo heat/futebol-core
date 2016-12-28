@@ -22,16 +22,9 @@ public class EventoTimesDiferenteValidador extends Validador<Evento> {
 
     @Override
     public void validate(Evento evento) throws ValidadorExcpetion {
-
-        Optional<Evento> eventoOptional = Optional.ofNullable(evento);
-
-        if (!eventoOptional.isPresent()){
-            throw new ValidadorExcpetion("Evento não informado! ");
-        }
-
-        if(evento.getCasa().equals(evento.getFora())){
+        if( getValorLogico() && evento.getCasa().equals(evento.getFora())){
+            // ele pode indicar se aceita ou nao cadastro de times iguais competindo obs.: 'sem logica mas...'
             throw new ValidadorExcpetion("Times casa e fora não podem ter o mesmo nome! ");
         }
-
     }
 }
