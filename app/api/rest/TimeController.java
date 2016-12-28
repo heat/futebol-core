@@ -3,6 +3,7 @@ package api.rest;
 import dominio.processadores.eventos.TimeAtualizarProcessador;
 import dominio.processadores.eventos.TimeInserirProcessador;
 import models.eventos.Time;
+import models.vo.Chave;
 import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -57,10 +58,10 @@ public class TimeController extends Controller{
 
         Time time = Json.fromJson(Controller.request().body().asJson(), Time.class);
 
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), TimeInserirProcessador.REGRA);
+        List<Validador> validadores = validadorRepository.todos(getTenant(), TimeInserirProcessador.REGRA);
 
         try {
-            inserirProcessador.executar(getTenant().get(), time,  validadores);
+            inserirProcessador.executar(getTenant(), time,  validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -76,11 +77,12 @@ public class TimeController extends Controller{
         if (!getProfile().isPresent()) return forbidden();
 
         Time Time = Json.fromJson(Controller.request().body().asJson(), Time.class);
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), TimeAtualizarProcessador.REGRA);
+        List<Validador> validadores = validadorRepository.todos(getTenant(), TimeAtualizarProcessador.REGRA);
         atualizarProcessador = new TimeAtualizarProcessador(timeRepository);
 
         try {
-            atualizarProcessador.executar(getTenant().get(), Time, validadores, id);
+            Chave chave = Chave.of(getTenant(), id);
+            atualizarProcessador.executar(chave, Time, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -94,7 +96,7 @@ public class TimeController extends Controller{
 
         if (!getProfile().isPresent()) return forbidden();
 
-        List todos = timeRepository.todos(getTenant().get());
+        List todos = timeRepository.todos(getTenant());
 
         return ok(Json.toJson(todos));
     }
@@ -105,7 +107,7 @@ public class TimeController extends Controller{
 
         if (!getProfile().isPresent()) return forbidden();
 
-        Optional<Time> todos = timeRepository.buscar(getTenant().get(), id);
+        Optional<Time> todos = timeRepository.buscar(getTenant(), id);
 
         if (!todos.isPresent()) {
             return notFound("Time não encontrado!");
@@ -121,18 +123,18 @@ public class TimeController extends Controller{
 
             if (!getProfile().isPresent()) return forbidden();
 
-            timeRepository.excluir(getTenant().get(), id);
+            timeRepository.excluir(getTenant(), id);
             return ok("Time excluído!");
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }
     }
 
-    private Optional<Tenant> getTenant(){
+    private Tenant getTenant(){
 
         Optional<CommonProfile> commonProfile = getProfile();
         CommonProfile profile = commonProfile.get();
-        return Optional.ofNullable(Tenant.of((Long) profile.getAttribute("TENANT_ID")));
+        return Tenant.of((Long) profile.getAttribute("TENANT_ID"));
     }
 
     private Optional<CommonProfile> getProfile() {

@@ -7,8 +7,8 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface ProcessadorAtualizar<E> {
+public interface Processador<K, E> {
 
-    public CompletableFuture<E> executar(Tenant tenant, E e, List<Validador> validators, Long idEntidade) throws ValidadorExcpetion;
+    public CompletableFuture<E> executar(K chave, E e, List<Validador> validadores) throws ValidadorExcpetion;
 
 }

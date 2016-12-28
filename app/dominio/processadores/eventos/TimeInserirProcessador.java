@@ -1,6 +1,6 @@
 package dominio.processadores.eventos;
 
-import dominio.processadores.ProcessadorInserir;
+import dominio.processadores.Processador;
 import models.eventos.Time;
 import models.vo.Tenant;
 import repositories.TimeRepository;
@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
-public class TimeInserirProcessador implements ProcessadorInserir<Time> {
+public class TimeInserirProcessador implements Processador<Time> {
 
     public static final String REGRA = "time.inserir";
+
     TimeRepository repository;
 
     @Inject

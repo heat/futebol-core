@@ -1,6 +1,6 @@
 package dominio.processadores.eventos;
 
-import dominio.processadores.ProcessadorInserir;
+import dominio.processadores.Processador;
 import models.eventos.Campeonato;
 import models.vo.Tenant;
 import repositories.CampeonatoRepository;
@@ -11,8 +11,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CampeonatoInserirProcessador implements ProcessadorInserir<Campeonato> {
-
+public class CampeonatoInserirProcessador implements Processador<Tenant, Campeonato> {
 
     public static final String REGRA = "campeonato.inserir";
 

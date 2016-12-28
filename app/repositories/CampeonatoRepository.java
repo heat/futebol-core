@@ -43,12 +43,8 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
             return Optional.ofNullable(query.getSingleResult());
 
         } catch (NoResultException e) {
-            e.printStackTrace();
-            return Optional.ofNullable(null);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return Optional.empty();
         }
-        return null;
     }
 
     @Override

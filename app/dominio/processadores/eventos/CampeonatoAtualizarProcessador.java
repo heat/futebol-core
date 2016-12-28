@@ -1,7 +1,8 @@
 package dominio.processadores.eventos;
 
-import dominio.processadores.ProcessadorAtualizar;
+import dominio.processadores.Processador;
 import models.eventos.Campeonato;
+import models.vo.Chave;
 import models.vo.Tenant;
 import repositories.CampeonatoRepository;
 import dominio.validadores.Validador;
@@ -12,30 +13,30 @@ import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CampeonatoAtualizarProcessador implements ProcessadorAtualizar<Campeonato> {
+public class CampeonatoAtualizarProcessador implements Processador<Chave, Campeonato> {
 
     public static final String REGRA = "campeonato.atualizar";
 
     CampeonatoRepository repository;
+
     @Inject
     public CampeonatoAtualizarProcessador(CampeonatoRepository repository) {
         this.repository = repository;
     }
 
-    public CompletableFuture<Campeonato> executar(Tenant tenant, Campeonato campeonato,
-                                                  List<Validador> validadores, Long idCampeonato) throws ValidadorExcpetion {
+    public CompletableFuture<Campeonato> executar(Chave chave, Campeonato campeonato,
+                                                  List<Validador> validadores) throws ValidadorExcpetion {
 
         for (Validador validador : validadores) {
             validador.validate(campeonato);
         }
 
         try{
-            repository.atualizar(tenant, idCampeonato, campeonato);
+            repository.atualizar(chave.getTenant(), chave.getId(), campeonato);
         }
         catch(NoResultException e){
             throw new ValidadorExcpetion(e.getMessage());
         }
-
 
         return CompletableFuture.completedFuture(campeonato);
     }

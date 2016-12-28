@@ -3,6 +3,7 @@ package api.rest;
 import dominio.processadores.eventos.EventoAtualizarProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
 import models.eventos.Evento;
+import models.vo.Chave;
 import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -51,10 +52,10 @@ public class EventoController extends Controller{
         if (!getProfile().isPresent()) return forbidden();
 
         Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
+        List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
         try {
-            inserirProcessador.executar(getTenant().get(), evento, validadores);
+            inserirProcessador.executar(getTenant(), evento, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -71,10 +72,11 @@ public class EventoController extends Controller{
 
         Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
 
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), EventoInserirProcessador.REGRA);
+        List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
         try {
-            atualizarProcessador.executar(getTenant().get(), evento, validadores, id);
+            Chave chave = Chave.of(getTenant(), id);
+            atualizarProcessador.executar(chave, evento, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
@@ -88,7 +90,7 @@ public class EventoController extends Controller{
 
         if (!getProfile().isPresent()) return forbidden();
 
-        List todos = eventoRepository.todos(getTenant().get());
+        List todos = eventoRepository.todos(getTenant());
 
         return ok(Json.toJson(todos));
     }
@@ -99,7 +101,7 @@ public class EventoController extends Controller{
 
         if (!getProfile().isPresent()) return forbidden();
 
-        Optional<Evento> todos = eventoRepository.buscar(getTenant().get(), id);
+        Optional<Evento> todos = eventoRepository.buscar(getTenant(), id);
 
         if (!todos.isPresent()) {
             return notFound("Evento não encontrado!");
@@ -115,24 +117,15 @@ public class EventoController extends Controller{
 
             if (!getProfile().isPresent()) return forbidden();
 
-            eventoRepository.excluir(getTenant().get(), id);
+            eventoRepository.excluir(getTenant(), id);
             return ok("Evento excluído!");
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }
     }
 
-    private Optional<Tenant> getTenant(){
 
-        Optional<CommonProfile> commonProfile = getProfile();
-        CommonProfile profile = commonProfile.get();
-        return Optional.ofNullable(Tenant.of((Long) profile.getAttribute("TENANT_ID")));
-    }
 
-    private Optional<CommonProfile> getProfile() {
-        final PlayWebContext context = new PlayWebContext(ctx(), playSessionStore);
-        final ProfileManager<CommonProfile> profileManager = new ProfileManager(context);
-        return profileManager.get(true);
-    }
+
 
 }
