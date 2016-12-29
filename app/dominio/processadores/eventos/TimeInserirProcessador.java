@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
-public class TimeInserirProcessador implements Processador<Time> {
+public class TimeInserirProcessador implements Processador<Tenant, Time> {
 
     public static final String REGRA = "time.inserir";
 
