@@ -23,8 +23,6 @@ WITH (
   OIDS=FALSE
 );
 
-ALTER TABLE public.permissoes
-  OWNER TO kb5w;
 COMMENT ON COLUMN public.permissoes.nome IS 'nome da permissao';
 COMMENT ON COLUMN public.permissoes.descricao IS 'descricão infromação da permissao';
 
