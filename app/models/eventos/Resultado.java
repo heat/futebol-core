@@ -29,7 +29,7 @@ public class Resultado implements Serializable{
     private Time time;
 
     @ManyToOne
-    @JoinColumn(name="resultados_evento_id")
+    @JoinColumn(name="evento_id")
     private Evento evento;
 
     public Long getId() {
