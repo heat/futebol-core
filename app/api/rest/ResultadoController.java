@@ -2,6 +2,7 @@ package api.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import controllers.ApplicationController;
 import dominio.processadores.eventos.ResultadoInserirProcessador;
 import models.eventos.Evento;
 import models.eventos.Resultado;
@@ -15,6 +16,7 @@ import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import repositories.EventoRepository;
 import repositories.ResultadoRepository;
@@ -28,10 +30,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class ResultadoController extends Controller{
+public class ResultadoController extends ApplicationController {
 
     ResultadoRepository resultadoRepository;
-    PlaySessionStore playSessionStore;
     ResultadoInserirProcessador inserirProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
@@ -40,8 +41,8 @@ public class ResultadoController extends Controller{
     public ResultadoController(ResultadoRepository resultadoRepository, PlaySessionStore playSessionStore,
                                ResultadoInserirProcessador inserirProcessador,
                                ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
+        super(playSessionStore);
         this.resultadoRepository = resultadoRepository;
-        this.playSessionStore = playSessionStore;
         this.inserirProcessador = inserirProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
@@ -53,9 +54,9 @@ public class ResultadoController extends Controller{
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir(Long idEvento) throws IOException {
 
-        if (!getProfile().isPresent()) return forbidden();
-
-        JsonNode json = Controller.request().body().asJson();
+        JsonNode json = Controller.request()
+                .body()
+                .asJson();
         ObjectMapper mapper = new ObjectMapper();
 
         Resultado[] resultado = mapper.readValue(json.toString(), Resultado[].class);
@@ -66,30 +67,27 @@ public class ResultadoController extends Controller{
             return notFound("Lista de resultados não pode ser vazia!");
         }
 
-        List<Validador> validadores = validadorRepository.todos(getTenant().get(), ResultadoInserirProcessador.REGRA);
+        List<Validador> validadores = validadorRepository.todos(getTenant(), ResultadoInserirProcessador.REGRA);
         inserirProcessador = new ResultadoInserirProcessador(resultadoRepository);
 
-        Optional<Evento> evento = eventoRepository.buscar(getTenant().get(), idEvento);
+        Optional<Evento> evento = eventoRepository.buscar(getTenant(), idEvento);
         if(!evento.isPresent()){
             return notFound("Evento não encontrado");
         }
         try {
-            inserirProcessador.executar(getTenant().get(), resultado, evento.get(), validadores);
+            inserirProcessador.executar(getTenant(), resultado, evento.get(), validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
-            return ok(validadorExcpetion.getMessage());
+            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        return ok("Resultado cadastrado! ");
+        return created(Json.toJson(resultado));
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
 
-        if (!getProfile().isPresent()) return forbidden();
-
-        List todos = resultadoRepository.todos(getTenant().get());
-
+        List todos = resultadoRepository.todos(getTenant());
         return ok(Json.toJson(todos));
     }
 
@@ -97,9 +95,7 @@ public class ResultadoController extends Controller{
     @Transactional
     public Result buscar(Long id) {
 
-        if (!getProfile().isPresent()) return forbidden();
-
-        Optional<Resultado> todos = (Optional<Resultado>) resultadoRepository.buscar(getTenant().get(), id);
+        Optional<Resultado> todos = (Optional<Resultado>) resultadoRepository.buscar(getTenant(), id);
 
         if (!todos.isPresent()) {
             return notFound("Resultado não encontrado!");
@@ -112,27 +108,10 @@ public class ResultadoController extends Controller{
     public Result excluir(Long id) {
 
         try {
-
-            if (!getProfile().isPresent()) return forbidden();
-
-            resultadoRepository.excluir(getTenant().get(), id);
-            return ok("Resultado excluído!");
+            resultadoRepository.excluir(getTenant(), id);
+            return noContent();
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }
     }
-
-    private Optional<Tenant> getTenant(){
-
-        Optional<CommonProfile> commonProfile = getProfile();
-        CommonProfile profile = commonProfile.get();
-        return Optional.ofNullable(Tenant.of((Long) profile.getAttribute("TENANT_ID")));
-    }
-
-    private Optional<CommonProfile> getProfile() {
-        final PlayWebContext context = new PlayWebContext(ctx(), playSessionStore);
-        final ProfileManager<CommonProfile> profileManager = new ProfileManager(context);
-        return profileManager.get(true);
-    }
-
 }

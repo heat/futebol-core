@@ -1,5 +1,6 @@
 package api.rest;
 
+import controllers.ApplicationController;
 import dominio.processadores.eventos.EventoAtualizarProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
 import models.eventos.Evento;
@@ -14,6 +15,7 @@ import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import repositories.EventoRepository;
 import repositories.ValidadorRepository;
@@ -25,10 +27,9 @@ import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
-public class EventoController extends Controller{
+public class EventoController extends ApplicationController{
 
     EventoRepository eventoRepository;
-    PlaySessionStore playSessionStore;
     EventoInserirProcessador inserirProcessador;
     EventoAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
@@ -37,8 +38,9 @@ public class EventoController extends Controller{
     public EventoController(EventoRepository eventoRepository, PlaySessionStore playSessionStore,
                             EventoInserirProcessador inserirProcessador, EventoAtualizarProcessador atualizarProcessador,
                             ValidadorRepository validadorRepository) {
+        super(playSessionStore);
+
         this.eventoRepository = eventoRepository;
-        this.playSessionStore = playSessionStore;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
@@ -49,18 +51,16 @@ public class EventoController extends Controller{
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
-        if (!getProfile().isPresent()) return forbidden();
-
         Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
         try {
             inserirProcessador.executar(getTenant(), evento, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
-            return ok(validadorExcpetion.getMessage());
+            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        return ok("Evento cadastrado! ");
+        return created(Json.toJson(evento));
     }
 
     @Secure(clients = "headerClient")
@@ -68,9 +68,9 @@ public class EventoController extends Controller{
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) {
 
-        if (!getProfile().isPresent()) return forbidden();
-
-        Evento evento = Json.fromJson(Controller.request().body().asJson(), Evento.class);
+        Evento evento = Json.fromJson(Controller.request()
+                .body()
+                .asJson(), Evento.class);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
@@ -78,7 +78,7 @@ public class EventoController extends Controller{
             Chave chave = Chave.of(getTenant(), id);
             atualizarProcessador.executar(chave, evento, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
-            return ok(validadorExcpetion.getMessage());
+            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
         return ok("Evento atualizado! ");
@@ -87,8 +87,6 @@ public class EventoController extends Controller{
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
-
-        if (!getProfile().isPresent()) return forbidden();
 
         List todos = eventoRepository.todos(getTenant());
 
@@ -99,14 +97,11 @@ public class EventoController extends Controller{
     @Transactional
     public Result buscar(Long id) {
 
-        if (!getProfile().isPresent()) return forbidden();
-
-        Optional<Evento> todos = eventoRepository.buscar(getTenant(), id);
-
-        if (!todos.isPresent()) {
+        Optional<Evento> eventos = eventoRepository.buscar(getTenant(), id);
+        if (!eventos.isPresent()) {
             return notFound("Evento não encontrado!");
         }
-        return ok(Json.toJson(todos));
+        return ok(Json.toJson(eventos));
     }
 
     @Secure(clients = "headerClient")
@@ -114,11 +109,8 @@ public class EventoController extends Controller{
     public Result excluir(Long id) {
 
         try {
-
-            if (!getProfile().isPresent()) return forbidden();
-
-            eventoRepository.excluir(getTenant(), id);
-            return ok("Evento excluído!");
+        eventoRepository.excluir(getTenant(), id);
+            return noContent();
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }
