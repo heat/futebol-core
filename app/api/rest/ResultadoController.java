@@ -1,15 +1,12 @@
 package api.rest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.ApplicationController;
-import dominio.processadores.eventos.ResultadoInserirProcessador;
+import dominio.processadores.eventos.FinalizarEventoProcessador;
 import models.eventos.Evento;
 import models.eventos.Resultado;
-import models.vo.Tenant;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.play.PlayWebContext;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -33,17 +30,17 @@ import java.util.Optional;
 public class ResultadoController extends ApplicationController {
 
     ResultadoRepository resultadoRepository;
-    ResultadoInserirProcessador inserirProcessador;
+    FinalizarEventoProcessador finalizarEventoProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
 
     @Inject
     public ResultadoController(ResultadoRepository resultadoRepository, PlaySessionStore playSessionStore,
-                               ResultadoInserirProcessador inserirProcessador,
+                               FinalizarEventoProcessador finalizarEventoProcessador,
                                ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
         super(playSessionStore);
         this.resultadoRepository = resultadoRepository;
-        this.inserirProcessador = inserirProcessador;
+        this.finalizarEventoProcessador = finalizarEventoProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
 
@@ -59,28 +56,31 @@ public class ResultadoController extends ApplicationController {
                 .asJson();
         ObjectMapper mapper = new ObjectMapper();
 
-        Resultado[] resultado = mapper.readValue(json.toString(), Resultado[].class);
+//        Resultado[] resultado = mapper.readValue(json.toString(), Resultado[].class);
 
-        //Melhorar
-        if(resultado.length == 0)
+        List<Resultado> resultados = mapper.readValue(json.toString(), new TypeReference<List<Resultado>>() { });
+
+        if(!Optional.ofNullable(resultados).isPresent())
         {
             return notFound("Lista de resultados não pode ser vazia!");
         }
 
-        List<Validador> validadores = validadorRepository.todos(getTenant(), ResultadoInserirProcessador.REGRA);
-        inserirProcessador = new ResultadoInserirProcessador(resultadoRepository);
+        List<Validador> validadores = validadorRepository.todos(getTenant(), FinalizarEventoProcessador.REGRA);
 
-        Optional<Evento> evento = eventoRepository.buscar(getTenant(), idEvento);
-        if(!evento.isPresent()){
+        Optional<Evento> eventoOptional = eventoRepository.buscar(getTenant(), idEvento);
+        if(!eventoOptional.isPresent()){
             return notFound("Evento não encontrado");
         }
+
+        Evento evento = eventoOptional.get();
+        evento.setResultados(resultados);
         try {
-            inserirProcessador.executar(getTenant(), resultado, evento.get(), validadores);
+            finalizarEventoProcessador.executar(getTenant(),evento, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        return created(Json.toJson(resultado));
+        return created(Json.toJson(resultados));
     }
 
     @Secure(clients = "headerClient")
@@ -88,7 +88,7 @@ public class ResultadoController extends ApplicationController {
     public Result todos() {
 
         List todos = resultadoRepository.todos(getTenant());
-        return ok(Json.toJson(todos));
+        return ok("Resultado Cadastrado - retornar json corretamente");
     }
 
     @Secure(clients = "headerClient")
@@ -100,7 +100,7 @@ public class ResultadoController extends ApplicationController {
         if (!todos.isPresent()) {
             return notFound("Resultado não encontrado!");
         }
-        return ok(Json.toJson(todos));
+        return ok("Resultado Cadastrado - retornar json corretamente");
     }
 
     @Secure(clients = "headerClient")

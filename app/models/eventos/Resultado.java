@@ -28,9 +28,15 @@ public class Resultado implements Serializable{
     @JoinColumn(name = "time_id")
     private Time time;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="evento_id")
     private Evento evento;
+
+    @Transient
+    private final String INTERVALO = "IN";
+
+    @Transient
+    private final String FINAL = "FN";
 
     public Long getId() {
         return id;
@@ -80,6 +86,15 @@ public class Resultado implements Serializable{
         this.evento = evento;
     }
 
+    public boolean isMomentoIntervalo(){
+
+        return momento.equals(INTERVALO)? true: false;
+    }
+
+    public boolean isMomentoFinal(){
+
+        return momento.equals(FINAL)? true: false;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

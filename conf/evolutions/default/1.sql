@@ -40,9 +40,7 @@ CREATE TABLE public.eventos (
                 campeonato_id INTEGER NOT NULL,
                 time_id_casa INTEGER NOT NULL,
                 time_id_fora INTEGER NOT NULL,
-                casa VARCHAR(255),
                 data_evento TIMESTAMP NOT NULL,
-                fora VARCHAR(255),
                 CONSTRAINT eventos_pk PRIMARY KEY (evento_id)
 );
 
