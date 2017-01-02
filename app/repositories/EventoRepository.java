@@ -60,9 +60,10 @@ public class EventoRepository implements Repository<Long, Evento>{
             throw new NoResultException("Evento não encontrado");
         }
 
-        evento.get().setCasa(e.getCasa());
-        evento.get().setFora(e.getFora());
-        evento.get().setDataEvento(e.getDataEvento());
+        Evento eventoEntity = evento.get();
+        eventoEntity.setCasa(e.getCasa());
+        eventoEntity.setFora(e.getFora());
+        eventoEntity.setDataEvento(e.getDataEvento());
         em.persist(evento.get());
         return CompletableFuture.completedFuture(evento.get());
     }
