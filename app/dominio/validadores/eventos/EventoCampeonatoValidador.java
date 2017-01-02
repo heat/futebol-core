@@ -27,10 +27,10 @@ public class EventoCampeonatoValidador extends Validador<Evento>{
         if (!eventoOptional.isPresent()){
             throw new ValidadorExcpetion("Evento não informado! ");
         }
-        Optional<Campeonato> campeonato = Optional.ofNullable(evento.getCampeonato());
+/*        Optional<Campeonato> campeonato = Optional.ofNullable(evento.getCampeonato());
         if (!campeonato.isPresent() ||
                 evento.getCampeonato().getId() <= 0) {
             throw new ValidadorExcpetion("Campeonato não informado! ");
-        }
+        }*/
     }
 }

@@ -2,8 +2,6 @@ package models.eventos;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "resultados")
@@ -28,22 +26,16 @@ public class Resultado implements Serializable{
     @JoinColumn(name = "time_id")
     private Time time;
 
-    @OneToOne
-    @JoinColumn(name="evento_id")
-    private Evento evento;
-
-    @Transient
-    private final String INTERVALO = "IN";
-
-    @Transient
-    private final String FINAL = "FN";
-
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
     }
 
     public String getMomento() {
@@ -70,31 +62,6 @@ public class Resultado implements Serializable{
         this.time = time;
     }
 
-    public Long getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(Long tenant) {
-        this.tenant = tenant;
-    }
-
-    public Evento getEvento() {
-        return evento;
-    }
-
-    public void setEvento(Evento evento) {
-        this.evento = evento;
-    }
-
-    public boolean isMomentoIntervalo(){
-
-        return momento.equals(INTERVALO)? true: false;
-    }
-
-    public boolean isMomentoFinal(){
-
-        return momento.equals(FINAL)? true: false;
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

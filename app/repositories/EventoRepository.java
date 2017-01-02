@@ -47,8 +47,8 @@ public class EventoRepository implements Repository<Long, Evento>{
             return Optional.ofNullable(null);
         } catch (Exception e) {
             e.printStackTrace();
+            return Optional.ofNullable(null);
         }
-        return null;
     }
 
     @Override
@@ -60,12 +60,11 @@ public class EventoRepository implements Repository<Long, Evento>{
             throw new NoResultException("Evento não encontrado");
         }
 
-        Evento ev = evento.get();
-        ev.setCasa(e.getCasa());
-        ev.setFora(e.getFora());
-        ev.setDataEvento(e.getDataEvento());
-        em.merge(ev);
-        return CompletableFuture.completedFuture(ev);
+        evento.get().setCasa(e.getCasa());
+        evento.get().setFora(e.getFora());
+        evento.get().setDataEvento(e.getDataEvento());
+        em.persist(evento.get());
+        return CompletableFuture.completedFuture(evento.get());
     }
 
     @Override
@@ -73,7 +72,7 @@ public class EventoRepository implements Repository<Long, Evento>{
 
         EntityManager em = jpaApi.em();
         evento.setTenant(tenant.get());
-        em.persist(evento);
+        em.merge(evento);
         return CompletableFuture.completedFuture(evento);
     }
 
@@ -90,4 +89,5 @@ public class EventoRepository implements Repository<Long, Evento>{
 
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
+
 }

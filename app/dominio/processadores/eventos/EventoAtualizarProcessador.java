@@ -62,8 +62,8 @@ public class EventoAtualizarProcessador implements Processador<Chave, Evento> {
             throw new ValidadorExcpetion("O nome dos times não podem ser alterados! ");
         }
 
-        if(!eventoNovo.getCampeonato().equals(eventoAtual.getCampeonato())){
+/*        if(!eventoNovo.getCampeonato().equals(eventoAtual.getCampeonato())){
             throw new ValidadorExcpetion("O campeonato não pode ser alterado! ");
-        }
+        }*/
     }
 }

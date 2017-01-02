@@ -39,7 +39,7 @@ public class Evento implements Serializable{
     @Column(name = "data_evento")
     private Calendar dataEvento;
 
-    @OneToMany(fetch=FetchType.EAGER)
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="evento_id")
     private List<Resultado> resultados;
 

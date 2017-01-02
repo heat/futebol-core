@@ -56,8 +56,6 @@ public class ResultadoController extends ApplicationController {
                 .asJson();
         ObjectMapper mapper = new ObjectMapper();
 
-//        Resultado[] resultado = mapper.readValue(json.toString(), Resultado[].class);
-
         List<Resultado> resultados = mapper.readValue(json.toString(), new TypeReference<List<Resultado>>() { });
 
         if(!Optional.ofNullable(resultados).isPresent())
