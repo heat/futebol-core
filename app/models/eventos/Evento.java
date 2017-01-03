@@ -3,6 +3,7 @@ package models.eventos;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.apostas.EventoAposta;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -43,9 +44,9 @@ public class Evento implements Serializable{
     @JoinColumn(name="evento_id")
     private List<Resultado> resultados;
 
-    @ManyToOne
-    @JoinColumn(name="campeonato_id")
-    private Campeonato campeonato;
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name="evento_id")
+    private List<EventoAposta> eventoApostas;
 
     public Long getId() {
         return id;
@@ -83,14 +84,6 @@ public class Evento implements Serializable{
     @JsonSerialize(using= CalendarSerializer.class)
     public void setDataEvento(Calendar dataEvento) {
         this.dataEvento = dataEvento;
-    }
-
-    public Campeonato getCampeonato(){
-        return this.campeonato;
-    }
-
-    public void setCampeonato(Campeonato campeonato){
-        this.campeonato = campeonato;
     }
 
     public List<Resultado> getResultados() {

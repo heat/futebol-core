@@ -37,7 +37,6 @@ public class FinalizarEventoProcessador implements Processador<Tenant, Evento>{
         List<Resultado> resultados = evento.getResultados();
         for(Resultado result : resultados){
             result.setTenant(tenant.get());
-
         }
         try{
          eventoRepository.atualizar(tenant, evento.getId(), evento);

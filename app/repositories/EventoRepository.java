@@ -44,10 +44,10 @@ public class EventoRepository implements Repository<Long, Evento>{
 
         } catch (NoResultException e) {
             e.printStackTrace();
-            return Optional.ofNullable(null);
+            return Optional.empty();
         } catch (Exception e) {
             e.printStackTrace();
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
     }
 
