@@ -50,6 +50,18 @@ POST     /times/:id                     api.rest.TimeController.atualizar(id: Lo
 
 DELETE   /times/:id                     api.rest.TimeController.excluir(id: Long)
 
+# ------- CRUD de evento_apostas
+GET      /eventoapostas                 api.rest.EventoApostaController.todos
+
+GET      /eventoapostas/:id             api.rest.EventoApostaController.buscar(id: Long)
+
+POST     /eventoapostas                 api.rest.EventoApostaController.inserir
+
+POST     /eventoapostas/:id             api.rest.EventoApostaController.atualizar(id: Long)
+
+DELETE   /eventoapostas/:id             api.rest.EventoApostaController.excluir(id: Long)
+
+
 POST    /token                       api.rest.UsuarioController.authenticar
 
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
