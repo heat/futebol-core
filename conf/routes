@@ -61,12 +61,22 @@ POST     /eventoapostas/:id             api.rest.EventoApostaController.atualiza
 
 DELETE   /eventoapostas/:id             api.rest.EventoApostaController.excluir(id: Long)
 
+# ------- CRUD de evento_apostas
+GET      /taxas                         api.rest.TaxaController.todos
 
-POST    /token                       api.rest.UsuarioController.authenticar
+GET      /taxas/:id                     api.rest.TaxaController.buscar(id: Long)
 
-GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
+POST     /taxas                         api.rest.TaxaController.inserir
 
-GET     /usuarios/0                  api.rest.UsuarioController.usuario
+POST     /taxas/:id                     api.rest.TaxaController.atualizar(id: Long)
+
+DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long)
+
+POST    /token                          api.rest.UsuarioController.authenticar
+
+GET     /logout                         @org.pac4j.play.ApplicationLogoutController.logout
+
+GET     /usuarios/0                     api.rest.UsuarioController.usuario
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index

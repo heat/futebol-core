@@ -20,6 +20,9 @@ public class Taxa implements Serializable{
     @Column(name = "taxa_id",updatable = false)
     private Long id;
 
+    @Column(name = "tenant_id")
+    private Long tenant;
+
     @Column(name = "taxa")
     private BigDecimal taxa;
 
@@ -72,5 +75,13 @@ public class Taxa implements Serializable{
     @JsonSerialize(using= CalendarSerializer.class)
     public void setAlteradoEm(Calendar alteradoEm) {
         this.alteradoEm = alteradoEm;
+    }
+
+    public Long getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
     }
 }
