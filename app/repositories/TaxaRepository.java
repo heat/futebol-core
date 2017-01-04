@@ -57,6 +57,7 @@ public class TaxaRepository implements Repository<Long, Taxa>{
             throw new NoResultException("Taxa não encontrada");
         }
         Taxa taxa = taxaOptional.get();
+        taxa.setOdd(t.getOdd());
         taxa.setTaxa(t.getTaxa());
         taxa.setLinha(t.getLinha());
         taxa.setAlteradoEm(t.getAlteradoEm());

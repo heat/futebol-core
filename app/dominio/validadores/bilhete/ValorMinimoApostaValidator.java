@@ -1,7 +1,7 @@
 package dominio.validadores.bilhete;
 
-import models.bilhetes.Bilhete;
 import dominio.validadores.Validador;
+import models.bilhetes.Bilhete;
 
 import javax.persistence.Entity;
 import java.math.BigDecimal;
@@ -19,10 +19,9 @@ public class ValorMinimoApostaValidator extends Validador<Bilhete> {
     }
 
     @Override
-    public void validate(Bilhete entity) {
-        BigDecimal valorAposta = entity.valorAposta();
-        if(valorAposta.compareTo(getValorDecimal()) > 0) {
+    public void validate(Bilhete bilhete) {
+/*        if(valorAposta.compareTo(getValorDecimal()) > 0) {
             System.out.println("Valor da aposta acima do comum");
-        }
+        }*/
     }
 }

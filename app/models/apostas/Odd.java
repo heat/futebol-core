@@ -2,7 +2,6 @@ package models.apostas;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Table( name = "odds")
@@ -34,10 +33,6 @@ public class Odd implements Serializable{
 
     @Column(name = "posicao")
     private Long posicao;
-
-    @OneToMany
-    @JoinColumn(name = "odd_id")
-    private List<Taxa> taxas;
 
     public Long getId() {
         return id;
@@ -99,11 +94,4 @@ public class Odd implements Serializable{
         this.posicao = posicao;
     }
 
-    public List<Taxa> getTaxas() {
-        return taxas;
-    }
-
-    public void setTaxas(List<Taxa> taxas) {
-        this.taxas = taxas;
-    }
 }

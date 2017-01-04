@@ -23,6 +23,10 @@ public class Taxa implements Serializable{
     @Column(name = "tenant_id")
     private Long tenant;
 
+    @OneToOne
+    @JoinColumn(name = "odd_id")
+    private Odd odd;
+
     @Column(name = "taxa")
     private BigDecimal taxa;
 
@@ -39,6 +43,22 @@ public class Taxa implements Serializable{
 
     public Long getId() {
         return id;
+    }
+
+    public Long getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
+    }
+
+    public Odd getOdd() {
+        return odd;
+    }
+
+    public void setOdd(Odd odd) {
+        this.odd = odd;
     }
 
     public BigDecimal getTaxa() {
@@ -77,11 +97,7 @@ public class Taxa implements Serializable{
         this.alteradoEm = alteradoEm;
     }
 
-    public Long getTenant() {
-        return tenant;
-    }
 
-    public void setTenant(Long tenant) {
-        this.tenant = tenant;
-    }
+
+
 }
