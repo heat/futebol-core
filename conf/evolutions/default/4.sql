@@ -1,3 +1,6 @@
+# Apostas domain schema
+
+# --- !Ups
 
 CREATE SEQUENCE public.eventos_apostas_id_seq;
 
@@ -54,7 +57,7 @@ CREATE TABLE public.odds
   prioridade INTEGER NOT NULL,
   tenant_id INTEGER NOT NULL,
   tipo_linha CHAR(1) NOT NULL,
-  CONSTRAINT odds_pkey PRIMARY KEY (odds_odd_id)
+  CONSTRAINT odds_pkey PRIMARY KEY (odd_id)
 )
 WITH (
   OIDS=FALSE
