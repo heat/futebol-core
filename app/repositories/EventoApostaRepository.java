@@ -51,11 +51,11 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
 
     @Override
     public CompletableFuture<EventoAposta> atualizar(Tenant tenant, Long id, EventoAposta ea) {
+
         EntityManager em = jpaApi.em();
         Optional<EventoAposta> eventoApostaOptional = buscar(tenant, id);
-        if(!eventoApostaOptional.isPresent()){
+        if(!eventoApostaOptional.isPresent())
             throw new NoResultException("Aposta não encontrada");
-        }
         EventoAposta eventoAposta = eventoApostaOptional.get();
         eventoAposta.setPermitir(ea.isPermitir());
         eventoAposta.setTaxas(ea.getTaxas());
@@ -65,24 +65,21 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
 
     @Override
     public CompletableFuture<EventoAposta> inserir(Tenant tenant, EventoAposta eventoAposta) {
+
         EntityManager em = jpaApi.em();
         eventoAposta.setTenant(tenant.get());
         em.persist(eventoAposta);
-
         return CompletableFuture.completedFuture(eventoAposta);
     }
 
     @Override
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
+
         EntityManager em = jpaApi.em();
         Optional<EventoAposta> eventoApostaOptional = buscar(tenant, id);
-        if(!eventoApostaOptional.isPresent()){
+        if(!eventoApostaOptional.isPresent())
             throw new NoResultException("Aposta não encontrada");
-        }
-        else{
-            EventoAposta eventoAposta = eventoApostaOptional.get();
-            em.remove(eventoAposta);
-        }
+        em.remove(eventoApostaOptional.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

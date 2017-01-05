@@ -41,7 +41,6 @@ public class PalpiteRepository implements Repository<Long, Palpite> {
             query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
             return Optional.ofNullable(query.getSingleResult());
-
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -52,9 +51,8 @@ public class PalpiteRepository implements Repository<Long, Palpite> {
 
         EntityManager em = jpaApi.em();
         Optional<Palpite> palpite = buscar(tenant, id);
-        if(!palpite.isPresent()){
+        if(!palpite.isPresent())
             throw new NoResultException("Palpite não encontrado");
-        }
         Palpite ppt = palpite.get();
         ppt.setStatus(p.getStatus());
         ppt.setTaxa(p.getTaxa());
@@ -68,7 +66,6 @@ public class PalpiteRepository implements Repository<Long, Palpite> {
         EntityManager em = jpaApi.em();
         palpite.setTenant(tenant.get());
         em.persist(palpite);
-
         return CompletableFuture.completedFuture(palpite);
     }
 
@@ -77,14 +74,9 @@ public class PalpiteRepository implements Repository<Long, Palpite> {
 
         EntityManager em = jpaApi.em();
         Optional<Palpite> palpite = buscar(tenant, id);
-        if(!palpite.isPresent()){
+        if(!palpite.isPresent())
             throw new NoResultException("Palpite não encontrado");
-        }
-        else{
-            Palpite p = palpite.get();
-            em.remove(p);
-        }
-
+        em.remove(palpite.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

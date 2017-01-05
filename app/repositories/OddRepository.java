@@ -51,7 +51,6 @@ public class OddRepository implements Repository<Long, Odd>{
         Optional<Odd> oddOptional = buscar(tenant, id);
         if(!oddOptional.isPresent())
             throw new NoResultException("Odd não encontrada");
-
         Odd odd = oddOptional.get();
         odd.setAbreviacao(o.getAbreviacao());
         odd.setDescricao(o.getAbreviacao());
@@ -79,8 +78,7 @@ public class OddRepository implements Repository<Long, Odd>{
         Optional<Odd> oddOptional = buscar(tenant, id);
         if(!oddOptional.isPresent())
             throw new NoResultException("Odd não encontrada");
-        else em.remove(oddOptional.get());
-
+        em.remove(oddOptional.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

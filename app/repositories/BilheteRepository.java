@@ -52,9 +52,8 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
 
         EntityManager em = jpaApi.em();
         Optional<Bilhete> bilhete = buscar(tenant, id);
-        if(!bilhete.isPresent()){
+        if(!bilhete.isPresent())
             throw new NoResultException("Bilhete não encontrado");
-        }
         Bilhete blt = bilhete.get();
         blt.setAlteradoEm(b.getAlteradoEm());
         blt.setCliente(b.getCliente());
@@ -73,7 +72,6 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         EntityManager em = jpaApi.em();
         bilhete.setTenant(tenant.get());
         em.persist(bilhete);
-
         return CompletableFuture.completedFuture(bilhete);
     }
 
@@ -84,10 +82,7 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         Optional<Bilhete> bilhete = buscar(tenant, id);
         if(!bilhete.isPresent())
             throw new NoResultException("Bilhete não encontrado");
-
-        Bilhete c = bilhete.get();
-        em.remove(c);
-
+        em.remove(bilhete.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

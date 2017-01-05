@@ -52,9 +52,8 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
 
         EntityManager em = jpaApi.em();
         Optional<Campeonato> campeonato = buscar(tenant, id);
-        if(!campeonato.isPresent()){
+        if(!campeonato.isPresent())
             throw new NoResultException("Campeonato não encontrado");
-        }
         Campeonato cp = campeonato.get();
         cp.setNome(c.getNome());
         em.merge(cp);
@@ -67,7 +66,6 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
         EntityManager em = jpaApi.em();
         campeonato.setTenant(tenant.get());
         em.persist(campeonato);
-
         return CompletableFuture.completedFuture(campeonato);
     }
 
@@ -76,14 +74,9 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
 
         EntityManager em = jpaApi.em();
         Optional<Campeonato> campeonato = buscar(tenant, id);
-        if(!campeonato.isPresent()){
+        if(!campeonato.isPresent())
             throw new NoResultException("Campeonato não encontrado");
-        }
-        else{
-            Campeonato c = campeonato.get();
-            em.remove(c);
-        }
-
+        em.remove(campeonato.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

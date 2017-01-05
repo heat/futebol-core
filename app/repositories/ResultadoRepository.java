@@ -26,6 +26,7 @@ public class ResultadoRepository implements Repository<Long, Resultado> {
 
     @Override
     public List<Resultado> todos(Tenant tenant) {
+
         EntityManager em = jpaApi.em();
         Query query = em.createQuery("FROM Resultado as r WHERE r.tenant = :tenant");
         query.setParameter("tenant", tenant.get());
@@ -34,20 +35,20 @@ public class ResultadoRepository implements Repository<Long, Resultado> {
 
     @Override
     public Optional<Resultado> buscar(Tenant tenant, Long id) {
+
         try {
             EntityManager em = jpaApi.em();
             TypedQuery<Resultado> query = em.createQuery("SELECT r FROM Resultado r WHERE r.tenant = :tenant and r.id = :id", Resultado.class);
             query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
             return Optional.ofNullable(query.getSingleResult());
-
         } catch (NoResultException e) {
             e.printStackTrace();
-            return Optional.ofNullable(null);
+            return Optional.empty();
         } catch (Exception e) {
             e.printStackTrace();
+            return Optional.empty();
         }
-        return null;
     }
 
     @Override
@@ -70,12 +71,9 @@ public class ResultadoRepository implements Repository<Long, Resultado> {
 
         EntityManager em = jpaApi.em();
         Optional<Resultado> resultado = buscar(tenant, id);
-        if(!resultado.isPresent()){
+        if(!resultado.isPresent())
             throw new NoResultException("Resultado não encontrado");
-        }
-        Resultado r = resultado.get();
-        em.remove(r);
-
+        em.remove(resultado.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

@@ -16,7 +16,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class EventoRepository implements Repository<Long, Evento>{
 
-
     JPAApi jpaApi;
 
     @Inject
@@ -35,13 +34,13 @@ public class EventoRepository implements Repository<Long, Evento>{
 
     @Override
     public Optional<Evento> buscar(Tenant tenant, Long id) {
+
         try {
             EntityManager em = jpaApi.em();
             TypedQuery<Evento> query = em.createQuery("SELECT e FROM Evento e WHERE e.tenant = :tenant and e.id = :id", Evento.class);
             query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
             return Optional.ofNullable(query.getSingleResult());
-
         } catch (NoResultException e) {
             e.printStackTrace();
             return Optional.empty();
@@ -56,10 +55,8 @@ public class EventoRepository implements Repository<Long, Evento>{
 
         EntityManager em = jpaApi.em();
         Optional<Evento> evento = buscar(tenant, id);
-        if(!evento.isPresent()){
+        if(!evento.isPresent())
             throw new NoResultException("Evento não encontrado");
-        }
-
         Evento eventoEntity = evento.get();
         eventoEntity.setCasa(e.getCasa());
         eventoEntity.setFora(e.getFora());
@@ -82,12 +79,9 @@ public class EventoRepository implements Repository<Long, Evento>{
 
         EntityManager em = jpaApi.em();
         Optional<Evento> evento = buscar(tenant, id);
-        if(!evento.isPresent()){
+        if(!evento.isPresent())
             throw new NoResultException("Evento não encontrado");
-        }
-        Evento e = evento.get();
-        em.remove(e);
-
+        em.remove(evento.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 

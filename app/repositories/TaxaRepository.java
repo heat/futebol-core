@@ -43,7 +43,6 @@ public class TaxaRepository implements Repository<Long, Taxa>{
             query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
             return Optional.ofNullable(query.getSingleResult());
-
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -51,11 +50,11 @@ public class TaxaRepository implements Repository<Long, Taxa>{
 
     @Override
     public CompletableFuture<Taxa> atualizar(Tenant tenant, Long id, Taxa t) {
+
         EntityManager em = jpaApi.em();
         Optional<Taxa> taxaOptional = buscar(tenant, id);
-        if(!taxaOptional.isPresent()){
+        if(!taxaOptional.isPresent())
             throw new NoResultException("Taxa não encontrada");
-        }
         Taxa taxa = taxaOptional.get();
         taxa.setOdd(t.getOdd());
         taxa.setTaxa(t.getTaxa());
@@ -67,6 +66,7 @@ public class TaxaRepository implements Repository<Long, Taxa>{
 
     @Override
     public CompletableFuture<Taxa> inserir(Tenant tenant, Taxa taxa) {
+
         EntityManager em = jpaApi.em();
         em.persist(taxa);
         taxa.setTenant(tenant.get());
@@ -75,15 +75,12 @@ public class TaxaRepository implements Repository<Long, Taxa>{
 
     @Override
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
+
         EntityManager em = jpaApi.em();
         Optional<Taxa> taxaOptional = buscar(tenant, id);
-        if(!taxaOptional.isPresent()){
+        if(!taxaOptional.isPresent())
             throw new NoResultException("Taxa não encontrada");
-        }
-        else{
-            Taxa taxa = taxaOptional.get();
-            em.remove(taxa);
-        }
+        em.remove(taxaOptional.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }
