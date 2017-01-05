@@ -83,17 +83,6 @@ POST     /bilhetes/:id                  api.rest.BilheteController.atualizar(id:
 
 DELETE   /bilhetes/:id                  api.rest.BilheteController.excluir(id: Long)
 
-# ------- CRUD de palpites
-GET      /palpites                      api.rest.PalpiteController.todos
-
-GET      /palpites/:id                  api.rest.PalpiteController.buscar(id: Long)
-
-POST     /palpites                      api.rest.PalpiteController.inserir
-
-POST     /palpites/:id                  api.rest.PalpiteController.atualizar(id: Long)
-
-DELETE   /palpites/:id                  api.rest.PalpiteController.excluir(id: Long)
-
 
 POST    /token                          api.rest.UsuarioController.authenticar
 
