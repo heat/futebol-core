@@ -103,7 +103,21 @@ public class Taxa implements Serializable{
         this.alteradoEm = alteradoEm;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Taxa taxa = (Taxa) o;
 
+        if (id != null ? !id.equals(taxa.id) : taxa.id != null) return false;
+        return tenant != null ? tenant.equals(taxa.tenant) : taxa.tenant == null;
+    }
 
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
+        return result;
+    }
 }

@@ -70,18 +70,13 @@ public class Campeonato implements Serializable{
         Campeonato that = (Campeonato) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (tenant != null ? !tenant.equals(that.tenant) : that.tenant != null) return false;
-        return nome != null ? nome.equals(that.nome) : that.nome == null;
-
+        return tenant != null ? tenant.equals(that.tenant) : that.tenant == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
-        result = 31 * result + (nome != null ? nome.hashCode() : 0);
         return result;
     }
-
-
 }

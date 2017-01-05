@@ -110,22 +110,13 @@ public class Evento implements Serializable{
         Evento evento = (Evento) o;
 
         if (id != null ? !id.equals(evento.id) : evento.id != null) return false;
-        if (casa != null ? !casa.equals(evento.casa) : evento.casa != null) return false;
-        if (fora != null ? !fora.equals(evento.fora) : evento.fora != null) return false;
-        if (dataEvento != null ? !dataEvento.equals(evento.dataEvento) : evento.dataEvento != null) return false;
-        return resultados != null ? resultados.equals(evento.resultados) : evento.resultados == null;
-
+        return tenant != null ? tenant.equals(evento.tenant) : evento.tenant == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (casa != null ? casa.hashCode() : 0);
-        result = 31 * result + (fora != null ? fora.hashCode() : 0);
-        result = 31 * result + (dataEvento != null ? dataEvento.hashCode() : 0);
-        result = 31 * result + (resultados != null ? resultados.hashCode() : 0);
+        result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
     }
-
-
 }

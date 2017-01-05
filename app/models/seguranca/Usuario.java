@@ -1,10 +1,7 @@
 package models.seguranca;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import models.seguranca.Permissao;
-
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -14,7 +11,7 @@ import java.util.List;
         query="SELECT us FROM Usuario us WHERE us.login = :login AND us.senha = :senha"
 )
 @Table(name="usuarios")
-public class Usuario {
+public class Usuario implements Serializable{
 
     @Id
     @SequenceGenerator(name="usuarios_usuario_id_seq", sequenceName = "usuarios_usuario_id_seq", allocationSize = 1)
@@ -98,5 +95,23 @@ public class Usuario {
 
     public List<Permissao> getPermissoes() {
         return getPapel().getPermissoes();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Usuario usuario = (Usuario) o;
+
+        if (id != null ? !id.equals(usuario.id) : usuario.id != null) return false;
+        return idTenant != null ? idTenant.equals(usuario.idTenant) : usuario.idTenant == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (idTenant != null ? idTenant.hashCode() : 0);
+        return result;
     }
 }

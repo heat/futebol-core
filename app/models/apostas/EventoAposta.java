@@ -58,4 +58,22 @@ public class EventoAposta implements Serializable{
     public void setTaxas(List<Taxa> taxas) {
         this.taxas = taxas;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EventoAposta that = (EventoAposta) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return tenant != null ? tenant.equals(that.tenant) : that.tenant == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
+        return result;
+    }
 }

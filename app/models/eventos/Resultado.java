@@ -70,20 +70,13 @@ public class Resultado implements Serializable{
         Resultado resultado = (Resultado) o;
 
         if (id != null ? !id.equals(resultado.id) : resultado.id != null) return false;
-        if (tenant != null ? !tenant.equals(resultado.tenant) : resultado.tenant != null) return false;
-        if (momento != null ? !momento.equals(resultado.momento) : resultado.momento != null) return false;
-        if (pontos != null ? !pontos.equals(resultado.pontos) : resultado.pontos != null) return false;
-        return time != null ? time.equals(resultado.time) : resultado.time == null;
-
+        return tenant != null ? tenant.equals(resultado.tenant) : resultado.tenant == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
-        result = 31 * result + (momento != null ? momento.hashCode() : 0);
-        result = 31 * result + (pontos != null ? pontos.hashCode() : 0);
-        result = 31 * result + (time != null ? time.hashCode() : 0);
         return result;
     }
 }

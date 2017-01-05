@@ -1,11 +1,15 @@
 package models.seguranca;
 
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "permissoes")
-public class Permissao {
+public class Permissao implements Serializable{
 
     @Id
     @Column(name = "permissao_id",updatable = false)
@@ -39,5 +43,20 @@ public class Permissao {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Permissao permissao = (Permissao) o;
+
+        return id != null ? id.equals(permissao.id) : permissao.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

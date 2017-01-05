@@ -57,16 +57,13 @@ public class Time implements Serializable {
         Time time = (Time) o;
 
         if (id != null ? !id.equals(time.id) : time.id != null) return false;
-        if (tenant != null ? !tenant.equals(time.tenant) : time.tenant != null) return false;
-        return nome != null ? nome.equals(time.nome) : time.nome == null;
-
+        return tenant != null ? tenant.equals(time.tenant) : time.tenant == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
-        result = 31 * result + (nome != null ? nome.hashCode() : 0);
         return result;
     }
 }

@@ -94,4 +94,18 @@ public class Odd implements Serializable{
         this.posicao = posicao;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Odd odd = (Odd) o;
+
+        return id != null ? id.equals(odd.id) : odd.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

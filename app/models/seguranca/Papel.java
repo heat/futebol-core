@@ -1,11 +1,12 @@
 package models.seguranca;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name="papeis")
-public class Papel {
+public class Papel implements Serializable{
 
     @Id
     @Column(name = "papel_id",updatable = false)
@@ -45,4 +46,18 @@ public class Papel {
         this.permissoes = permissoes;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Papel papel = (Papel) o;
+
+        return id != null ? id.equals(papel.id) : papel.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

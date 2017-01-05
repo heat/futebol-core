@@ -1,11 +1,12 @@
 package models.seguranca;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Locale;
 
 @Entity
 @Table(name = "perfis")
-public class Perfil {
+public class Perfil implements Serializable{
 
     public enum Genero {
         MASCULINO, FEMININO
@@ -133,5 +134,23 @@ public class Perfil {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Perfil perfil = (Perfil) o;
+
+        if (id != null ? !id.equals(perfil.id) : perfil.id != null) return false;
+        return usuario != null ? usuario.equals(perfil.usuario) : perfil.usuario == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (usuario != null ? usuario.hashCode() : 0);
+        return result;
     }
 }
