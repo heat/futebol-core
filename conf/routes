@@ -61,7 +61,7 @@ POST     /eventoapostas/:id             api.rest.EventoApostaController.atualiza
 
 DELETE   /eventoapostas/:id             api.rest.EventoApostaController.excluir(id: Long)
 
-# ------- CRUD de evento_apostas
+# ------- CRUD de taxas
 GET      /taxas                         api.rest.TaxaController.todos
 
 GET      /taxas/:id                     api.rest.TaxaController.buscar(id: Long)
@@ -71,6 +71,29 @@ POST     /taxas                         api.rest.TaxaController.inserir
 POST     /taxas/:id                     api.rest.TaxaController.atualizar(id: Long)
 
 DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long)
+
+# ------- CRUD de bilhetes
+GET      /bilhetes                      api.rest.BilheteController.todos
+
+GET      /bilhetes/:id                  api.rest.BilheteController.buscar(id: Long)
+
+POST     /bilhetes                      api.rest.BilheteController.inserir
+
+POST     /bilhetes/:id                  api.rest.BilheteController.atualizar(id: Long)
+
+DELETE   /bilhetes/:id                  api.rest.BilheteController.excluir(id: Long)
+
+# ------- CRUD de palpites
+GET      /palpites                      api.rest.PalpiteController.todos
+
+GET      /palpites/:id                  api.rest.PalpiteController.buscar(id: Long)
+
+POST     /palpites                      api.rest.PalpiteController.inserir
+
+POST     /palpites/:id                  api.rest.PalpiteController.atualizar(id: Long)
+
+DELETE   /palpites/:id                  api.rest.PalpiteController.excluir(id: Long)
+
 
 POST    /token                          api.rest.UsuarioController.authenticar
 

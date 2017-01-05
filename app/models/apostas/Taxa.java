@@ -2,6 +2,7 @@ package models.apostas;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.bilhetes.Palpite;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 
 @Entity
 @Table( name = "taxas")
@@ -40,6 +42,10 @@ public class Taxa implements Serializable{
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "taxa_id")
+    private List<Palpite> palpites;
 
     public Long getId() {
         return id;

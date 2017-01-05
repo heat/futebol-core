@@ -1,5 +1,7 @@
 package models.apostas;
 
+import models.bilhetes.Palpite;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -24,6 +26,10 @@ public class EventoAposta implements Serializable{
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "evento_apostas_id")
     private List<Taxa> taxas;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "evento_apostas_id")
+    private List<Palpite> palpites;
 
     public Long getId() {
         return id;

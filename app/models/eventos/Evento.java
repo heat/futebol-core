@@ -94,6 +94,14 @@ public class Evento implements Serializable{
         this.resultados = resultados;
     }
 
+    public List<EventoAposta> getEventoApostas() {
+        return eventoApostas;
+    }
+
+    public void setEventoApostas(List<EventoAposta> eventoApostas) {
+        this.eventoApostas = eventoApostas;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
