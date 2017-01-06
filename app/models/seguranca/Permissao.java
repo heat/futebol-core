@@ -45,6 +45,16 @@ public class Permissao implements Serializable{
         this.descricao = descricao;
     }
 
+    public Permissao() {
+
+    }
+
+    public Permissao(Long id, String nome, String descricao) {
+        this.id = id;
+        this.nome = nome;
+        this.descricao = descricao;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

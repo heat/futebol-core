@@ -16,6 +16,13 @@ public class PalpitePK implements Serializable{
     private EventoAposta eventoAposta;
 
     public PalpitePK() {
+
+    }
+
+    public PalpitePK(Bilhete bilhete, EventoAposta eventoAposta) {
+
+        this.bilhete = bilhete;
+        this.eventoAposta = eventoAposta;
     }
 
     public Bilhete getBilhete() {

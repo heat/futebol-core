@@ -23,6 +23,17 @@ public class Palpite implements Serializable{
     @Column(name = "status")
     private char status;
 
+    public Palpite() {
+
+    }
+
+    public Palpite(Long tenant, BigDecimal taxa, char status) {
+
+        this.tenant = tenant;
+        this.taxa = taxa;
+        this.status = status;
+    }
+
     public PalpitePK getId() {
         return id;
     }

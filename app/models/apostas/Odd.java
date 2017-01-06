@@ -34,6 +34,21 @@ public class Odd implements Serializable{
     @Column(name = "posicao")
     private Long posicao;
 
+    public Odd() {
+    }
+
+    public Odd(String nome, String mercado, char tipoLinha,
+               String abreviacao, String descricao, Long prioridade, Long posicao) {
+
+        this.nome = nome;
+        this.mercado = mercado;
+        this.tipoLinha = tipoLinha;
+        this.abreviacao = abreviacao;
+        this.descricao = descricao;
+        this.prioridade = prioridade;
+        this.posicao = posicao;
+    }
+
     public Long getId() {
         return id;
     }

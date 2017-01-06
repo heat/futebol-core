@@ -26,6 +26,18 @@ public class Resultado implements Serializable{
     @JoinColumn(name = "time_id")
     private Time time;
 
+    public Resultado() {
+
+    }
+
+    public Resultado(Long tenant, String momento, Long pontos, Time time) {
+
+        this.tenant = tenant;
+        this.momento = momento;
+        this.pontos = pontos;
+        this.time = time;
+    }
+
     public Long getId() {
         return id;
     }

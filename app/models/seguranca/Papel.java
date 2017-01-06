@@ -21,6 +21,16 @@ public class Papel implements Serializable{
             inverseJoinColumns={@JoinColumn(name="permissao_id")})
     private List<Permissao> permissoes;
 
+    public Papel() {
+
+    }
+
+    public Papel(Long id, String nome, List<Permissao> permissoes) {
+
+        this.id = id;
+        this.nome = nome;
+        this.permissoes = permissoes;
+    }
 
     public Long getId() {
         return id;

@@ -46,6 +46,24 @@ public class Bilhete implements Serializable{
     @JoinColumn(name = "bilhete_id")
     private List<Palpite> palpites;
 
+    public Bilhete() {
+
+    }
+
+    public Bilhete(Long tenant, String codigo, char status, String cliente, BigDecimal valorAposta,
+                   BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
+
+        this.tenant = tenant;
+        this.codigo = codigo;
+        this.status = status;
+        this.cliente = cliente;
+        this.valorAposta = valorAposta;
+        this.valorPremio = valorPremio;
+        this.criadoEm = criadoEm;
+        this.alteradoEm = alteradoEm;
+        this.palpites = palpites;
+    }
+
     public Long getId() {
         return id;
     }

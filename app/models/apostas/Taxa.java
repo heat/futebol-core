@@ -47,6 +47,22 @@ public class Taxa implements Serializable{
     @JoinColumn(name = "taxa_id")
     private List<Palpite> palpites;
 
+    public Taxa() {
+
+    }
+
+    public Taxa(Long tenant, Odd odd, BigDecimal taxa, BigDecimal linha,
+                Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
+
+        this.tenant = tenant;
+        this.odd = odd;
+        this.taxa = taxa;
+        this.linha = linha;
+        this.criadoEm = criadoEm;
+        this.alteradoEm = alteradoEm;
+        this.palpites = palpites;
+    }
+
     public Long getId() {
         return id;
     }

@@ -48,6 +48,21 @@ public class Evento implements Serializable{
     @JoinColumn(name="evento_id")
     private List<EventoAposta> eventoApostas;
 
+    public Evento() {
+
+    }
+
+    public Evento(Long tenant, Time casa, Time fora, Calendar dataEvento,
+                  List<Resultado> resultados, List<EventoAposta> eventoApostas) {
+
+        this.tenant = tenant;
+        this.casa = casa;
+        this.fora = fora;
+        this.dataEvento = dataEvento;
+        this.resultados = resultados;
+        this.eventoApostas = eventoApostas;
+    }
+
     public Long getId() {
         return id;
     }

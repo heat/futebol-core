@@ -47,6 +47,25 @@ public class Perfil implements Serializable{
     @Column(name = "localizacao")
     private String localizacao;
 
+    public Perfil() {
+
+    }
+
+    public Perfil(Long id, Usuario usuario, String email, String primeiroNome, String sobrenome, String nomeExibicao,
+                  Genero genero, Locale localidade, String imagemUrl, String perfilUrl, String localizacao) {
+
+        this.id = id;
+        this.usuario = usuario;
+        this.email = email;
+        this.primeiroNome = primeiroNome;
+        this.sobrenome = sobrenome;
+        this.nomeExibicao = nomeExibicao;
+        this.genero = genero;
+        this.localidade = localidade;
+        this.imagemUrl = imagemUrl;
+        this.perfilUrl = perfilUrl;
+        this.localizacao = localizacao;
+    }
 
     public Long getId() {
         return id;

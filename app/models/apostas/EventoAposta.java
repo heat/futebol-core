@@ -10,7 +10,6 @@ import java.util.List;
 @Table( name = "evento_apostas")
 public class EventoAposta implements Serializable{
 
-
     @Id
     @SequenceGenerator(name="eventos_apostas_id_seq", sequenceName = "eventos_apostas_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventos_apostas_id_seq")
@@ -30,6 +29,17 @@ public class EventoAposta implements Serializable{
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "evento_apostas_id")
     private List<Palpite> palpites;
+
+    public EventoAposta() {
+    }
+
+    public EventoAposta(Long tenant, boolean permitir, List<Taxa> taxas, List<Palpite> palpites) {
+
+        this.tenant = tenant;
+        this.permitir = permitir;
+        this.taxas = taxas;
+        this.palpites = palpites;
+    }
 
     public Long getId() {
         return id;
