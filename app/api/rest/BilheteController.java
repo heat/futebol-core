@@ -105,6 +105,7 @@ public class BilheteController extends ApplicationController {
     @Transactional
     public Result excluir(Long id) {
         try {
+            //TODO: o excluir é somente cancelar
             bilheteRepository.excluir(getTenant(), id);
             return noContent(); // padrao para quando exclui uma entidade
         } catch (NoResultException e) {

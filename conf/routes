@@ -83,6 +83,10 @@ POST     /bilhetes/:id                  api.rest.BilheteController.atualizar(id:
 
 DELETE   /bilhetes/:id                  api.rest.BilheteController.excluir(id: Long)
 
+# ------- CRUD de PIN
+POST     /pins                          api.rest.BilheteController.inserir
+
+GET      /pins/:id                      api.rest.BilheteController.buscar(id: Long)
 
 POST    /token                          api.rest.UsuarioController.authenticar
 

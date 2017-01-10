@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import models.apostas.EventoAposta;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
+import play.Logger;
 import play.db.jpa.JPAApi;
 
 import javax.persistence.EntityManager;
@@ -15,9 +16,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ *
+ * TODO: verificar padrao de utilizacao do log e como utilizar
+ * https://www.playframework.com/documentation/2.5.x/JavaLogging#toolbar
+ */
 public class EventoApostaRepository implements Repository<Long, EventoAposta>{
 
     JPAApi jpaApi;
+
+    final Logger.ALogger logger = Logger.of(this.getClass());
 
     @Inject
     public EventoApostaRepository(JPAApi jpaApi) {
@@ -56,10 +64,12 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
         Optional<EventoAposta> eventoApostaOptional = buscar(tenant, id);
         if(!eventoApostaOptional.isPresent())
             throw new NoResultException("Aposta não encontrada");
+
         EventoAposta eventoAposta = eventoApostaOptional.get();
         eventoAposta.setPermitir(ea.isPermitir());
         eventoAposta.setTaxas(ea.getTaxas());
         em.merge(eventoAposta);
+        logger.info("atualização: eventoAposta={}", eventoAposta);
         return CompletableFuture.completedFuture(eventoAposta);
     }
 
@@ -69,9 +79,17 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
         EntityManager em = jpaApi.em();
         eventoAposta.setTenant(tenant.get());
         em.persist(eventoAposta);
+        logger.info("criacao: eventoAposta={}", eventoAposta);
         return CompletableFuture.completedFuture(eventoAposta);
     }
 
+    /**
+     * Um evento aposta nunca é excluido. Ele é apenas cancelado.
+     * TODO: implementar cancelar ao invés de excluir
+     * @param tenant
+     * @param id
+     * @return
+     */
     @Override
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
 
