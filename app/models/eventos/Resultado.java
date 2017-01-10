@@ -1,5 +1,7 @@
 package models.eventos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -25,6 +27,14 @@ public class Resultado implements Serializable{
     @OneToOne
     @JoinColumn(name = "time_id")
     private Time time;
+
+    @JsonIgnore
+    @Transient
+    private final String INTERVALO = "IN";
+
+    @JsonIgnore
+    @Transient
+    private final String FINAL = "FN";
 
     public Resultado() {
 
@@ -74,6 +84,16 @@ public class Resultado implements Serializable{
         this.time = time;
     }
 
+    public boolean isMomentoIntervalo() {
+
+        return getMomento() == INTERVALO;
+    }
+
+    public boolean isMomentoFinal() {
+
+        return getMomento() == FINAL;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -91,4 +111,5 @@ public class Resultado implements Serializable{
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
     }
+
 }

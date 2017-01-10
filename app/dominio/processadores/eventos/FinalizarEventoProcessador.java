@@ -29,18 +29,17 @@ public class FinalizarEventoProcessador implements Processador<Tenant, Evento>{
     public CompletableFuture<Evento> executar(Tenant tenant, Evento evento, List<Validador> validadores) throws ValidadorExcpetion {
 
 
-        for (Validador validador : validadores) {
-            validador.validate(evento);
-        }
-
-
         List<Resultado> resultados = evento.getResultados();
         for(Resultado result : resultados){
             result.setTenant(tenant.get());
         }
+
+        for (Validador validador : validadores) {
+            validador.validate(evento);
+        }
+
         try{
          eventoRepository.atualizar(tenant, evento.getId(), evento);
-
         }
         catch(NoResultException e){
             throw new ValidadorExcpetion(e.getMessage());

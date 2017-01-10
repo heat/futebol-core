@@ -61,8 +61,8 @@ public class EventoRepository implements Repository<Long, Evento>{
         eventoEntity.setCasa(e.getCasa());
         eventoEntity.setFora(e.getFora());
         eventoEntity.setDataEvento(e.getDataEvento());
-        em.persist(evento.get());
-        return CompletableFuture.completedFuture(evento.get());
+        em.merge(eventoEntity);
+        return CompletableFuture.completedFuture(eventoEntity);
     }
 
     @Override

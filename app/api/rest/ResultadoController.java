@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.FinalizarEventoProcessador;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Evento;
 import models.eventos.Resultado;
 import org.pac4j.play.java.Secure;
@@ -18,8 +20,6 @@ import play.mvc.Result;
 import repositories.EventoRepository;
 import repositories.ResultadoRepository;
 import repositories.ValidadorRepository;
-import dominio.validadores.Validador;
-import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -71,7 +71,10 @@ public class ResultadoController extends ApplicationController {
         }
 
         Evento evento = eventoOptional.get();
-        evento.setResultados(resultados);
+        for(Resultado resultado: resultados){
+            evento.addResultado(resultado);
+        }
+
         try {
             finalizarEventoProcessador.executar(getTenant(),evento, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {

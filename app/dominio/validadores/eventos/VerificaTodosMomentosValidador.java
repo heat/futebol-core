@@ -26,7 +26,6 @@ public class VerificaTodosMomentosValidador extends Validador<Evento>{
     @Override
     public void validate(Evento evento) throws ValidadorExcpetion {
 
-/*
         Optional<Evento> result = Optional.ofNullable(evento);
         if(!result.isPresent()){
             throw new NoResultException("Evento não encontrado");
@@ -49,7 +48,6 @@ public class VerificaTodosMomentosValidador extends Validador<Evento>{
             if(resultado.getTime().getId() == evento.getCasa().getId()
                     && resultado.isMomentoIntervalo()) casaIntervalo = true;
 
-
             if(resultado.getTime().getId() == evento.getFora().getId()
                     && resultado.isMomentoFinal()) foraIntervalo = true;
 
@@ -62,7 +60,6 @@ public class VerificaTodosMomentosValidador extends Validador<Evento>{
 
         if(!casaIntervalo || !foraIntervalo || !casaFinal || !foraFinal)
             throw new ValidadorExcpetion("Resultado inválido");
-*/
     }
 
 

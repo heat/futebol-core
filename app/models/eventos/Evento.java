@@ -109,6 +109,10 @@ public class Evento implements Serializable{
         this.resultados = resultados;
     }
 
+    public void addResultado(Resultado resultado){
+        this.resultados.add(resultado);
+    }
+
     public List<EventoAposta> getEventoApostas() {
         return eventoApostas;
     }
