@@ -32,7 +32,7 @@ public class UsuarioController extends Controller {
             token = generator.generate(profile.get());
             System.out.println(profile.get().toString());
         }
-        return ok("token:" + token);
+        return ok("access_token : " + token);
     }
 
     @Secure(clients = "headerClient")

@@ -1,10 +1,14 @@
 package models.bilhetes;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.serializacoes.CalendarDeserializer;
+import models.serializacoes.CalendarSerializer;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.List;
 
 @Entity
 @Table(name = "bilhetes")
@@ -23,7 +27,7 @@ public class Bilhete implements Serializable{
     private String codigo;
 
     @Column(name = "status")
-    private char status;
+    private String status;
 
     @Column(name = "cliente")
     private String cliente;
@@ -42,16 +46,17 @@ public class Bilhete implements Serializable{
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
 
+/*    @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "bilhete_id")
-    private List<Palpite> palpites;
+    private List<Palpite> palpites;*/
 
     public Bilhete() {
 
     }
 
-    public Bilhete(Long tenant, String codigo, char status, String cliente, BigDecimal valorAposta,
-                   BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
+    public Bilhete(Long tenant, String codigo, String status, String cliente, BigDecimal valorAposta,
+                   BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm) {
 
         this.tenant = tenant;
         this.codigo = codigo;
@@ -61,7 +66,7 @@ public class Bilhete implements Serializable{
         this.valorPremio = valorPremio;
         this.criadoEm = criadoEm;
         this.alteradoEm = alteradoEm;
-        this.palpites = palpites;
+//        this.palpites = palpites;
     }
 
     public Long getId() {
@@ -84,11 +89,11 @@ public class Bilhete implements Serializable{
         this.codigo = codigo;
     }
 
-    public char getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -116,22 +121,27 @@ public class Bilhete implements Serializable{
         this.valorPremio = valorPremio;
     }
 
+    @JsonDeserialize(using= CalendarDeserializer.class)
     public Calendar getCriadoEm() {
         return criadoEm;
     }
 
+    @JsonSerialize(using= CalendarSerializer.class)
     public void setCriadoEm(Calendar criadoEm) {
         this.criadoEm = criadoEm;
     }
 
+    @JsonDeserialize(using= CalendarDeserializer.class)
     public Calendar getAlteradoEm() {
         return alteradoEm;
     }
 
+    @JsonSerialize(using= CalendarSerializer.class)
     public void setAlteradoEm(Calendar alteradoEm) {
         this.alteradoEm = alteradoEm;
     }
 
+/*
     public List<Palpite> getPalpites() {
         return palpites;
     }
@@ -139,6 +149,7 @@ public class Bilhete implements Serializable{
     public void setPalpites(List<Palpite> palpites) {
         this.palpites = palpites;
     }
+*/
 
     @Override
     public boolean equals(Object o) {

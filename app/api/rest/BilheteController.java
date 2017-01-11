@@ -7,6 +7,7 @@ import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.bilhetes.Bilhete;
+import models.seguranca.Usuario;
 import models.vo.Chave;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
@@ -17,6 +18,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.BilheteRepository;
+import repositories.UsuarioRepository;
 import repositories.ValidadorRepository;
 
 import javax.persistence.NoResultException;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class BilheteController extends ApplicationController {
 
     BilheteRepository bilheteRepository;
+    UsuarioRepository usuarioRepository;
     BilheteInserirProcessador inserirProcessador;
     BilheteAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
@@ -33,10 +36,11 @@ public class BilheteController extends ApplicationController {
     @Inject
 
     public BilheteController(PlaySessionStore playSessionStore, BilheteRepository bilheteRepository,
-                             BilheteInserirProcessador inserirProcessador, BilheteAtualizarProcessador atualizarProcessador,
-                             ValidadorRepository validadorRepository) {
+                             BilheteInserirProcessador inserirProcessador,
+                             UsuarioRepository usuarioRepository, BilheteAtualizarProcessador atualizarProcessador, ValidadorRepository validadorRepository) {
         super(playSessionStore);
         this.bilheteRepository = bilheteRepository;
+        this.usuarioRepository = usuarioRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
@@ -46,16 +50,20 @@ public class BilheteController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir() {
+    public Result inserir(Long idUsuario) {
 
         Bilhete bilhete = Json.fromJson(Controller.request()
                 .body()
                 .asJson(), Bilhete.class);
 
+        Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), idUsuario);
+        if(!usuarioOptional.isPresent())
+            return notFound("Usuário do bilhete não encontrado");
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
-
+        Usuario usuario = usuarioOptional.get();
+        usuario.addBilhete(bilhete);
         try {
-            inserirProcessador.executar(getTenant(), bilhete, validadores);
+            inserirProcessador.executar(getTenant(), usuario, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
@@ -79,7 +87,7 @@ public class BilheteController extends ApplicationController {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        return ok("Bilhete atualizada! ");
+        return ok("Bilhete atualizado! ");
     }
 
     @Secure(clients = "headerClient")

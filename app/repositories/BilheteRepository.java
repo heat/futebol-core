@@ -56,12 +56,7 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
             throw new NoResultException("Bilhete não encontrado");
         Bilhete blt = bilhete.get();
         blt.setAlteradoEm(b.getAlteradoEm());
-        blt.setCliente(b.getCliente());
-        blt.setCodigo(b.getCodigo());
-        blt.setPalpites(b.getPalpites());
         blt.setStatus(b.getStatus());
-        blt.setValorAposta(b.getValorAposta());
-        blt.setValorPremio(b.getValorPremio());
         em.merge(blt);
         return CompletableFuture.completedFuture(blt);
     }

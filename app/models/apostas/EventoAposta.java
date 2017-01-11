@@ -25,11 +25,11 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     private boolean permitir;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "evento_apostas_id")
+    @JoinColumn(name = "evento_aposta_id")
     private List<Taxa> taxas;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "evento_apostas_id")
+    @JoinColumn(name = "evento_aposta_id")
     private List<Palpite> palpites;
 
     public EventoAposta() {

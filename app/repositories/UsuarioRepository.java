@@ -30,12 +30,32 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
 
     @Override
     public Optional<Usuario> buscar(Tenant tenant, Long id) {
-        return null;
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.idTenant = :idTenant and u.id = :id", Usuario.class);
+            query.setParameter("idTenant", tenant.get());
+            query.setParameter("id", id);
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @Override
-    public CompletableFuture<Usuario> atualizar(Tenant tenant, Long id, Usuario updetable) {
-        return null;
+    public CompletableFuture<Usuario> atualizar(Tenant tenant, Long id, Usuario us) {
+
+        EntityManager em = jpaApi.em();
+        Optional<Usuario> usuario = buscar(tenant, id);
+        if(!usuario.isPresent())
+            throw new NoResultException("Evento não encontrado");
+        Usuario usuarioEntity = usuario.get();
+        usuarioEntity.setBilhetes(us.getBilhetes());
+        em.merge(usuarioEntity);
+        return CompletableFuture.completedFuture(usuarioEntity);
     }
 
     @Override

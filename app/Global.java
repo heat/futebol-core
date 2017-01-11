@@ -1,16 +1,10 @@
-import dominio.processadores.eventos.CampeonatoInserirProcessador;
-import dominio.processadores.eventos.EventoAtualizarProcessador;
-import dominio.processadores.eventos.EventoInserirProcessador;
-import dominio.processadores.eventos.TimeInserirProcessador;
+import dominio.processadores.eventos.*;
+import dominio.validadores.eventos.*;
 import models.eventos.Time;
 import models.vo.Tenant;
 import play.Application;
 import play.GlobalSettings;
 import play.db.jpa.JPAApi;
-import dominio.validadores.eventos.CampeonatoNomeValidator;
-import dominio.validadores.eventos.EventoDataValidador;
-import dominio.validadores.eventos.EventoTimesDiferenteValidador;
-import dominio.validadores.eventos.TimeStringValidador;
 
 import javax.persistence.EntityManager;
 
@@ -36,13 +30,20 @@ public class Global extends GlobalSettings {
                     null,
                     ".+"); // utilizamos o campo string para montar um Regex de validação
             em.persist(campeonatoNomeValidator);
-            TimeStringValidador timeStringValidador = new TimeStringValidador(Tenant.SYSBET.get(),
+            TimeStringValidador timeInserirStringValidador = new TimeStringValidador(Tenant.SYSBET.get(),
                     TimeInserirProcessador.REGRA,
                     null,
                     true,
                     null,
                     ".+");
-            em.persist(timeStringValidador);
+            em.persist(timeInserirStringValidador);
+            TimeStringValidador timeAtualizarStringValidador = new TimeStringValidador(Tenant.SYSBET.get(),
+                    TimeAtualizarProcessador.REGRA,
+                    null,
+                    true,
+                    null,
+                    ".+");
+            em.persist(timeAtualizarStringValidador);
             EventoDataValidador eventoInserirDataValidador = new EventoDataValidador(Tenant.SYSBET.get(),
                     // Esse é um exemplo onde a mesma regra está para dois processadores diferentes
                     EventoInserirProcessador.REGRA,
@@ -67,6 +68,14 @@ public class Global extends GlobalSettings {
                     null,
                     null);
             em.persist(eventoTimesDiferenteValidador);
+            VerificaTodosMomentosValidador verificaTodosMomentosValidador =
+                    new VerificaTodosMomentosValidador(Tenant.SYSBET.get(),
+                    FinalizarEventoProcessador.REGRA,
+                    null,
+                    true,
+                    null,
+                    null);
+            em.persist(verificaTodosMomentosValidador);
             return jpaApi;
         });
     }

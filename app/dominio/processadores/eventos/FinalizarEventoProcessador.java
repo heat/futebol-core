@@ -28,7 +28,6 @@ public class FinalizarEventoProcessador implements Processador<Tenant, Evento>{
     @Override
     public CompletableFuture<Evento> executar(Tenant tenant, Evento evento, List<Validador> validadores) throws ValidadorExcpetion {
 
-
         List<Resultado> resultados = evento.getResultados();
         for(Resultado result : resultados){
             result.setTenant(tenant.get());

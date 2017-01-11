@@ -1,5 +1,7 @@
 package models.seguranca;
 
+import models.bilhetes.Bilhete;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -35,6 +37,11 @@ public class Usuario implements Serializable{
     @OneToOne(mappedBy = "usuario")
     private Perfil perfil;
 
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id")
+    private List<Bilhete> bilhetes;
+
     public Usuario(){
 
     }
@@ -47,10 +54,6 @@ public class Usuario implements Serializable{
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getIdTenant() {
@@ -97,6 +100,17 @@ public class Usuario implements Serializable{
         return getPapel().getPermissoes();
     }
 
+    public List<Bilhete> getBilhetes() {
+        return bilhetes;
+    }
+
+    public void setBilhetes(List<Bilhete> bilhetes) {
+        this.bilhetes = bilhetes;
+    }
+
+    public void addBilhete(Bilhete bilhete){
+        this.bilhetes.add(bilhete);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

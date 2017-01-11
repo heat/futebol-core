@@ -2,17 +2,13 @@ package models.bilhetes;
 
 import models.apostas.EventoAposta;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 
-@Embeddable
 public class PalpitePK implements Serializable{
 
-    @Column(name = "bilhete_id")
+
     private Bilhete bilhete;
 
-    @Column(name = "evento_aposta_id")
     private EventoAposta eventoAposta;
 
     public PalpitePK() {

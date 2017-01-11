@@ -1,18 +1,26 @@
 package models.bilhetes;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import models.apostas.EventoAposta;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "palpites")
+@IdClass(PalpitePK.class)
 public class Palpite implements Serializable{
 
-    @EmbeddedId
-    private PalpitePK id;
+
+    @Id
+    @OneToOne
+    @JoinColumn(name = "bilhete_id")
+    private Bilhete bilhete;
+
+    @Id
+    @OneToOne
+    @JoinColumn(name = "evento_aposta_id")
+    private EventoAposta eventoAposta;
 
     @Column(name = "tenant_id")
     private Long tenant;
@@ -34,8 +42,20 @@ public class Palpite implements Serializable{
         this.status = status;
     }
 
-    public PalpitePK getId() {
-        return id;
+    public Bilhete getBilhete() {
+        return bilhete;
+    }
+
+    public void setBilhete(Bilhete bilhete) {
+        this.bilhete = bilhete;
+    }
+
+    public EventoAposta getEventoAposta() {
+        return eventoAposta;
+    }
+
+    public void setEventoAposta(EventoAposta eventoAposta) {
+        this.eventoAposta = eventoAposta;
     }
 
     public Long getTenant() {
@@ -69,13 +89,16 @@ public class Palpite implements Serializable{
 
         Palpite palpite = (Palpite) o;
 
-        if (id != null ? !id.equals(palpite.id) : palpite.id != null) return false;
+        if (bilhete != null ? !bilhete.equals(palpite.bilhete) : palpite.bilhete != null) return false;
+        if (eventoAposta != null ? !eventoAposta.equals(palpite.eventoAposta) : palpite.eventoAposta != null)
+            return false;
         return tenant != null ? tenant.equals(palpite.tenant) : palpite.tenant == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = bilhete != null ? bilhete.hashCode() : 0;
+        result = 31 * result + (eventoAposta != null ? eventoAposta.hashCode() : 0);
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
     }
