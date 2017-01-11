@@ -10,7 +10,7 @@ public class Odd implements Serializable{
     @Id
     @SequenceGenerator(name="odds_odd_id_seq", sequenceName = "odds_odd_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "odds_odd_id_seq")
-    @Column(name = "odds_odd_id",updatable = false)
+    @Column(name = "odd_id",updatable = false)
     private Long id;
 
     @Column(name = "nome")

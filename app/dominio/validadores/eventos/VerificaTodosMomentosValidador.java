@@ -27,16 +27,13 @@ public class VerificaTodosMomentosValidador extends Validador<Evento>{
     public void validate(Evento evento) throws ValidadorExcpetion {
 
         Optional<Evento> result = Optional.ofNullable(evento);
-        if(!result.isPresent()){
+        if(!result.isPresent())
             throw new NoResultException("Evento não encontrado");
-        }
+
         List<Resultado> resultados =  evento.getResultados();
 
-        Optional<List<Resultado>> listaResultados = Optional.ofNullable(evento.getResultados());
-
-        if(!listaResultados.isPresent()){
+        if(!Optional.ofNullable(resultados).isPresent())
             throw new NoResultException("Resultado não encontrado");
-        }
 
         boolean casaIntervalo = false;
         boolean foraIntervalo = false;
@@ -58,8 +55,11 @@ public class VerificaTodosMomentosValidador extends Validador<Evento>{
                     && resultado.isMomentoFinal()) foraFinal = true;
         }
 
-        if(!casaIntervalo || !foraIntervalo || !casaFinal || !foraFinal)
+        if(!casaIntervalo || !foraIntervalo || !casaFinal || !foraFinal){
+            resultados.clear();
             throw new ValidadorExcpetion("Resultado inválido");
+        }
+
     }
 
 

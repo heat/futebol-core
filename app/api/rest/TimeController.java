@@ -3,12 +3,10 @@ package api.rest;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.TimeAtualizarProcessador;
 import dominio.processadores.eventos.TimeInserirProcessador;
+import dominio.validadores.Validador;
+import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Time;
 import models.vo.Chave;
-import models.vo.Tenant;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.play.PlayWebContext;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -19,8 +17,6 @@ import play.mvc.Result;
 import repositories.EventoRepository;
 import repositories.TimeRepository;
 import repositories.ValidadorRepository;
-import dominio.validadores.Validador;
-import dominio.validadores.exceptions.ValidadorExcpetion;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -73,7 +69,6 @@ public class TimeController extends ApplicationController{
                 .body()
                 .asJson(), Time.class);
         List<Validador> validadores = validadorRepository.todos(getTenant(), TimeAtualizarProcessador.REGRA);
-        atualizarProcessador = new TimeAtualizarProcessador(timeRepository);
 
         try {
             Chave chave = Chave.of(getTenant(), id);

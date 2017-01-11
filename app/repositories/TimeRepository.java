@@ -80,7 +80,7 @@ public class TimeRepository implements  Repository<Long, Time>{
         EntityManager em = jpaApi.em();
         Optional<Time> time = buscar(tenant, id);
         if(!time.isPresent())
-            throw new NoResultException("Campeonato não encontrado");
+            throw new NoResultException("Time não encontrado");
         em.remove(time.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
