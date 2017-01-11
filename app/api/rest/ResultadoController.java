@@ -76,7 +76,17 @@ public class ResultadoController extends ApplicationController {
         }
 
         try {
-            finalizarEventoProcessador.executar(getTenant(),evento, validadores);
+            AtualizarPalpitesProcessador atualizarPalpitesProcessador = null;
+            AtualizaBilhetesFinalizacaoPartidaProcessador atualizaBilhetesFinalizacaoPartidaProcessador = null;
+            finalizarEventoProcessador.executar(getTenant(),evento, validadores)
+                .thenApply((eventoFinalizado) -> {
+                    // simula que estou atualizando todos os palpites
+                    atualizarPalpitesProcessador.executar(getTenant(), eventoFinalizado, validadoresPalpites);
+                    return eventoFinalizado;
+                }).thenApply((eventoFinalizado) -> {
+                    atualizaBilhetesFinalizacaoPartidaProcessador.executar(getTenant(), eventoFinalizado, validadoresBilhete);
+                    return eventoFinalizado;
+            });
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }

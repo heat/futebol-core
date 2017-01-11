@@ -1,6 +1,7 @@
 package models.apostas;
 
 import models.bilhetes.Palpite;
+import models.eventos.Evento;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,7 +9,8 @@ import java.util.List;
 
 @Entity
 @Table( name = "evento_apostas")
-public class EventoAposta implements Serializable{
+// TODO: colocar stauts em um evento aposta
+public class EventoAposta implements Apostavel<Evento>, Serializable{
 
     @Id
     @SequenceGenerator(name="eventos_apostas_id_seq", sequenceName = "eventos_apostas_id_seq", allocationSize = 1)
