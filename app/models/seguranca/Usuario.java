@@ -39,7 +39,7 @@ public class Usuario implements Serializable{
 
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false, updatable = true, insertable = true)
     private List<Bilhete> bilhetes;
 
     public Usuario(){
