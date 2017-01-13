@@ -84,13 +84,13 @@ public class Resultado implements Serializable{
         this.time = time;
     }
 
+    @JsonIgnore
     public boolean isMomentoIntervalo() {
-
         return getMomento() == INTERVALO;
     }
 
+    @JsonIgnore
     public boolean isMomentoFinal() {
-
         return getMomento() == FINAL;
     }
 

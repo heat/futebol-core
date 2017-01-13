@@ -1,5 +1,6 @@
 package models.bilhetes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.serializacoes.CalendarDeserializer;
@@ -9,11 +10,43 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 
 @Entity
 @Table(name = "bilhetes")
 public class Bilhete implements Serializable{
 
+
+    public enum Status {
+
+        /**
+         * Situacao em que o bilhete ainda não foi atualizado após o fim da partida
+         */
+        ABERTO("ABERTO"),
+        /**
+         * Todos os palpites do bilhete estão corretos
+         */
+        PREMIADO("PREMIADO"),
+        /**
+         * Pelo menos um palpite do bilhete está errado
+         */
+        ERRADO("ERRADO"),
+        /**
+         * O prêmio do bilhete foi pago
+         */
+        PAGO("PAGO"),
+        /**
+         * Desistiram do bilhete antes do início (?) da partida
+         */
+        CANCELADO("CANCELADO");
+
+        private String string;
+
+        Status(String string) {
+
+            this.string = string;
+        }
+    }
     @Id
     @SequenceGenerator(name="bilhetes_bilhete_id_seq", sequenceName = "bilhetes_bilhete_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bilhetes_bilhete_id_seq")
@@ -27,7 +60,7 @@ public class Bilhete implements Serializable{
     private String codigo;
 
     @Column(name = "status")
-    private String status;
+    private Status status;
 
     @Column(name = "cliente")
     private String cliente;
@@ -46,17 +79,17 @@ public class Bilhete implements Serializable{
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
 
-/*    @JsonIgnore
+    @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "bilhete_id")
-    private List<Palpite> palpites;*/
+    private List<Palpite> palpites;
 
     public Bilhete() {
 
     }
 
-    public Bilhete(Long tenant, String codigo, String status, String cliente, BigDecimal valorAposta,
-                   BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm) {
+    public Bilhete(Long tenant, String codigo, Status status, String cliente, BigDecimal valorAposta,
+                   BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
 
         this.tenant = tenant;
         this.codigo = codigo;
@@ -66,7 +99,7 @@ public class Bilhete implements Serializable{
         this.valorPremio = valorPremio;
         this.criadoEm = criadoEm;
         this.alteradoEm = alteradoEm;
-//        this.palpites = palpites;
+        this.palpites = palpites;
     }
 
     public Long getId() {
@@ -89,11 +122,11 @@ public class Bilhete implements Serializable{
         this.codigo = codigo;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -141,7 +174,6 @@ public class Bilhete implements Serializable{
         this.alteradoEm = alteradoEm;
     }
 
-/*
     public List<Palpite> getPalpites() {
         return palpites;
     }
@@ -149,7 +181,6 @@ public class Bilhete implements Serializable{
     public void setPalpites(List<Palpite> palpites) {
         this.palpites = palpites;
     }
-*/
 
     @Override
     public boolean equals(Object o) {

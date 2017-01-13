@@ -3,6 +3,9 @@ package repositories;
 
 import com.google.inject.Inject;
 import models.apostas.EventoAposta;
+import models.apostas.Taxa;
+import models.bilhetes.Bilhete;
+import models.bilhetes.Palpite;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.Logger;
@@ -99,5 +102,85 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
             throw new NoResultException("Aposta não encontrada");
         em.remove(eventoApostaOptional.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
+    }
+
+    public Optional<List<Palpite>> buscarPalpites(Tenant tenant, Long idEventoAposta){
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Palpite> query =
+                    em.createQuery( "SELECT palpites " +
+                                    "FROM EventoAposta eventoAposta " +
+                                    "JOIN eventoAposta.taxas as taxas " +
+                                    "JOIN taxas.palpites as palpites "+
+                                    "WHERE ea.tenant = :tenant and ea.id = :id",
+                                    Palpite.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("id", idEventoAposta);
+
+            return Optional.ofNullable(query.getResultList());
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<List<Taxa>> buscarTaxas(Tenant tenant, Long idEventoAposta){
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Taxa> query =
+                    em.createQuery( "SELECT palpites " +
+                                    "FROM EventoAposta eventoAposta " +
+                                    "JOIN eventoAposta.taxas as taxas " +
+                                    "WHERE ea.tenant = :tenant and ea.id = :id",
+                                    Taxa.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("id", idEventoAposta);
+
+            return Optional.ofNullable(query.getResultList());
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<List<Bilhete>> buscarBilhetesPorEvento(Tenant tenant, Long idEventoAposta){
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Bilhete> query =
+                    em.createQuery( "SELECT b " +
+                                    "FROM Bilhete b " +
+                                    "JOIN b.palpites as p " +
+                                    "WHERE p.eventoAposta.id = :idEventoAposta and b.tenant = :tenant and p.tenant = :tenant and p.eventoAposta.tenant = :tenant",
+                            Bilhete.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("id", idEventoAposta);
+
+            return Optional.ofNullable(query.getResultList());
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Long> buscarIdBilhetePorEvento(Tenant tenant, Long idEventoAposta){
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Long> query =
+                    em.createQuery( "SELECT b.id " +
+                                    "FROM Bilhete b " +
+                                    "JOIN b.palpites as p " +
+                                    "WHERE p.eventoAposta.id = :idEventoAposta and b.tenant = :tenant and p.tenant = :tenant and p.eventoAposta.tenant = :tenant",
+                            Long.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("id", idEventoAposta);
+            return Optional.ofNullable(query.getSingleResult());
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 }

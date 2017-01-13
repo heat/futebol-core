@@ -33,9 +33,9 @@ public class FinalizarEventoProcessador implements Processador<Tenant, Evento>{
             result.setTenant(tenant.get());
         }
 
-        for (Validador validador : validadores) {
+/*        for (Validador validador : validadores) {
             validador.validate(evento);
-        }
+        }*/
 
         try{
          eventoRepository.atualizar(tenant, evento.getId(), evento);

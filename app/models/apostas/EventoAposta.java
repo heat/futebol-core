@@ -71,6 +71,14 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
         this.taxas = taxas;
     }
 
+    public List<Palpite> getPalpites() {
+        return palpites;
+    }
+
+    public void setPalpites(List<Palpite> palpites) {
+        this.palpites = palpites;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,6 +1,7 @@
 package models.eventos;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.apostas.EventoAposta;
@@ -44,23 +45,23 @@ public class Evento implements Serializable{
     @JoinColumn(name="evento_id")
     private List<Resultado> resultados;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="evento_id")
-    private List<EventoAposta> eventoApostas;
+    private EventoAposta eventoAposta;
 
     public Evento() {
 
     }
 
     public Evento(Long tenant, Time casa, Time fora, Calendar dataEvento,
-                  List<Resultado> resultados, List<EventoAposta> eventoApostas) {
+                  List<Resultado> resultados, EventoAposta eventoAposta) {
 
         this.tenant = tenant;
         this.casa = casa;
         this.fora = fora;
         this.dataEvento = dataEvento;
         this.resultados = resultados;
-        this.eventoApostas = eventoApostas;
+        this.eventoAposta = eventoAposta;
     }
 
     public Long getId() {
@@ -113,12 +114,13 @@ public class Evento implements Serializable{
         this.resultados.add(resultado);
     }
 
-    public List<EventoAposta> getEventoApostas() {
-        return eventoApostas;
+    @JsonIgnore
+    public EventoAposta getEventoAposta() {
+        return eventoAposta;
     }
 
-    public void setEventoApostas(List<EventoAposta> eventoApostas) {
-        this.eventoApostas = eventoApostas;
+    public void setEventoAposta(EventoAposta eventoAposta) {
+        this.eventoAposta = eventoAposta;
     }
 
     @Override

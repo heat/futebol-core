@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.ApplicationController;
+import dominio.processadores.apostas.AtualizarBilhetesFinalizacaoPartidaProcessador;
+import dominio.processadores.apostas.AtualizarPalpitesProcessador;
 import dominio.processadores.eventos.FinalizarEventoProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Evento;
 import models.eventos.Resultado;
+import models.vo.Chave;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -33,16 +36,22 @@ public class ResultadoController extends ApplicationController {
     FinalizarEventoProcessador finalizarEventoProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
+    AtualizarPalpitesProcessador atualizarPalpitesProcessador;
+    AtualizarBilhetesFinalizacaoPartidaProcessador atualizaBilhetesFinalizacaoPartidaProcessador;
 
     @Inject
     public ResultadoController(ResultadoRepository resultadoRepository, PlaySessionStore playSessionStore,
                                FinalizarEventoProcessador finalizarEventoProcessador,
-                               ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
+                               ValidadorRepository validadorRepository, EventoRepository eventoRepository,
+                               AtualizarPalpitesProcessador atualizarPalpitesProcessador,
+                               AtualizarBilhetesFinalizacaoPartidaProcessador atualizaBilhetesFinalizacaoPartidaProcessador) {
         super(playSessionStore);
         this.resultadoRepository = resultadoRepository;
         this.finalizarEventoProcessador = finalizarEventoProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
+        this.atualizarPalpitesProcessador = atualizarPalpitesProcessador;
+        this.atualizaBilhetesFinalizacaoPartidaProcessador = atualizaBilhetesFinalizacaoPartidaProcessador;
 
     }
 
@@ -59,38 +68,43 @@ public class ResultadoController extends ApplicationController {
         List<Resultado> resultados = mapper.readValue(json.toString(), new TypeReference<List<Resultado>>() { });
 
         if(!Optional.ofNullable(resultados).isPresent())
-        {
             return notFound("Lista de resultados não pode ser vazia!");
-        }
 
-        List<Validador> validadores = validadorRepository.todos(getTenant(), FinalizarEventoProcessador.REGRA);
+        List<Validador> validadoresEventos = validadorRepository.todos(getTenant(), FinalizarEventoProcessador.REGRA);
+        List<Validador> validadoresPalpites = validadorRepository.todos(getTenant(), AtualizarPalpitesProcessador.REGRA);
+        List<Validador> validadoresBilhetes = validadorRepository.todos(getTenant(), AtualizarPalpitesProcessador.REGRA);
 
         Optional<Evento> eventoOptional = eventoRepository.buscar(getTenant(), idEvento);
-        if(!eventoOptional.isPresent()){
+        if(!eventoOptional.isPresent())
             return notFound("Evento não encontrado");
-        }
 
         Evento evento = eventoOptional.get();
         for(Resultado resultado: resultados){
             evento.addResultado(resultado);
         }
-
+        Chave chave = Chave.of(getTenant(), idEvento);
         try {
-            AtualizarPalpitesProcessador atualizarPalpitesProcessador = null;
-            AtualizaBilhetesFinalizacaoPartidaProcessador atualizaBilhetesFinalizacaoPartidaProcessador = null;
-            finalizarEventoProcessador.executar(getTenant(),evento, validadores)
+
+            finalizarEventoProcessador.executar(getTenant(), evento, validadoresEventos)
                 .thenApply((eventoFinalizado) -> {
-                    // simula que estou atualizando todos os palpites
-                    atualizarPalpitesProcessador.executar(getTenant(), eventoFinalizado, validadoresPalpites);
+                    // simula que estou atualizando todos os palpites,informando quais bilhetes acertaram ou erraram
+                    try {
+                        atualizarPalpitesProcessador.executar( chave, eventoFinalizado, validadoresPalpites);
+                    } catch (ValidadorExcpetion validadorExcpetion) {
+                        validadorExcpetion.printStackTrace();
+                    }
                     return eventoFinalizado;
                 }).thenApply((eventoFinalizado) -> {
-                    atualizaBilhetesFinalizacaoPartidaProcessador.executar(getTenant(), eventoFinalizado, validadoresBilhete);
-                    return eventoFinalizado;
+                try {
+                    atualizaBilhetesFinalizacaoPartidaProcessador.executar(chave, eventoFinalizado, validadoresBilhetes);
+                } catch (ValidadorExcpetion validadorExcpetion) {
+                    validadorExcpetion.printStackTrace();
+                }
+                return eventoFinalizado;
             });
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-
         return created(Json.toJson(resultados));
     }
 

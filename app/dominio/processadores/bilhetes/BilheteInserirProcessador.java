@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.bilhetes.Bilhete;
 import models.seguranca.Usuario;
 import models.vo.Tenant;
 import repositories.UsuarioRepository;
@@ -27,6 +28,9 @@ public class BilheteInserirProcessador implements Processador<Tenant, Usuario>{
     @Override
     public CompletableFuture<Usuario> executar(Tenant tenant, Usuario usuario, List<Validador> validadores) throws ValidadorExcpetion {
 
+        for(Bilhete bilhete : usuario.getBilhetes()){
+            bilhete.setTenant(tenant.get());
+        }
 
         usuarioRepository.atualizar(tenant, usuario.getId(), usuario);
         return CompletableFuture.completedFuture(usuario);

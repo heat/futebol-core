@@ -1,5 +1,6 @@
 package models.bilhetes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import models.apostas.EventoAposta;
 
 import javax.persistence.*;
@@ -11,6 +12,30 @@ import java.math.BigDecimal;
 @IdClass(PalpitePK.class)
 public class Palpite implements Serializable{
 
+    public enum Status {
+
+        /**
+         * Situacao em que o palpite ainda não foi atualizado após o fim da partida
+         */
+        ABERTO("ABERTO"),
+        /**
+         * O palpite está correto
+         */
+        CERTO("CERTO"),
+        /**
+         * O palpite está errado
+         */
+        ERRADO("ERRADO"),
+        /**
+         * Desistiram do palpite antes do início (?) da partida
+         */
+        CANCELADO("CANCELADO");
+
+        private String string;
+        Status(String string) {
+            this.string = string;
+        }
+    }
 
     @Id
     @OneToOne
@@ -29,19 +54,21 @@ public class Palpite implements Serializable{
     private BigDecimal taxa;
 
     @Column(name = "status")
-    private char status;
+    private Status status;
 
     public Palpite() {
 
     }
 
-    public Palpite(Long tenant, BigDecimal taxa, char status) {
+    public Palpite(Long tenant, BigDecimal taxa, Status status) {
 
         this.tenant = tenant;
         this.taxa = taxa;
         this.status = status;
+
     }
 
+    @JsonIgnore
     public Bilhete getBilhete() {
         return bilhete;
     }
@@ -50,6 +77,7 @@ public class Palpite implements Serializable{
         this.bilhete = bilhete;
     }
 
+    @JsonIgnore
     public EventoAposta getEventoAposta() {
         return eventoAposta;
     }
@@ -74,11 +102,11 @@ public class Palpite implements Serializable{
         this.taxa = taxa;
     }
 
-    public char getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
