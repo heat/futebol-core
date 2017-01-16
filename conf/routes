@@ -79,9 +79,9 @@ GET      /bilhetes/:id                  api.rest.BilheteController.buscar(id: Lo
 
 POST     /bilhetes/:id                  api.rest.BilheteController.inserir(id: Long)
 
-#POST     /bilhetes/:id                  api.rest.BilheteController.atualizar(id: Long)
+#POST    /bilhetes/:id                  api.rest.BilheteController.atualizar(id: Long)
 
-DELETE   /bilhetes/:id                  api.rest.BilheteController.excluir(id: Long)
+DELETE   /bilhetes/:id                  api.rest.BilheteController.cancelar(id: Long)
 
 # ------- CRUD de usuarios
 

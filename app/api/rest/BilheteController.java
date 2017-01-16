@@ -111,9 +111,8 @@ public class BilheteController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result excluir(Long id) {
+    public Result cancelar(Long id) {
         try {
-            //TODO: o excluir é somente cancelar
             bilheteRepository.excluir(getTenant(), id);
             return noContent(); // padrao para quando exclui uma entidade
         } catch (NoResultException e) {

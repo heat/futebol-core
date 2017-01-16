@@ -45,6 +45,10 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         } catch (NoResultException e) {
             return Optional.empty();
         }
+        catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -74,10 +78,12 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) throws NoResultException{
 
         EntityManager em = jpaApi.em();
-        Optional<Bilhete> bilhete = buscar(tenant, id);
-        if(!bilhete.isPresent())
+        Optional<Bilhete> bilheteOptional = buscar(tenant, id);
+        if(!bilheteOptional.isPresent())
             throw new NoResultException("Bilhete não encontrado");
-        em.remove(bilhete.get());
+        Bilhete bilhete = bilheteOptional.get();
+        bilhete.setStatus(Bilhete.Status.CANCELADO);
+        em.merge(bilhete);
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

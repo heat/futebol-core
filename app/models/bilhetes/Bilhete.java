@@ -58,6 +58,7 @@ public class Bilhete implements Serializable{
     @Column(name = "codigo")
     private String codigo;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
 
