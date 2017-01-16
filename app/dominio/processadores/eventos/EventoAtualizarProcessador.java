@@ -1,12 +1,11 @@
 package dominio.processadores.eventos;
 
 import dominio.processadores.Processador;
-import models.eventos.Evento;
-import models.vo.Chave;
-import models.vo.Tenant;
-import repositories.EventoRepository;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.eventos.Evento;
+import models.vo.Chave;
+import repositories.EventoRepository;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;

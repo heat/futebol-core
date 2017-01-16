@@ -43,9 +43,11 @@ public class Taxa implements Serializable{
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
 
+/*
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "taxa_id")
+    @JoinColumn(name = "taxa_id", nullable = false, updatable = false, insertable = true)
     private List<Palpite> palpites;
+*/
 
     public Taxa() {
 
@@ -60,7 +62,7 @@ public class Taxa implements Serializable{
         this.linha = linha;
         this.criadoEm = criadoEm;
         this.alteradoEm = alteradoEm;
-        this.palpites = palpites;
+       // this.palpites = palpites;
     }
 
     public Long getId() {
@@ -119,6 +121,7 @@ public class Taxa implements Serializable{
         this.alteradoEm = alteradoEm;
     }
 
+/*
     public List<Palpite> getPalpites() {
         return palpites;
     }
@@ -126,6 +129,7 @@ public class Taxa implements Serializable{
     public void setPalpites(List<Palpite> palpites) {
         this.palpites = palpites;
     }
+*/
 
     @Override
     public boolean equals(Object o) {

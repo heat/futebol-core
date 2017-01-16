@@ -1,7 +1,5 @@
 package models.eventos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -22,8 +20,8 @@ public class Campeonato implements Serializable{
     @Column
     private String nome;
 
-    @OneToMany(fetch=FetchType.EAGER)
-    @JoinColumn(name="campeonato_id")
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name="campeonato_id", nullable = false, updatable = true, insertable = true)
     private List<Evento> eventos;
 
     protected Campeonato() {
@@ -53,13 +51,16 @@ public class Campeonato implements Serializable{
         this.tenant = tenant;
     }
 
-    @JsonIgnore
     public List<Evento> getEventos() {
         return eventos;
     }
 
     public void setEventos(List<Evento> eventos) {
         this.eventos = eventos;
+    }
+
+    public void addEvento (Evento evento){
+        this.eventos.add(evento);
     }
 
     @Override

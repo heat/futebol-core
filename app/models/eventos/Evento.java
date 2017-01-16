@@ -4,7 +4,9 @@ package models.eventos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
+import models.apostas.Taxa;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -18,7 +20,7 @@ import java.util.List;
 /*@NamedQueries({
         @NamedQuery(name = "Evento.hasCampeonato", query = "SELECT e FROM Evento e WHERE e.codigo = :codigo ")
 })*/
-public class Evento implements Serializable{
+public class Evento implements Apostavel<EventoAposta>, Serializable{
 
     @Id
     @SequenceGenerator(name = "eventos_evento_id_seq", sequenceName = "eventos_evento_id_seq", allocationSize = 1)
@@ -42,11 +44,11 @@ public class Evento implements Serializable{
     private Calendar dataEvento;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name="evento_id")
+    @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
     private List<Resultado> resultados;
 
     @OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name="evento_id")
+    @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
     private EventoAposta eventoAposta;
 
     public Evento() {
@@ -139,5 +141,10 @@ public class Evento implements Serializable{
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public List<Taxa> getTaxas() {
+        return null;
     }
 }

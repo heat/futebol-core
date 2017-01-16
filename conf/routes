@@ -24,9 +24,9 @@ GET      /eventos                    api.rest.EventoController.todos
 
 GET      /eventos/:id                api.rest.EventoController.buscar(id: Long)
 
-POST     /eventos                    api.rest.EventoController.inserir
+POST     /eventos/inserir/:id        api.rest.EventoController.inserir(id: Long)
 
-POST     /eventos/:id                api.rest.EventoController.atualizar(id: Long)
+POST     /eventos/atualizar/:id      api.rest.EventoController.atualizar(id: Long)
 
 DELETE   /eventos/:id                api.rest.EventoController.excluir(id: Long)
 

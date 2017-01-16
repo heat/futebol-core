@@ -25,12 +25,14 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     private boolean permitir;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "evento_aposta_id")
+    @JoinColumn(name = "evento_aposta_id", nullable = false, updatable = true, insertable = true)
     private List<Taxa> taxas;
 
+/*
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "evento_aposta_id")
+    @JoinColumn(name = "evento_aposta_id", nullable = false, updatable = false, insertable = true)
     private List<Palpite> palpites;
+*/
 
     public EventoAposta() {
     }
@@ -40,7 +42,7 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
         this.tenant = tenant;
         this.permitir = permitir;
         this.taxas = taxas;
-        this.palpites = palpites;
+        //this.palpites = palpites;
     }
 
     public Long getId() {
@@ -71,6 +73,7 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
         this.taxas = taxas;
     }
 
+/*
     public List<Palpite> getPalpites() {
         return palpites;
     }
@@ -78,6 +81,7 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     public void setPalpites(List<Palpite> palpites) {
         this.palpites = palpites;
     }
+*/
 
     @Override
     public boolean equals(Object o) {

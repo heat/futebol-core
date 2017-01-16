@@ -1,12 +1,11 @@
 package models.bilhetes;
 
-import models.apostas.EventoAposta;
-
 import java.io.Serializable;
 
 public class PalpitePK implements Serializable{
 
 
+/*
     private Bilhete bilhete;
 
     private EventoAposta eventoAposta;
@@ -54,6 +53,7 @@ public class PalpitePK implements Serializable{
         result = 31 * result + (eventoAposta != null ? eventoAposta.hashCode() : 0);
         return result;
     }
+*/
 
 
 }

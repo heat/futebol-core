@@ -1,6 +1,5 @@
 package models.bilhetes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.serializacoes.CalendarDeserializer;
@@ -79,10 +78,12 @@ public class Bilhete implements Serializable{
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
 
+/*
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "bilhete_id")
     private List<Palpite> palpites;
+*/
 
     public Bilhete() {
 
@@ -99,7 +100,7 @@ public class Bilhete implements Serializable{
         this.valorPremio = valorPremio;
         this.criadoEm = criadoEm;
         this.alteradoEm = alteradoEm;
-        this.palpites = palpites;
+//        this.palpites = palpites;
     }
 
     public Long getId() {
@@ -174,6 +175,7 @@ public class Bilhete implements Serializable{
         this.alteradoEm = alteradoEm;
     }
 
+/*
     public List<Palpite> getPalpites() {
         return palpites;
     }
@@ -181,6 +183,7 @@ public class Bilhete implements Serializable{
     public void setPalpites(List<Palpite> palpites) {
         this.palpites = palpites;
     }
+*/
 
     @Override
     public boolean equals(Object o) {

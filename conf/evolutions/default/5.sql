@@ -2,6 +2,40 @@
 
 # --- !Ups
 
+
+CREATE SEQUENCE public.bilhetes_bilhete_id_seq;
+
+CREATE TABLE public.bilhetes
+(
+  bilhete_id INTEGER NOT NULL DEFAULT nextval('public.bilhetes_bilhete_id_seq'),
+  tenant_id INTEGER NOT NULL,
+  usuario_id INTEGER NOT NULL,
+  codigo VARCHAR(12) NOT NULL,
+  status character(1) NOT NULL,
+  cliente VARCHAR(50) NOT NULL,
+  valor_aposta DECIMAL(10,2) NOT NULL,
+  valor_premio DECIMAL(10,2) NOT NULL,
+  alterado_em timestamp without time zone NOT NULL,
+  criado_em timestamp without time zone NOT NULL,
+  CONSTRAINT bilhetes_pkey PRIMARY KEY (bilhete_id)
+)
+WITH (
+   OIDS=FALSE
+);
+
+ALTER TABLE public.bilhetes
+  OWNER TO postgres;
+COMMENT ON TABLE public.bilhetes IS 'Tabela de bilhetes';
+
+
+ALTER TABLE public.bilhetes ADD CONSTRAINT usuarios_bilhetes_fk
+FOREIGN KEY (usuario_id)
+REFERENCES public.usuarios (usuario_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+
 CREATE TABLE public.palpites
 (
   bilhete_id INTEGER NOT NULL,
@@ -42,37 +76,6 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-CREATE SEQUENCE public.bilhetes_bilhete_id_seq;
-
-CREATE TABLE public.bilhetes
-(
-  bilhete_id INTEGER NOT NULL DEFAULT nextval('public.bilhetes_bilhete_id_seq'),
-  tenant_id INTEGER NOT NULL,
-  usuario_id INTEGER NOT NULL,
-  codigo VARCHAR(12) NOT NULL,
-  status character(1) NOT NULL,
-  cliente VARCHAR(50) NOT NULL,
-  valor_aposta DECIMAL(10,2) NOT NULL,
-  valor_premio DECIMAL(10,2) NOT NULL,
-  alterado_em timestamp without time zone NOT NULL,
-  criado_em timestamp without time zone NOT NULL,
-  CONSTRAINT bilhetes_pkey PRIMARY KEY (bilhete_id)
-)
-WITH (
-   OIDS=FALSE
-);
-
-ALTER TABLE public.bilhetes
-  OWNER TO postgres;
-COMMENT ON TABLE public.bilhetes IS 'Tabela de bilhetes';
-
-
-ALTER TABLE public.bilhetes ADD CONSTRAINT usuarios_bilhetes_fk
-FOREIGN KEY (usuario_id)
-REFERENCES public.usuarios (usuario_id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
 
 # --- !Downs
 

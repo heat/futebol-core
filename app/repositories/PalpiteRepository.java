@@ -43,7 +43,6 @@ public class PalpiteRepository implements Repository<Long, Palpite> {
     public CompletableFuture<Palpite> inserir(Tenant tenant, Palpite palpite) {
 
         EntityManager em = jpaApi.em();
-        palpite.setTenant(tenant.get());
         em.persist(palpite);
 
         return CompletableFuture.completedFuture(palpite);

@@ -1,34 +1,34 @@
 package models.bilhetes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import models.apostas.EventoAposta;
-
-import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
-@Entity
+/*@Entity
 @Table(name = "palpites")
 @IdClass(PalpitePK.class)
+@AttributeOverrides({
+        @AttributeOverride(name="bilhete", column=@Column(name="bilhete_id")),
+        @AttributeOverride(name="eventoAposta", column=@Column(name="evento_aposta_id"))
+})*/
+
 public class Palpite implements Serializable{
 
-    public enum Status {
+/*    public enum Status {
 
-        /**
+        *//**
          * Situacao em que o palpite ainda não foi atualizado após o fim da partida
-         */
+         *//*
         ABERTO("ABERTO"),
-        /**
+        *//**
          * O palpite está correto
-         */
+         *//*
         CERTO("CERTO"),
-        /**
+        *//**
          * O palpite está errado
-         */
+         *//*
         ERRADO("ERRADO"),
-        /**
+        *//**
          * Desistiram do palpite antes do início (?) da partida
-         */
+         *//*
         CANCELADO("CANCELADO");
 
         private String string;
@@ -38,13 +38,11 @@ public class Palpite implements Serializable{
     }
 
     @Id
-    @OneToOne
-    @JoinColumn(name = "bilhete_id")
+    //@OneToOne(mappedBy = "palpites")
     private Bilhete bilhete;
 
     @Id
-    @OneToOne
-    @JoinColumn(name = "evento_aposta_id")
+    //@OneToOne(mappedBy = "palpites")
     private EventoAposta eventoAposta;
 
     @Column(name = "tenant_id")
@@ -129,5 +127,5 @@ public class Palpite implements Serializable{
         result = 31 * result + (eventoAposta != null ? eventoAposta.hashCode() : 0);
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
-    }
+    }*/
 }
