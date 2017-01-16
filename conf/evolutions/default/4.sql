@@ -16,10 +16,7 @@ WITH (
    OIDS=FALSE
 );
 
-ALTER TABLE public.evento_apostas
-  OWNER TO postgres;
 COMMENT ON TABLE public.evento_apostas IS 'Tabela com eventos apostáveis';
-
 
 CREATE SEQUENCE public.taxas_taxa_id_seq;
 
@@ -39,8 +36,6 @@ CREATE TABLE public.taxas
     OIDS=FALSE
 );
 
-ALTER TABLE public.taxas
-  OWNER TO postgres;
 COMMENT ON TABLE public.taxas IS 'Tabela com taxas relacionadas a cada ODD e cobrada no momento da aposta';
 
 
@@ -63,8 +58,6 @@ WITH (
   OIDS=FALSE
 );
 
-ALTER TABLE public.odds
-  OWNER TO postgres;
 COMMENT ON TABLE public.odds IS 'Tabela de odds';
 
 ALTER TABLE public.evento_apostas ADD CONSTRAINT eventos_evento_apostas_fk

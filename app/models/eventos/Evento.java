@@ -31,6 +31,10 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
     @Column(name="tenant_id")
     private Long tenant;
 
+    @ManyToOne
+    @Column(name = "campeonato_id")
+    private Campeonato campeonato;
+
     @OneToOne
     @JoinColumn(name = "time_id_casa")
     private Time casa;
@@ -47,10 +51,6 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
     @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
     private List<Resultado> resultados;
 
-    @OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
-    private EventoAposta eventoAposta;
-
     public Evento() {
 
     }
@@ -63,7 +63,6 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
         this.fora = fora;
         this.dataEvento = dataEvento;
         this.resultados = resultados;
-        this.eventoAposta = eventoAposta;
     }
 
     public Long getId() {
@@ -76,6 +75,14 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
 
     public void setTenant(Long tenant) {
         this.tenant = tenant;
+    }
+
+    public Campeonato getCampeonato() {
+        return campeonato;
+    }
+
+    public void setCampeonato(Campeonato campeonato) {
+        this.campeonato = campeonato;
     }
 
     public Time getCasa() {
@@ -114,15 +121,6 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
 
     public void addResultado(Resultado resultado){
         this.resultados.add(resultado);
-    }
-
-    @JsonIgnore
-    public EventoAposta getEventoAposta() {
-        return eventoAposta;
-    }
-
-    public void setEventoAposta(EventoAposta eventoAposta) {
-        this.eventoAposta = eventoAposta;
     }
 
     @Override

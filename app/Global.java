@@ -1,5 +1,7 @@
 import dominio.processadores.eventos.*;
 import dominio.validadores.eventos.*;
+import models.eventos.Campeonato;
+import models.eventos.Evento;
 import models.eventos.Time;
 import models.vo.Tenant;
 import play.Application;
@@ -7,6 +9,9 @@ import play.GlobalSettings;
 import play.db.jpa.JPAApi;
 
 import javax.persistence.EntityManager;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Random;
 
 public class Global extends GlobalSettings {
 
@@ -85,5 +90,22 @@ public class Global extends GlobalSettings {
         Time coritiba = new Time(Tenant.SYSBET, "Coritiba");
         em.persist(palmeiras);
         em.persist(coritiba);
+
+        Campeonato campeonato = new Campeonato("Brasileirao");
+
+        em.persist(campeonato);
+
+        Random random = new Random(System.currentTimeMillis());
+
+        Evento evento = new Evento();
+        evento.setTenant(Tenant.SYSBET.get());
+        evento.setCasa(palmeiras);
+        evento.setFora(coritiba);
+        evento.setCampeonato(campeonato);
+        Calendar dataJogo = Calendar.getInstance();
+        dataJogo.add(Calendar.HOUR, random.nextInt(10));
+        evento.setDataEvento(dataJogo);
+
+        em.persist(evento);
     }
 }

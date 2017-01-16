@@ -16,7 +16,7 @@ import java.util.List;
 public class Bilhete implements Serializable{
 
 
-    public enum Status {
+    public enum Situacao {
 
         /**
          * Situacao em que o bilhete ainda não foi atualizado após o fim da partida
@@ -39,11 +39,11 @@ public class Bilhete implements Serializable{
          */
         CANCELADO("CANCELADO");
 
-        private String string;
+        private String nome;
 
-        Status(String string) {
+        Situacao(String nome) {
 
-            this.string = string;
+            this.nome = nome;
         }
     }
     @Id
@@ -58,9 +58,9 @@ public class Bilhete implements Serializable{
     @Column(name = "codigo")
     private String codigo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private Status status;
+    @Enumerated(EnumType.STRING )
+    @Column(name = "situacao")
+    private Situacao situacao;
 
     @Column(name = "cliente")
     private String cliente;
@@ -79,29 +79,21 @@ public class Bilhete implements Serializable{
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
 
-/*
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "bilhete_id")
-    private List<Palpite> palpites;
-*/
-
     public Bilhete() {
 
     }
 
-    public Bilhete(Long tenant, String codigo, Status status, String cliente, BigDecimal valorAposta,
+    public Bilhete(Long tenant, String codigo, Situacao situacao, String cliente, BigDecimal valorAposta,
                    BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
 
         this.tenant = tenant;
         this.codigo = codigo;
-        this.status = status;
+        this.situacao = situacao;
         this.cliente = cliente;
         this.valorAposta = valorAposta;
         this.valorPremio = valorPremio;
         this.criadoEm = criadoEm;
         this.alteradoEm = alteradoEm;
-//        this.palpites = palpites;
     }
 
     public Long getId() {
@@ -124,12 +116,12 @@ public class Bilhete implements Serializable{
         this.codigo = codigo;
     }
 
-    public Status getStatus() {
-        return status;
+    public Situacao getSituacao() {
+        return situacao;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
     }
 
     public String getCliente() {
@@ -175,16 +167,6 @@ public class Bilhete implements Serializable{
     public void setAlteradoEm(Calendar alteradoEm) {
         this.alteradoEm = alteradoEm;
     }
-
-/*
-    public List<Palpite> getPalpites() {
-        return palpites;
-    }
-
-    public void setPalpites(List<Palpite> palpites) {
-        this.palpites = palpites;
-    }
-*/
 
     @Override
     public boolean equals(Object o) {

@@ -21,7 +21,7 @@ public class Campeonato implements Serializable{
     private String nome;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name="campeonato_id", nullable = false, updatable = true, insertable = true)
+    @JoinColumn(name="campeonato_id", nullable = false, updatable = false, insertable = false)
     private List<Evento> eventos;
 
     protected Campeonato() {

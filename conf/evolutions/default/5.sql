@@ -1,4 +1,4 @@
-# Apostas domain schema
+# Bilhete domain schema
 
 # --- !Ups
 
@@ -11,7 +11,7 @@ CREATE TABLE public.bilhetes
   tenant_id INTEGER NOT NULL,
   usuario_id INTEGER NOT NULL,
   codigo VARCHAR(12) NOT NULL,
-  status character(1) NOT NULL,
+  situacao character(1) NOT NULL,
   cliente VARCHAR(50) NOT NULL,
   valor_aposta DECIMAL(10,2) NOT NULL,
   valor_premio DECIMAL(10,2) NOT NULL,
@@ -23,8 +23,6 @@ WITH (
    OIDS=FALSE
 );
 
-ALTER TABLE public.bilhetes
-  OWNER TO postgres;
 COMMENT ON TABLE public.bilhetes IS 'Tabela de bilhetes';
 
 
@@ -43,15 +41,13 @@ CREATE TABLE public.palpites
   taxa_id INTEGER NOT NULL,
   tenant_id INTEGER NOT NULL,
   taxa DECIMAL(5,2) NOT NULL,
-  status character(1) NOT NULL,
+  situacao character(1) NOT NULL,
   CONSTRAINT palpites_pkey PRIMARY KEY (bilhete_id, evento_aposta_id)
 )
 WITH (
    OIDS=FALSE
 );
 
-ALTER TABLE public.palpites
-  OWNER TO postgres;
 COMMENT ON TABLE public.palpites IS 'Tabela de palpites';
 
 ALTER TABLE public.palpites ADD CONSTRAINT evento_apostas_palpites_fk
@@ -82,7 +78,6 @@ NOT DEFERRABLE;
 DROP TABLE IF EXISTS palpites CASCADE;
 
 DROP TABLE IF EXISTS bilhetes CASCADE;
-
 
 DROP SEQUENCE IF EXISTS public.bilhetes_bilhete_id_seq CASCADE;
 

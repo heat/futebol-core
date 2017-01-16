@@ -60,7 +60,7 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
             throw new NoResultException("Bilhete não encontrado");
         Bilhete blt = bilhete.get();
         blt.setAlteradoEm(b.getAlteradoEm());
-        blt.setStatus(b.getStatus());
+        blt.setSituacao(b.getSituacao());
         em.merge(blt);
         return CompletableFuture.completedFuture(blt);
     }
@@ -82,7 +82,7 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         if(!bilheteOptional.isPresent())
             throw new NoResultException("Bilhete não encontrado");
         Bilhete bilhete = bilheteOptional.get();
-        bilhete.setStatus(Bilhete.Status.CANCELADO);
+        bilhete.setSituacao(Bilhete.Situacao.CANCELADO);
         em.merge(bilhete);
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }

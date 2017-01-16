@@ -37,20 +37,8 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
         }
 
         List<Resultado> resultados = evento.getResultados();
-        EventoAposta eventoAposta = evento.getEventoAposta();
-        List<Taxa> taxas = eventoAposta.getTaxas();
 
         try{
-           for(Taxa taxa : taxas){
-               for(Palpite palpite: taxa.getPalpites()){
-                   if(isPalpiteCorreto(evento,resultados, taxa.getOdd()))
-                      palpite.setStatus(Palpite.Status.CERTO);
-                   else
-                      palpite.setStatus(Palpite.Status.ERRADO);
-               }
-           }
-           eventoAposta.setPermitir(false);
-           eventoApostaRepository.atualizar(chave.getTenant(), chave.getId(), eventoAposta);
         }
         catch(NoResultException e){
             throw new ValidadorExcpetion(e.getMessage());
@@ -69,9 +57,6 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
                 return isResultadoForaCorreto(evento, resultados);
             case Odds.EMPATE:
                 return isResultadoEmpateCorreto(evento, resultados);
-            /*E todas as demais odds
-            * Necessário verificar os casos nas quais as odds possuem
-            * o mesmo nome : casa e fora para resultado final e handicap*/
             default:
                 System.out.println("Lembre de completar os demais cases, MIKE!!!!");
         }
@@ -116,25 +101,4 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
         }
         return pontosFora == pontosCasa ? true : false;
     }
-/*
-    private Resultado resultadoFinalCasa(Evento evento, List<Resultado> resultados){
-
-        for(Resultado resultado: resultados){
-            if(resultado.isMomentoFinal() && resultado.getTime().equals(evento.getCasa()))
-                return resultado;
-        }
-        return null;
-    }
-
-    private Resultado resultadoFinalFora(Evento evento, List<Resultado> resultados){
-
-        for(Resultado resultado: resultados){
-            if(resultado.isMomentoFinal() && resultado.getTime().equals(evento.getCasa()))
-                return resultado;
-        }
-        return null;
-    }
-*/
-
-
 }
