@@ -50,6 +50,7 @@ CREATE TABLE public.usuarios (
                 tenant_id INTEGER NOT NULL,
                 login VARCHAR(255) NOT NULL,
                 senha VARCHAR(255) NOT NULL,
+                status VARCHAR(255) NOT NULL,
                 papel_id integer NOT NULL, -- papel de acesso do usuario
                 CONSTRAINT usuario_id_pk PRIMARY KEY (usuario_id),
                 CONSTRAINT papeis_usuarios_fk FOREIGN KEY (papel_id)
@@ -89,12 +90,13 @@ insert into usuarios (tenant_id,
                     login,
                     papel_id,
                     senha,
+                    status,
                     usuario_id) -- inclui administrador padrao
-VALUES (1, 'admin.demo', 1, '123456', 1),
-       (1, 'supervisor.demo', 2, '123456', 2),
-       (1, 'operador.demo', 3, '123456', 3),
-       (1, 'revendedor.demo', 4, '12456', 4),
-       (1, 'usuario.demo', 5, '123456', 5);
+VALUES (1, 'admin.demo', 1, '123456', 'ATIVO', 1),
+       (1, 'supervisor.demo', 2, '123456', 'ATIVO', 2),
+       (1, 'operador.demo', 3, '123456', 'ATIVO', 3),
+       (1, 'revendedor.demo', 4, '12456', 'ATIVO', 4),
+       (1, 'usuario.demo', 5, '123456', 'ATIVO', 5);
 
 insert into perfis (email,
                     genero,

@@ -15,6 +15,25 @@ import java.util.List;
 @Table(name="usuarios")
 public class Usuario implements Serializable{
 
+    public enum Status {
+
+        /**
+         * Ususário com acesso ao sistema
+         */
+        ATIVO("ATIVO"),
+
+        /**
+         * Usuário com cadastro cancelado
+         */
+        CANCELADO("CANCELADO");
+
+        private String string;
+
+        Status(String string) {
+
+            this.string = string;
+        }
+    }
     @Id
     @SequenceGenerator(name="usuarios_usuario_id_seq", sequenceName = "usuarios_usuario_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_usuario_id_seq")
@@ -29,6 +48,10 @@ public class Usuario implements Serializable{
 
     @Column(name="senha")
     private String senha;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="status")
+    private Status status;
 
     @OneToOne
     @JoinColumn(name="papel_id")
@@ -46,10 +69,11 @@ public class Usuario implements Serializable{
 
     }
 
-    public Usuario(String login, String senha, Long idTenant) {
+    public Usuario(String login, String senha, Long idTenant, Status status) {
         this.login = login;
         this.senha = senha;
         this.idTenant = idTenant;
+        this.status = status;
     }
 
     public Long getId() {
@@ -78,6 +102,14 @@ public class Usuario implements Serializable{
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public Papel getPapel() {

@@ -1,6 +1,5 @@
 package repositories;
 
-import models.seguranca.Papel;
 import models.seguranca.Usuario;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
@@ -13,6 +12,8 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import static models.seguranca.Usuario.Status.CANCELADO;
 
 public class UsuarioRepository implements Repository<Long,Usuario>{
 
@@ -51,7 +52,22 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
         EntityManager em = jpaApi.em();
         Optional<Usuario> usuario = buscar(tenant, id);
         if(!usuario.isPresent())
-            throw new NoResultException("Evento não encontrado");
+            throw new NoResultException("Usuário não encontrado!");
+        Usuario usuarioEntity = usuario.get();
+        usuarioEntity.setPerfil(us.getPerfil());
+        usuarioEntity.setPapel(us.getPapel());
+        usuarioEntity.setSenha(us.getSenha());
+        em.merge(usuarioEntity);
+        return CompletableFuture.completedFuture(usuarioEntity);
+    }
+
+
+    public CompletableFuture<Usuario> atualizarUsuarioBilhete(Tenant tenant, Long id, Usuario us) {
+
+        EntityManager em = jpaApi.em();
+        Optional<Usuario> usuario = buscar(tenant, id);
+        if(!usuario.isPresent())
+            throw new NoResultException("Usuário não encontrado!");
         Usuario usuarioEntity = usuario.get();
         usuarioEntity.setBilhetes(us.getBilhetes());
         em.merge(usuarioEntity);
@@ -61,19 +77,22 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
     @Override
     public CompletableFuture<Usuario> inserir(Tenant tenant, Usuario novo) {
         EntityManager em = jpaApi.em();
-
-        Papel admin = em.find(Papel.class, 1L);
-
         novo.setIdTenant(tenant.get());
-        novo.setPapel(admin);
-        jpaApi.em()
-                .persist(novo);
+        em.persist(novo);
         return CompletableFuture.completedFuture(novo);
     }
 
     @Override
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
-        return null;
+        EntityManager em = jpaApi.em();
+        Optional<Usuario> usuarioOptional = buscar(tenant, id);
+        if(!usuarioOptional.isPresent())
+            throw new NoResultException("Usuário não encontrado");
+        Usuario usuario = usuarioOptional.get();
+        usuario.setStatus(CANCELADO);
+        em.merge(usuario);
+        return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
+
     }
 
 

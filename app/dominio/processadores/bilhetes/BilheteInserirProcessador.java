@@ -32,7 +32,7 @@ public class BilheteInserirProcessador implements Processador<Tenant, Usuario>{
             bilhete.setTenant(tenant.get());
         }
 
-        usuarioRepository.atualizar(tenant, usuario.getId(), usuario);
+        usuarioRepository.atualizarUsuarioBilhete(tenant, usuario.getId(), usuario);
         return CompletableFuture.completedFuture(usuario);
     }
 }
