@@ -59,7 +59,7 @@ POST     /eventoapostas                 api.rest.EventoApostaController.inserir
 
 POST     /eventoapostas/:id             api.rest.EventoApostaController.atualizar(id: Long)
 
-DELETE   /eventoapostas/:id             api.rest.EventoApostaController.excluir(id: Long)
+DELETE   /eventoapostas/:id             api.rest.EventoApostaController.cancelar(id: Long)
 
 # ------- CRUD de taxas
 GET      /taxas                         api.rest.TaxaController.todos

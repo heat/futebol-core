@@ -103,7 +103,7 @@ public class EventoApostaController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result excluir(Long id) {
+    public Result cancelar(Long id) {
         try {
             eventoApostaRepository.excluir(getTenant(), id);
             return noContent(); // padrao para quando exclui uma entidade

@@ -34,7 +34,6 @@ public class BilheteController extends ApplicationController {
     ValidadorRepository validadorRepository;
 
     @Inject
-
     public BilheteController(PlaySessionStore playSessionStore, BilheteRepository bilheteRepository,
                              BilheteInserirProcessador inserirProcessador,
                              UsuarioRepository usuarioRepository, BilheteAtualizarProcessador atualizarProcessador, ValidadorRepository validadorRepository) {

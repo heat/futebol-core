@@ -100,7 +100,9 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
         Optional<EventoAposta> eventoApostaOptional = buscar(tenant, id);
         if(!eventoApostaOptional.isPresent())
             throw new NoResultException("Aposta não encontrada");
-        em.remove(eventoApostaOptional.get());
+        EventoAposta eventoAposta = eventoApostaOptional.get();
+        eventoAposta.setSituacao(EventoAposta.Situacao.CANCELADO);
+        em.merge(eventoAposta);
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 

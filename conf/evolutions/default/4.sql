@@ -8,6 +8,7 @@ CREATE TABLE public.evento_apostas
 (
   evento_aposta_id INTEGER NOT NULL DEFAULT nextval('public.eventos_apostas_id_seq'),
   permitir boolean,
+  situacao VARCHAR(255),
   tenant_id INTEGER NOT NULL,
   evento_id INTEGER NOT NULL,
   CONSTRAINT evento_apostas_pkey PRIMARY KEY (evento_aposta_id)

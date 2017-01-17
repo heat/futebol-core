@@ -1,6 +1,5 @@
 package models.apostas;
 
-import models.bilhetes.Palpite;
 import models.eventos.Evento;
 
 import javax.persistence.*;
@@ -12,6 +11,31 @@ import java.util.List;
 // TODO: colocar stauts em um evento aposta
 public class EventoAposta implements Apostavel<Evento>, Serializable{
 
+    public enum Situacao {
+        /**
+         * Situacao em que o apostavel aceita apostas
+         */
+        ABERTO("ABERTO"),
+        /**
+         * Apostavel é valido porém temporariamente não aceita apostas
+         */
+        FECHADO("FECHADO"),
+        /**
+         * Já encerrado o apostavél e não é mais possível realizar apostas
+         */
+        FINALIZADO("FINALIZADO"),
+        /**
+         * Apostável foi cancelado pela adminsitracao
+         */
+        CANCELADO("CANCELADO");
+
+        private String string;
+
+        Situacao(String string) {
+            this.string = string;
+        }
+    }
+
     @Id
     @SequenceGenerator(name="eventos_apostas_id_seq", sequenceName = "eventos_apostas_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventos_apostas_id_seq")
@@ -21,28 +45,30 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     @Column(name = "tenant_id")
     private Long tenant;
 
+    @OneToOne
+    @JoinColumn(name = "evento_id")
+    private Evento evento;
+
     @Column(name = "permitir")
     private boolean permitir;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "situacao")
+    private Situacao situacao;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "evento_aposta_id", nullable = false, updatable = true, insertable = true)
     private List<Taxa> taxas;
 
-/*
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "evento_aposta_id", nullable = false, updatable = false, insertable = true)
-    private List<Palpite> palpites;
-*/
-
     public EventoAposta() {
+
     }
 
-    public EventoAposta(Long tenant, boolean permitir, List<Taxa> taxas, List<Palpite> palpites) {
+    public EventoAposta(Long tenant, boolean permitir, List<Taxa> taxas) {
 
         this.tenant = tenant;
         this.permitir = permitir;
         this.taxas = taxas;
-        //this.palpites = palpites;
     }
 
     public Long getId() {
@@ -73,15 +99,21 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
         this.taxas = taxas;
     }
 
-/*
-    public List<Palpite> getPalpites() {
-        return palpites;
+    public Situacao getSituacao() {
+        return situacao;
     }
 
-    public void setPalpites(List<Palpite> palpites) {
-        this.palpites = palpites;
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
     }
-*/
+
+    public Evento getEvento() {
+        return evento;
+    }
+
+    public void setEvento(Evento evento) {
+        this.evento = evento;
+    }
 
     @Override
     public boolean equals(Object o) {
