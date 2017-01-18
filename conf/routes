@@ -75,7 +75,7 @@ DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long
 # ------- CRUD de bilhetes
 GET      /bilhetes                      api.rest.BilheteController.todos
 
-GET      /bilhetes/:id                  api.rest.BilheteController.buscar(id: Long)
+GET      /bilhetes/:codigo                  api.rest.BilheteController.buscar(codigo: String)
 
 POST     /bilhetes                      api.rest.BilheteController.inserir(id: Long)
 

@@ -100,8 +100,8 @@ public class BilheteController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result buscar(Long id) {
-        Optional<Bilhete> bilhete = bilheteRepository.buscar(getTenant(), id);
+    public Result buscar(String codigo) {
+        Optional<Bilhete> bilhete = bilheteRepository.buscar(getTenant(), codigo);
 
         if (!bilhete.isPresent()) {
             return notFound("Bilhete não encontrado!");

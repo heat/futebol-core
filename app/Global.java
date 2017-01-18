@@ -1,4 +1,6 @@
+import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.processadores.eventos.*;
+import dominio.validadores.bilhete.CodigoBilhetePolitica;
 import dominio.validadores.eventos.*;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
@@ -81,6 +83,13 @@ public class Global extends GlobalSettings {
                     null,
                     null);
             em.persist(verificaTodosMomentosValidador);
+            CodigoBilhetePolitica codigoBilhetePolitica =
+                    new CodigoBilhetePolitica( Tenant.SYSBET.get(),
+                            BilheteInserirProcessador.REGRA,
+                            null,
+                            true,
+                            null,
+                            "xxx-xxxx-xxx-00");
             return jpaApi;
         });
     }

@@ -32,6 +32,11 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         return query.getResultList();
     }
 
+    public Optional<Bilhete> buscar(Tenant tenant, String codigo) {
+        //TODO
+        return Optional.empty();
+    }
+
     @Override
     public Optional<Bilhete> buscar(Tenant tenant, Long id) {
 
