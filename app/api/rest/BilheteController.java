@@ -9,6 +9,7 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.bilhetes.Bilhete;
 import models.seguranca.Usuario;
 import models.vo.Chave;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -55,14 +56,14 @@ public class BilheteController extends ApplicationController {
                 .body()
                 .asJson(), Bilhete.class);
 
-        Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), idUsuario);
-        if(!usuarioOptional.isPresent())
-            return notFound("Usuário do bilhete não encontrado");
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
-        Usuario usuario = usuarioOptional.get();
-        usuario.addBilhete(bilhete);
+
+        CommonProfile profile = getProfile().get();
+        Usuario usuario = usuarioRepository.buscar(getTenant(), profile.getId());
+
+        bilhete.setUsuario(usuario);
         try {
-            inserirProcessador.executar(getTenant(), usuario, validadores);
+            inserirProcessador.executar(getTenant(), bilhete, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }

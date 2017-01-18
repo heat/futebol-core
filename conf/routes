@@ -77,7 +77,7 @@ GET      /bilhetes                      api.rest.BilheteController.todos
 
 GET      /bilhetes/:id                  api.rest.BilheteController.buscar(id: Long)
 
-POST     /bilhetes/:id                  api.rest.BilheteController.inserir(id: Long)
+POST     /bilhetes                      api.rest.BilheteController.inserir(id: Long)
 
 #POST    /bilhetes/:id                  api.rest.BilheteController.atualizar(id: Long)
 
