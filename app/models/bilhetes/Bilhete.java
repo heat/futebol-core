@@ -115,6 +115,14 @@ public class Bilhete implements Serializable{
         this.tenant = tenant;
     }
 
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     public String getCodigo() {
         return codigo;
     }
