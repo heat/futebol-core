@@ -2,6 +2,7 @@ package models.bilhetes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.seguranca.Usuario;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -9,7 +10,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.List;
 
 @Entity
 @Table(name = "bilhetes")
@@ -46,6 +46,7 @@ public class Bilhete implements Serializable{
             this.nome = nome;
         }
     }
+
     @Id
     @SequenceGenerator(name="bilhetes_bilhete_id_seq", sequenceName = "bilhetes_bilhete_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bilhetes_bilhete_id_seq")
@@ -57,6 +58,10 @@ public class Bilhete implements Serializable{
 
     @Column(name = "codigo")
     private String codigo;
+
+    @OneToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
     @Enumerated(EnumType.STRING )
     @Column(name = "situacao")
@@ -83,11 +88,13 @@ public class Bilhete implements Serializable{
 
     }
 
-    public Bilhete(Long tenant, String codigo, Situacao situacao, String cliente, BigDecimal valorAposta,
-                   BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
+    public Bilhete(Long tenant, String codigo, Usuario usuario, Situacao situacao,
+                   String cliente, BigDecimal valorAposta, BigDecimal valorPremio,
+                   Calendar criadoEm, Calendar alteradoEm) {
 
         this.tenant = tenant;
         this.codigo = codigo;
+        this.usuario = usuario;
         this.situacao = situacao;
         this.cliente = cliente;
         this.valorAposta = valorAposta;

@@ -50,7 +50,7 @@ public class BilheteController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir(Long idUsuario) {
+    public Result inserir() {
 
         Bilhete bilhete = Json.fromJson(Controller.request()
                 .body()
@@ -59,8 +59,11 @@ public class BilheteController extends ApplicationController {
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
 
         CommonProfile profile = getProfile().get();
-        Usuario usuario = usuarioRepository.buscar(getTenant(), profile.getId());
+        Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId() ) );
 
+        if(!usuarioOptional.isPresent())
+            return notFound("Usuário não encontrada!");
+        Usuario usuario = usuarioOptional.get();
         bilhete.setUsuario(usuario);
         try {
             inserirProcessador.executar(getTenant(), bilhete, validadores);
