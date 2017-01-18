@@ -12,7 +12,7 @@ import repositories.UsuarioRepository;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class BilheteInserirProcessador implements Processador<Tenant, Usuario>{
+public class BilheteInserirProcessador implements Processador<Tenant, Bilhete>{
 
     public static final String REGRA = "bilhete.inserir";
 
@@ -21,18 +21,19 @@ public class BilheteInserirProcessador implements Processador<Tenant, Usuario>{
     @Inject
     public BilheteInserirProcessador(UsuarioRepository usuarioRepository) {
 
-        this.usuarioRepository = usuarioRepository;
+        this.bilheteRepository = usuarioRepository;
     }
 
     //TODO: criar gerador que gera codigo do bilhete e coloca na entidade codigo deve ser unico no formato XXX-XXXX-XXX-00
     @Override
-    public CompletableFuture<Usuario> executar(Tenant tenant, Usuario usuario, List<Validador> validadores) throws ValidadorExcpetion {
+    public CompletableFuture<Usuario> executar(Tenant tenant, Bilhete bilhete, List<Validador> validadores) throws ValidadorExcpetion {
 
-        for(Bilhete bilhete : usuario.getBilhetes()){
-            bilhete.setTenant(tenant.get());
+        for (Validador<Bilhete> validador: validadores) {
+            validador.validate(bilhete);
         }
 
-        usuarioRepository.atualizarUsuarioBilhete(tenant, usuario.getId(), usuario);
-        return CompletableFuture.completedFuture(usuario);
+
+
+        return CompletableFuture.completedFuture(bilheteRepository.inserir(bilhete););
     }
 }
