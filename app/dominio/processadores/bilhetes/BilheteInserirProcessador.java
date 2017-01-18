@@ -5,9 +5,8 @@ import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.bilhetes.Bilhete;
-import models.seguranca.Usuario;
 import models.vo.Tenant;
-import repositories.UsuarioRepository;
+import repositories.BilheteRepository;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,24 +15,21 @@ public class BilheteInserirProcessador implements Processador<Tenant, Bilhete>{
 
     public static final String REGRA = "bilhete.inserir";
 
-    UsuarioRepository usuarioRepository;
+    BilheteRepository bilheteRepository;
 
     @Inject
-    public BilheteInserirProcessador(UsuarioRepository usuarioRepository) {
+    public BilheteInserirProcessador(BilheteRepository bilheteRepository) {
 
-        this.bilheteRepository = usuarioRepository;
+        this.bilheteRepository = bilheteRepository;
     }
 
     //TODO: criar gerador que gera codigo do bilhete e coloca na entidade codigo deve ser unico no formato XXX-XXXX-XXX-00
     @Override
-    public CompletableFuture<Usuario> executar(Tenant tenant, Bilhete bilhete, List<Validador> validadores) throws ValidadorExcpetion {
+    public CompletableFuture<Bilhete> executar(Tenant tenant, Bilhete bilhete, List<Validador> validadores) throws ValidadorExcpetion {
 
         for (Validador<Bilhete> validador: validadores) {
             validador.validate(bilhete);
         }
-
-
-
-        return CompletableFuture.completedFuture(bilheteRepository.inserir(bilhete););
+        return bilheteRepository.inserir(tenant, bilhete) ;
     }
 }
