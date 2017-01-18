@@ -1,7 +1,5 @@
 package models.eventos;
 
-import models.vo.Tenant;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -24,8 +22,8 @@ public class Time implements Serializable {
     protected Time() {
     }
 
-    public Time(Tenant tenant, String nome) {
-        this.tenant = tenant.get();
+    public Time(Long tenant, String nome) {
+        this.tenant = tenant;
         this.nome = nome;
     }
 

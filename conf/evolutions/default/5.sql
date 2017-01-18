@@ -2,7 +2,6 @@
 
 # --- !Ups
 
-
 CREATE SEQUENCE public.bilhetes_bilhete_id_seq;
 
 CREATE TABLE public.bilhetes
@@ -34,21 +33,31 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 
+CREATE SEQUENCE public.palpites_palpite_id_seq;
+
 CREATE TABLE public.palpites
 (
-  bilhete_id INTEGER NOT NULL,
+  palpite_id INTEGER NOT NULL DEFAULT nextval('public.palpites_palpite_id_seq'),
   evento_aposta_id INTEGER NOT NULL,
   taxa_id INTEGER NOT NULL,
   tenant_id INTEGER NOT NULL,
+  bilhete_id INTEGER NOT NULL,
   taxa DECIMAL(5,2) NOT NULL,
-  situacao character(1) NOT NULL,
-  CONSTRAINT palpites_pkey PRIMARY KEY (bilhete_id, evento_aposta_id)
+  status VARCHAR(255) NOT NULL,
+  CONSTRAINT palpites_pkey PRIMARY KEY (palpite_id)
 )
 WITH (
    OIDS=FALSE
 );
 
 COMMENT ON TABLE public.palpites IS 'Tabela de palpites';
+
+ALTER TABLE public.palpites ADD CONSTRAINT bilhetes_palpites_fk
+FOREIGN KEY (bilhete_id)
+REFERENCES public.bilhetes (bilhete_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
 
 ALTER TABLE public.palpites ADD CONSTRAINT evento_apostas_palpites_fk
 FOREIGN KEY (evento_aposta_id)
@@ -65,13 +74,6 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE public.palpites ADD CONSTRAINT bilhetes_palpites_fk
-FOREIGN KEY (bilhete_id)
-REFERENCES public.bilhetes (bilhete_id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
 
 # --- !Downs
 
@@ -80,4 +82,6 @@ DROP TABLE IF EXISTS palpites CASCADE;
 DROP TABLE IF EXISTS bilhetes CASCADE;
 
 DROP SEQUENCE IF EXISTS public.bilhetes_bilhete_id_seq CASCADE;
+
+DROP SEQUENCE IF EXISTS public.palpites_palpite_id_seq CASCADE;
 

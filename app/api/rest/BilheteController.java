@@ -62,15 +62,16 @@ public class BilheteController extends ApplicationController {
         Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId() ) );
 
         if(!usuarioOptional.isPresent())
-            return notFound("Usuário não encontrada!");
+            return notFound("Usuário não encontrado!");
         Usuario usuario = usuarioOptional.get();
+
         bilhete.setUsuario(usuario);
         try {
             inserirProcessador.executar(getTenant(), bilhete, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-        return created(Json.toJson(bilhete));
+        return created();
     }
 
     @Secure(clients = "headerClient")

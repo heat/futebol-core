@@ -8,7 +8,6 @@ import java.util.List;
 
 @Entity
 @Table( name = "evento_apostas")
-// TODO: colocar stauts em um evento aposta
 public class EventoAposta implements Apostavel<Evento>, Serializable{
 
     public enum Situacao {

@@ -5,7 +5,6 @@ import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.EventoAposta;
-import models.apostas.Taxa;
 import models.vo.Tenant;
 import repositories.EventoApostaRepository;
 
@@ -30,10 +29,10 @@ public class EventoApostaInserirProcessador implements Processador<Tenant, Event
         for (Validador validador : validadores) {
             validador.validate(eventoAposta);
         }
-        List<Taxa> taxas = eventoAposta.getTaxas();
+/*        List<Taxa> taxas = eventoAposta.getTaxas();
         for(Taxa taxa : taxas){
 
-        }
+        }*/
 
         eventoApostaRepository.inserir(tenant, eventoAposta);
         return CompletableFuture.completedFuture(eventoAposta);

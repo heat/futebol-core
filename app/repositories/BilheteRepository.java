@@ -75,7 +75,7 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
 
         EntityManager em = jpaApi.em();
         bilhete.setTenant(tenant.get());
-        em.persist(bilhete);
+        em.merge(bilhete);
         return CompletableFuture.completedFuture(bilhete);
     }
 

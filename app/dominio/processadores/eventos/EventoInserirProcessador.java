@@ -27,7 +27,7 @@ public class EventoInserirProcessador implements Processador<Tenant, Evento> {
         for (Validador validador : validadores) {
             validador.validate(evento);
         }
-        eventoRepository.atualizar(tenant, evento.getId(),evento);
+        eventoRepository.inserir(tenant, evento);
         return CompletableFuture.completedFuture(evento);
     }
 }

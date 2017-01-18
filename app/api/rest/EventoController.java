@@ -1,8 +1,5 @@
 package api.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.EventoAtualizarProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
@@ -55,32 +52,23 @@ public class EventoController extends ApplicationController{
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir(Long idCampeonato) throws IOException {
 
-        JsonNode json = Controller.request()
+        Evento evento = Json.fromJson(Controller.request()
                 .body()
-                .asJson();
-        ObjectMapper mapper = new ObjectMapper();
+                .asJson(), Evento.class);
 
-        List<Evento> eventos = mapper.readValue(json.toString(), new TypeReference<List<Evento>>() { });
-
-        if(!Optional.ofNullable(eventos).isPresent())
-            return notFound("Lista de eventos não pode ser vazia!");
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
         Optional<Campeonato> campeonatoOptional = campeonatoRepository.buscar(getTenant(), idCampeonato);
         if(!campeonatoOptional.isPresent())
             return notFound("Campeonato não encontrado!");
-
-        Campeonato campeonato = campeonatoOptional.get();
-        for (Evento evento: eventos) {
-            campeonato.addEvento(evento);
-        }
+        evento.setCampeonato(campeonatoOptional.get());
         try {
-            inserirProcessador.executar(getTenant(), campeonato, validadores);
+            inserirProcessador.executar(getTenant(), evento, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        return created(Json.toJson(campeonato));
+        return created(Json.toJson(evento));
     }
 
     @Secure(clients = "headerClient")

@@ -51,13 +51,12 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     public CompletableFuture<Campeonato> atualizar(Tenant tenant, Long id, Campeonato c) {
 
         EntityManager em = jpaApi.em();
-/*        Optional<Campeonato> campeonato = buscar(tenant, id);
+        Optional<Campeonato> campeonato = buscar(tenant, id);
         if(!campeonato.isPresent())
             throw new NoResultException("Campeonato não encontrado");
         Campeonato cp = campeonato.get();
         cp.setNome(c.getNome());
-        cp.setEventos(cp.getEventos());*/
-        em.merge(c);
+        em.merge(cp);
         return CompletableFuture.completedFuture(c);
     }
 

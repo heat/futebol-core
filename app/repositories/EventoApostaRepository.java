@@ -88,7 +88,6 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
 
     /**
      * Um evento aposta nunca é excluido. Ele é apenas cancelado.
-     * TODO: implementar cancelar ao invés de excluir
      * @param tenant
      * @param id
      * @return

@@ -1,5 +1,6 @@
 package models.seguranca;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import models.bilhetes.Bilhete;
 
 import javax.persistence.*;
@@ -120,6 +121,7 @@ public class Usuario implements Serializable{
         this.papel = papel;
     }
 
+    @JsonIgnore
     public Perfil getPerfil() {
         return perfil;
     }

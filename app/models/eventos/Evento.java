@@ -1,7 +1,5 @@
 package models.eventos;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.apostas.Apostavel;
@@ -31,8 +29,8 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
     @Column(name="tenant_id")
     private Long tenant;
 
-    @ManyToOne
-    @Column(name = "campeonato_id")
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "campeonato_id", nullable = false, updatable = true, insertable = false)
     private Campeonato campeonato;
 
     @OneToOne
@@ -56,7 +54,7 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
     }
 
     public Evento(Long tenant, Time casa, Time fora, Calendar dataEvento,
-                  List<Resultado> resultados, EventoAposta eventoAposta) {
+                  List<Resultado> resultados) {
 
         this.tenant = tenant;
         this.casa = casa;

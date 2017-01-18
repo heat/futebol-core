@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 
 @Entity
 @Table(name = "bilhetes")
@@ -59,8 +60,8 @@ public class Bilhete implements Serializable{
     @Column(name = "codigo")
     private String codigo;
 
-    @OneToOne
-    @JoinColumn(name = "id_usuario")
+    @OneToOne( cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id", nullable = false, updatable = false, insertable = false)
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING )
@@ -84,14 +85,16 @@ public class Bilhete implements Serializable{
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "bilhete_id", nullable = false, updatable = false, insertable = false)
+    private List<Palpite> palpites;
+
     public Bilhete() {
 
     }
 
-    public Bilhete(Long tenant, String codigo, Usuario usuario, Situacao situacao,
-                   String cliente, BigDecimal valorAposta, BigDecimal valorPremio,
-                   Calendar criadoEm, Calendar alteradoEm) {
-
+    public Bilhete(Long tenant, String codigo, Usuario usuario, Situacao situacao, String cliente, BigDecimal valorAposta,
+                   BigDecimal valorPremio, Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
         this.tenant = tenant;
         this.codigo = codigo;
         this.usuario = usuario;
@@ -101,6 +104,7 @@ public class Bilhete implements Serializable{
         this.valorPremio = valorPremio;
         this.criadoEm = criadoEm;
         this.alteradoEm = alteradoEm;
+        this.palpites = palpites;
     }
 
     public Long getId() {
@@ -115,20 +119,20 @@ public class Bilhete implements Serializable{
         this.tenant = tenant;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
     public String getCodigo() {
         return codigo;
     }
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Situacao getSituacao() {
@@ -161,6 +165,14 @@ public class Bilhete implements Serializable{
 
     public void setValorPremio(BigDecimal valorPremio) {
         this.valorPremio = valorPremio;
+    }
+
+    public List<Palpite> getPalpites() {
+        return palpites;
+    }
+
+    public void setPalpites(List<Palpite> palpites) {
+        this.palpites = palpites;
     }
 
     @JsonDeserialize(using= CalendarDeserializer.class)
