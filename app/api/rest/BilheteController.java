@@ -71,7 +71,7 @@ public class BilheteController extends ApplicationController {
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-        return created();
+        return created(Json.toJson(bilhete));
     }
 
     @Secure(clients = "headerClient")
@@ -97,14 +97,15 @@ public class BilheteController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
-        List todos = bilheteRepository.todos(getTenant());
 
+        List todos = bilheteRepository.todos(getTenant());
         return ok(Json.toJson(todos));
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result buscar(String codigo) {
+
         Optional<Bilhete> bilhete = bilheteRepository.buscar(getTenant(), codigo);
 
         if (!bilhete.isPresent()) {

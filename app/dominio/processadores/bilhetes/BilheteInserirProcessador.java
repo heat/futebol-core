@@ -23,7 +23,6 @@ public class BilheteInserirProcessador implements Processador<Tenant, Bilhete>{
         this.bilheteRepository = bilheteRepository;
     }
 
-    //TODO: criar gerador que gera codigo do bilhete e coloca na entidade codigo deve ser unico no formato XXX-XXXX-XXX-00
     @Override
     public CompletableFuture<Bilhete> executar(Tenant tenant, Bilhete bilhete, List<Validador> validadores) throws ValidadorExcpetion {
 

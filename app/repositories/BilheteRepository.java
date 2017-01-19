@@ -33,8 +33,20 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
     }
 
     public Optional<Bilhete> buscar(Tenant tenant, String codigo) {
-        //TODO
-        return Optional.empty();
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Bilhete> query = em.createQuery("SELECT b FROM Bilhete b WHERE b.tenant = :tenant and b.codigo = :codigo", Bilhete.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("codigo", codigo);
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
     }
 
     @Override
