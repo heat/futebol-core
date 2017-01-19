@@ -69,7 +69,6 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
         if(!usuario.isPresent())
             throw new NoResultException("Usuário não encontrado!");
         Usuario usuarioEntity = usuario.get();
-        usuarioEntity.setBilhetes(us.getBilhetes());
         em.merge(usuarioEntity);
         return CompletableFuture.completedFuture(usuarioEntity);
     }

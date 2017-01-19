@@ -22,29 +22,29 @@ public class Bilhete implements Serializable{
         /**
          * Situacao em que o bilhete ainda não foi atualizado após o fim da partida
          */
-        ABERTO("ABERTO"),
+        A("ABERTO"),
         /**
-         * Todos os palpites do bilhete estão corretos
+         * Todos os palpites do bilhete estão corretos - [G]anhou
          */
-        PREMIADO("PREMIADO"),
+        G("PREMIADO"),
         /**
          * Pelo menos um palpite do bilhete está errado
          */
-        ERRADO("ERRADO"),
+        E("ERRADO"),
         /**
          * O prêmio do bilhete foi pago
          */
-        PAGO("PAGO"),
+        P("PAGO"),
         /**
          * Desistiram do bilhete antes do início (?) da partida
          */
-        CANCELADO("CANCELADO");
+        C("CANCELADO");
 
-        private String nome;
+        private String situacao;
 
-        Situacao(String nome) {
+        Situacao(String situacao) {
 
-            this.nome = nome;
+            this.situacao = situacao;
         }
     }
 
@@ -60,8 +60,8 @@ public class Bilhete implements Serializable{
     @Column(name = "codigo")
     private String codigo;
 
-    @OneToOne( cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", nullable = false, updatable = false, insertable = false)
+    @OneToOne( cascade = CascadeType.MERGE)
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING )

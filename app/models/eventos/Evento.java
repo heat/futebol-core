@@ -2,9 +2,6 @@ package models.eventos;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import models.apostas.Apostavel;
-import models.apostas.EventoAposta;
-import models.apostas.Taxa;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -18,7 +15,7 @@ import java.util.List;
 /*@NamedQueries({
         @NamedQuery(name = "Evento.hasCampeonato", query = "SELECT e FROM Evento e WHERE e.codigo = :codigo ")
 })*/
-public class Evento implements Apostavel<EventoAposta>, Serializable{
+public class Evento implements Serializable{
 
     @Id
     @SequenceGenerator(name = "eventos_evento_id_seq", sequenceName = "eventos_evento_id_seq", allocationSize = 1)
@@ -30,7 +27,7 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
     private Long tenant;
 
     @ManyToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "campeonato_id", nullable = false, updatable = true, insertable = false)
+    @JoinColumn(name = "campeonato_id")
     private Campeonato campeonato;
 
     @OneToOne
@@ -46,7 +43,7 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
     private Calendar dataEvento;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
+    @JoinColumn(name="evento_id")
     private List<Resultado> resultados;
 
     public Evento() {
@@ -139,8 +136,4 @@ public class Evento implements Apostavel<EventoAposta>, Serializable{
         return result;
     }
 
-    @Override
-    public List<Taxa> getTaxas() {
-        return null;
-    }
 }

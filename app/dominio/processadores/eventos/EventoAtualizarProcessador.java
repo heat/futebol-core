@@ -33,12 +33,11 @@ public class EventoAtualizarProcessador implements Processador<Chave, Evento> {
 
         Optional<Evento> eventoAtual = repository.buscar(chave.getTenant(), chave.getId());
 
-        if(eventoAtual.isPresent()) validate(eventoAtual.get(), eventoNovo);
+        if (eventoAtual.isPresent()) validate(eventoAtual.get(), eventoNovo);
 
-        try{
+        try {
             repository.atualizar(chave.getTenant(), chave.getId(), eventoNovo);
-        }
-        catch (NoResultException e){
+        } catch (NoResultException e) {
             throw new ValidadorExcpetion(e.getMessage());
         }
 
@@ -47,22 +46,21 @@ public class EventoAtualizarProcessador implements Processador<Chave, Evento> {
 
     /**
      * Validar se o nome de pelo menos um dos times foi alterado
+     *
      * @param eventoAtual
      * @param eventoNovo
      * @throws ValidadorExcpetion
      */
     private void validate(Evento eventoAtual, Evento eventoNovo) throws ValidadorExcpetion {
 
-        if(!eventoNovo.getCasa().equals(eventoAtual.getCasa())){
+        if (!eventoNovo.getCasa().equals(eventoAtual.getCasa()))
             throw new ValidadorExcpetion("O nome dos times não podem ser alterados! ");
-        }
 
-        if(!eventoNovo.getFora().equals(eventoAtual.getFora())){
+        if (!eventoNovo.getFora().equals(eventoAtual.getFora()))
             throw new ValidadorExcpetion("O nome dos times não podem ser alterados! ");
-        }
 
-/*        if(!eventoNovo.getCampeonato().equals(eventoAtual.getCampeonato())){
+        if (!eventoNovo.getCampeonato().equals(eventoAtual.getCampeonato()))
             throw new ValidadorExcpetion("O campeonato não pode ser alterado! ");
-        }*/
     }
+
 }

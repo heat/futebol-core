@@ -1,7 +1,6 @@
 package models.seguranca;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import models.bilhetes.Bilhete;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -60,11 +59,6 @@ public class Usuario implements Serializable{
 
     @OneToOne(mappedBy = "usuario")
     private Perfil perfil;
-
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", nullable = false, updatable = true, insertable = true)
-    private List<Bilhete> bilhetes;
 
     public Usuario(){
 
@@ -134,17 +128,6 @@ public class Usuario implements Serializable{
         return getPapel().getPermissoes();
     }
 
-    public List<Bilhete> getBilhetes() {
-        return bilhetes;
-    }
-
-    public void setBilhetes(List<Bilhete> bilhetes) {
-        this.bilhetes = bilhetes;
-    }
-
-    public void addBilhete(Bilhete bilhete){
-        this.bilhetes.add(bilhete);
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

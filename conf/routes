@@ -75,11 +75,11 @@ DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long
 # ------- CRUD de bilhetes
 GET      /bilhetes                      api.rest.BilheteController.todos
 
-GET      /bilhetes/:codigo                  api.rest.BilheteController.buscar(codigo: String)
+GET      /bilhetes/:codigo              api.rest.BilheteController.buscar(codigo: String)
 
 POST     /bilhetes                      api.rest.BilheteController.inserir()
 
-#POST    /bilhetes/:id                  api.rest.BilheteController.atualizar(id: Long)
+POST    /bilhetes/:id                  api.rest.BilheteController.atualizar(id: Long)
 
 DELETE   /bilhetes/:id                  api.rest.BilheteController.cancelar(id: Long)
 
@@ -97,11 +97,6 @@ GET     /usuarios/0                     api.rest.UsuarioController.usuario
 #POST     /pins                          api.rest.BilheteController.inserir
 
 #GET      /pins/:id                      api.rest.BilheteController.buscar(id: Long)
-
-POST    /token                          api.rest.UsuarioController.authenticar
-
-GET     /logout                         @org.pac4j.play.ApplicationLogoutController.logout
-
 
 
 # An example controller showing a sample home page
