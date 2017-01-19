@@ -12,7 +12,6 @@ import play.db.jpa.JPAApi;
 
 import javax.persistence.EntityManager;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Random;
 
 public class Global extends GlobalSettings {
@@ -27,7 +26,7 @@ public class Global extends GlobalSettings {
 
         jpaApi.withTransaction((em) -> {
 
-            dummyData(em);
+            //dummyData(em);
             em.createQuery("DELETE FROM Validador v").executeUpdate();
             // é apenas uam capa pois a delegação da validação esta para o StringRegexValidador
             CampeonatoNomeValidator campeonatoNomeValidator = new CampeonatoNomeValidator(Tenant.SYSBET.get(),
@@ -90,17 +89,19 @@ public class Global extends GlobalSettings {
                             true,
                             null,
                             "xxx-xxxx-xxx-00");
+            em.persist(codigoBilhetePolitica);
             return jpaApi;
         });
     }
 
     private void dummyData(EntityManager em) {
-        Time palmeiras = new Time(Tenant.SYSBET, "Palmeiras");
-        Time coritiba = new Time(Tenant.SYSBET, "Coritiba");
+        Time palmeiras = new Time(Tenant.SYSBET.get(), "Palmeiras");
+        Time coritiba = new Time(Tenant.SYSBET.get(), "Coritiba");
         em.persist(palmeiras);
         em.persist(coritiba);
 
-        Campeonato campeonato = new Campeonato("Brasileirao");
+        //Não é possível inserir dois campeonatos com o mesmo nome
+        Campeonato campeonato = new Campeonato(Tenant.SYSBET.get(), "Brasileirao");
 
         em.persist(campeonato);
 

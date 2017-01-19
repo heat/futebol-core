@@ -5,11 +5,14 @@ import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.bilhetes.Bilhete;
 
+import javax.persistence.Entity;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Politica de geração e definição do codigo do bilhete
  */
+@Entity
 public class CodigoBilhetePolitica extends Validador<Bilhete> implements IPolitica<Bilhete> {
 
     public CodigoBilhetePolitica() {
@@ -29,9 +32,18 @@ public class CodigoBilhetePolitica extends Validador<Bilhete> implements IPoliti
 
     @Override
     public Bilhete politica(Bilhete bilhete) {
-        // TODO alguma logica para gerar o codigo do bilhete
-        String codigo = "";
-        bilhete.setCodigo(codigo);
+        UUID uuid = UUID.randomUUID();
+        String uuidString = String.valueOf(uuid).replaceAll("-", "");
+        uuidString = uuidString.toUpperCase();
+        String parte1 = uuidString.substring(0,3);
+        String parte2 = uuidString.substring(3,7);
+        String parte3 = uuidString.substring(7,10);
+        String parte4 = "00";
+
+        StringBuilder codigo = new StringBuilder();
+
+        codigo.append(parte1 + "-" + parte2 + "-" + parte3 + "-" + parte4);
+        bilhete.setCodigo(codigo.toString());
         return bilhete;
     }
 }
