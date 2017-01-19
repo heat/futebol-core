@@ -9,7 +9,7 @@ CREATE TABLE public.bilhetes
   bilhete_id INTEGER NOT NULL DEFAULT nextval('public.bilhetes_bilhete_id_seq'),
   tenant_id INTEGER NOT NULL,
   usuario_id INTEGER NOT NULL,
-  codigo VARCHAR(12) NOT NULL,
+  codigo VARCHAR(15) NOT NULL,
   situacao character(1) NOT NULL,
   cliente VARCHAR(50) NOT NULL,
   valor_aposta DECIMAL(10,2) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE public.palpites
   tenant_id INTEGER NOT NULL,
   bilhete_id INTEGER NOT NULL,
   taxa DECIMAL(5,2) NOT NULL,
-  status VARCHAR(255) NOT NULL,
+  status VARCHAR(1) NOT NULL,
   CONSTRAINT palpites_pkey PRIMARY KEY (palpite_id)
 )
 WITH (

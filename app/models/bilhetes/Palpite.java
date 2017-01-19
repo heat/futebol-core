@@ -15,19 +15,19 @@ public class Palpite implements Serializable{
         /**
          * Situacao em que o palpite ainda não foi atualizado após o fim da partida
          */
-        ABERTO("ABERTO"),
+        A("ABERTO"),
         /**
          *O palpite está correto
          */
-        CERTO("CERTO"),
+        V("CERTO"),
         /**
          *O palpite está errado
          */
-        ERRADO("ERRADO"),
+        E("ERRADO"),
         /**
          *Desistiram do palpite antes do início (?) da partida
          */
-        CANCELADO("CANCELADO");
+        C("CANCELADO");
 
         private String status;
 

@@ -19,7 +19,7 @@ public interface Apostavel<E> {
         /**
          * Já encerrado o apostavél e não é mais possível realizar apostas
          */
-        FINALIZADO,
+        ENCERRADO,
         /**
          * Apostável foi cancelado pela adminsitracao
          */

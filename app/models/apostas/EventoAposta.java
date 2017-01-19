@@ -11,27 +11,28 @@ import java.util.List;
 public class EventoAposta implements Apostavel<Evento>, Serializable{
 
     public enum Situacao {
+
         /**
          * Situacao em que o apostavel aceita apostas
          */
-        ABERTO("ABERTO"),
+        A("ABERTO"),
         /**
          * Apostavel é valido porém temporariamente não aceita apostas
          */
-        FECHADO("FECHADO"),
+        F("FECHADO"),
         /**
          * Já encerrado o apostavél e não é mais possível realizar apostas
          */
-        FINALIZADO("FINALIZADO"),
+        E("ENCERRADO"),
         /**
          * Apostável foi cancelado pela adminsitracao
          */
-        CANCELADO("CANCELADO");
+        C("CANCELADO");
 
-        private String string;
+        private String situacao;
 
-        Situacao(String string) {
-            this.string = string;
+        Situacao(String situacao) {
+            this.situacao = situacao;
         }
     }
 
