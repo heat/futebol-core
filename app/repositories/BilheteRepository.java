@@ -87,7 +87,7 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         if(!bilheteOptional.isPresent())
             throw new NoResultException("Bilhete não encontrado");
         Bilhete bilhete = bilheteOptional.get();
-        bilhete.setSituacao(Bilhete.Situacao.CANCELADO);
+        bilhete.setSituacao(Bilhete.Situacao.C);
         em.merge(bilhete);
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
