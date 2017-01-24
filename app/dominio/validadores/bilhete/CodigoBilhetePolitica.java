@@ -28,6 +28,9 @@ public class CodigoBilhetePolitica extends Validador<Bilhete> implements IPoliti
 
         String formato = getValorTexto();
         //TODO logica regex para ve se o formato do bilhete
+        if(!(bilheteSrc.getCodigo().length() != formato.length())){
+           throw new ValidadorExcpetion("Código do bilhete não possui tamanho padrão: XXX-XXX-XX-00 ");
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import play.mvc.Result;
 import repositories.BilheteRepository;
 import repositories.UsuarioRepository;
 import repositories.ValidadorRepository;
+import views.html.bilhete;
 
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -59,9 +60,9 @@ public class BilheteController extends ApplicationController {
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
 
         CommonProfile profile = getProfile().get();
-        Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId() ) );
+        Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
 
-        if(!usuarioOptional.isPresent())
+        if (!usuarioOptional.isPresent())
             return notFound("Usuário não encontrado!");
         Usuario usuario = usuarioOptional.get();
 
@@ -124,8 +125,18 @@ public class BilheteController extends ApplicationController {
             return notFound(e.getMessage());
         }
     }
-    
-    
+
+
+    @Secure(clients = "headerClient")
+    @Transactional
+    public Result imprimir(String codigo) {
+
+        Optional<Bilhete> bilheteOptional = bilheteRepository.buscar(getTenant(), codigo);
+        if (!bilheteOptional.isPresent())
+            return notFound("Bilhete não encontrado!");
+        Bilhete blt = bilheteOptional.get();
+        return ok(bilhete.render(blt));
+    }
 
 
 }

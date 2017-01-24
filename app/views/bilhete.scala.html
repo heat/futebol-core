@@ -1,0 +1,40 @@
+@(bilhete: models.bilhetes.Bilhete)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Bilhete: @bilhete.getCodigo() </title>
+</head>
+<body>
+SYSBET
+Bolao Desportivo
+Bilhete: @bilhete.getCodigo()
+Data: @bilhete.getCriadoEm().getTime()
+Cliente: @bilhete.getCliente()
+
+------------------------
+AC Milan x
+Torino
+12/01/2017 17:00
+Odd:Casa
+Taxa: 2,15
+------------------------
+Sevilha x
+Real Madrid
+12/01/2017 17:15
+Odd:Casa
+Taxa: 2,75
+------------------------
+PALPITE(S): 2
+COTA: R$10,00
+PREMIO: R$59,13
+Para o recebimento do
+premio obrigatorio aprensentar
+este comprovante.
+WWW.DEMO.SYSBET.IN
+BOA SORTE!
+</body>
+</html>
+
+
