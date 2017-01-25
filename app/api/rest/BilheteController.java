@@ -1,14 +1,18 @@
 package api.rest;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
 import dominio.processadores.bilhetes.BilheteAtualizarProcessador;
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
+import models.bilhetes.Palpite;
 import models.seguranca.Usuario;
 import models.vo.Chave;
+import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
@@ -24,6 +28,8 @@ import repositories.ValidadorRepository;
 import views.html.bilhete;
 
 import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -127,15 +133,24 @@ public class BilheteController extends ApplicationController {
     }
 
 
-    @Secure(clients = "headerClient")
     @Transactional
     public Result imprimir(String codigo) {
-
-        Optional<Bilhete> bilheteOptional = bilheteRepository.buscar(getTenant(), codigo);
-        if (!bilheteOptional.isPresent())
-            return notFound("Bilhete não encontrado!");
-        Bilhete blt = bilheteOptional.get();
-        return ok(bilhete.render(blt));
+        Bilhete bilhete = new Bilhete();
+        bilhete.setCodigo("TESTE");
+        bilhete.setSituacao(Bilhete.Situacao.A);
+        bilhete.setAlteradoEm(Calendar.getInstance());
+        bilhete.setCliente("TESTE CLIENTE");
+        bilhete.setCriadoEm(Calendar.getInstance());
+        bilhete.setPalpites(
+                Lists.newArrayList(new Palpite(Tenant.SYSBET.get(),
+                        new Taxa(),
+                        BigDecimal.TEN,
+                        Palpite.Status.A )));
+        bilhete.setTenant(Tenant.SYSBET.get());
+        bilhete.setUsuario(new Usuario());
+        bilhete.setValorAposta(BigDecimal.TEN);
+        bilhete.setValorPremio(BigDecimal.TEN.multiply(BigDecimal.TEN));
+        return ok(views.txt.bilhetes.render(bilhete));
     }
 
 

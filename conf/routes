@@ -83,7 +83,7 @@ POST     /bilhetes/:id                  api.rest.BilheteController.atualizar(id:
 
 DELETE   /bilhetes/:id                  api.rest.BilheteController.cancelar(id: Long)
 
-GET      /bilhetes/impressao/:codigo     api.rest.BilheteController.imprimir(codigo: String)
+GET      /bilhetes/:codigo/impressao     api.rest.BilheteController.imprimir(codigo: String)
 
 # ------- CRUD de usuarios
 
