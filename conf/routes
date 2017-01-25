@@ -2,11 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-POST    /token                       api.rest.UsuarioController.authenticar
+POST    /authentication              api.rest.UsuarioController.authenticar
 
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
 
-GET     /usuarios/0                  api.rest.UsuarioController.usuario
 
 # ------ CRUD de campeonatos
 GET      /campeonatos                api.rest.CampeonatoController.todos
@@ -31,13 +30,8 @@ POST     /eventos/atualizar/:id      api.rest.EventoController.atualizar(id: Lon
 DELETE   /eventos/:id                api.rest.EventoController.excluir(id: Long)
 
 # ------- CRUD de resultados
-GET      /resultados                    api.rest.ResultadoController.todos
-
-GET      /resultados/:id                api.rest.ResultadoController.buscar(id: Long)
 
 POST     /resultados/:id                api.rest.ResultadoController.inserir(id: Long)
-
-DELETE   /resultados/:id                api.rest.ResultadoController.excluir(id: Long)
 
 # ------- CRUD de times
 GET      /times                         api.rest.TimeController.todos
@@ -51,15 +45,13 @@ POST     /times/:id                     api.rest.TimeController.atualizar(id: Lo
 DELETE   /times/:id                     api.rest.TimeController.excluir(id: Long)
 
 # ------- CRUD de evento_apostas
-GET      /eventoapostas                 api.rest.EventoApostaController.todos
+GET      /apostas                 api.rest.EventoApostaController.todos
 
-GET      /eventoapostas/:id             api.rest.EventoApostaController.buscar(id: Long)
+GET      /apostas/:id             api.rest.EventoApostaController.buscar(id: Long)
 
-POST     /eventoapostas                 api.rest.EventoApostaController.inserir
+POST     /apostas                 api.rest.EventoApostaController.inserir
 
-POST     /eventoapostas/:id             api.rest.EventoApostaController.atualizar(id: Long)
-
-DELETE   /eventoapostas/:id             api.rest.EventoApostaController.cancelar(id: Long)
+POST     /apostas/:id             api.rest.EventoApostaController.atualizar(id: Long)
 
 # ------- CRUD de taxas
 GET      /taxas                         api.rest.TaxaController.todos
@@ -67,8 +59,6 @@ GET      /taxas                         api.rest.TaxaController.todos
 GET      /taxas/:id                     api.rest.TaxaController.buscar(id: Long)
 
 POST     /taxas                         api.rest.TaxaController.inserir
-
-POST     /taxas/:id                     api.rest.TaxaController.atualizar(id: Long)
 
 DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long)
 
@@ -78,8 +68,6 @@ GET      /bilhetes                      api.rest.BilheteController.todos
 GET      /bilhetes/:codigo              api.rest.BilheteController.buscar(codigo: String)
 
 POST     /bilhetes                      api.rest.BilheteController.inserir()
-
-POST     /bilhetes/:id                  api.rest.BilheteController.atualizar(id: Long)
 
 DELETE   /bilhetes/:id                  api.rest.BilheteController.cancelar(id: Long)
 
@@ -94,6 +82,10 @@ POST     /usuarios/:id                  api.rest.UsuarioController.atualizar(id:
 DELETE   /usuarios/:id                  api.rest.UsuarioController.cancelar(id: Long)
 
 GET     /usuarios/0                     api.rest.UsuarioController.usuario
+
+#---------- CRUD perfil
+GET     /perfil/0                     api.rest.PerfilController.perfil
+
 
 # ------- CRUD de PIN
 #POST     /pins                          api.rest.BilheteController.inserir

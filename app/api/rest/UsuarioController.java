@@ -65,8 +65,7 @@ public class UsuarioController extends ApplicationController{
         Optional<CommonProfile> profile = getProfile();
         CommonProfile commonProfile = profile.get();
 
-        return ok("teste" +
-                commonProfile.getClass());
+        return ok(Json.toJson(commonProfile));
     }
 
     @Secure(clients = "headerClient")
@@ -106,7 +105,7 @@ public class UsuarioController extends ApplicationController{
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-        return created(Json.toJson(usuario));
+        return ok(Json.toJson(usuario));
     }
 
     @Secure(clients = "headerClient")
