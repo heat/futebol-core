@@ -1,5 +1,9 @@
 package api.rest;
 
+import api.json.Jsonable;
+import api.json.ObjectJson;
+import api.json.TimeJson;
+import com.fasterxml.jackson.databind.JsonNode;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.TimeAtualizarProcessador;
 import dominio.processadores.eventos.TimeInserirProcessador;
@@ -10,9 +14,7 @@ import models.vo.Chave;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
-import play.libs.Json;
 import play.mvc.BodyParser;
-import play.mvc.Controller;
 import play.mvc.Result;
 import repositories.EventoRepository;
 import repositories.TimeRepository;
@@ -50,14 +52,19 @@ public class TimeController extends ApplicationController{
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() throws IOException {
 
-        Time time = Json.fromJson(Controller.request().body().asJson(), Time.class);
+        Optional<Time> timeOptional = requestJson();
+        if(!timeOptional.isPresent())
+            badRequest("Parâmetro ausente");
+        Time time = timeOptional.get();
+
         List<Validador> validadores = validadorRepository.todos(getTenant(), TimeInserirProcessador.REGRA);
         try {
             inserirProcessador.executar(getTenant(), time,  validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
-        return created(Json.toJson(time));
+        TimeJson timeJson = TimeJson.of(time);
+        return created(ObjectJson.toJson(timeJson));
     }
 
     @Secure(clients = "headerClient")
@@ -65,38 +72,45 @@ public class TimeController extends ApplicationController{
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) {
 
-        Time Time = Json.fromJson(Controller.request()
-                .body()
-                .asJson(), Time.class);
+        Optional<Time> timeOptional = requestJson();
+        if(!timeOptional.isPresent())
+            badRequest("Parâmetro ausente");
+        Time time = timeOptional.get();
+
         List<Validador> validadores = validadorRepository.todos(getTenant(), TimeAtualizarProcessador.REGRA);
 
         try {
             Chave chave = Chave.of(getTenant(), id);
-            atualizarProcessador.executar(chave, Time, validadores);
+            atualizarProcessador.executar(chave, time, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
 
-        return ok("Time atualizado! ");
+        TimeJson timeJson = TimeJson.of(timeRepository.buscar(getTenant(), id).get());
+        return ok(ObjectJson.toJson(timeJson));
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
 
-        List todos = timeRepository.todos(getTenant());
-        return ok(Json.toJson(todos));
+        List<Time> times = timeRepository.todos(getTenant());
+        List<Jsonable> jsons =  TimeJson.of(times);
+
+        return ok(ObjectJson.toJson(TimeJson.tipoLista, jsons));
+
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result buscar(Long id) {
 
-        Optional<Time> todos = timeRepository.buscar(getTenant(), id);
-        if (!todos.isPresent()) {
+        Optional<Time> times = timeRepository.buscar(getTenant(), id);
+        if (!times.isPresent()) {
             return notFound("Time não encontrado!");
         }
-        return ok(Json.toJson(todos));
+        TimeJson json = TimeJson.of(times.get());
+        return ok(ObjectJson.toJson(json));
     }
 
     @Secure(clients = "headerClient")
@@ -111,4 +125,10 @@ public class TimeController extends ApplicationController{
         }
     }
 
+    private Optional<Time> requestJson(){
+
+        JsonNode json = request().body().asJson();
+        String nome = json.findPath("nome").textValue();
+        return Optional.ofNullable(new Time(getTenant().get(), nome));
+    }
 }
