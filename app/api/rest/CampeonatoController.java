@@ -84,7 +84,7 @@ public class CampeonatoController extends ApplicationController {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        CampeonatoJson campeonatoJson = CampeonatoJson.of(campeonato);
+        CampeonatoJson campeonatoJson = CampeonatoJson.of(campeonatoRepository.buscar(getTenant(), id).get());
 
         return ok(ObjectJson.toJson(campeonatoJson));
     }
@@ -101,13 +101,12 @@ public class CampeonatoController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result buscar(Long id) {
-        Optional<Campeonato> campeonato = campeonatoRepository.buscar(getTenant(), id);
+    public Result buscar(String nome) {
+        Optional<Campeonato> campeonato = campeonatoRepository.buscar(getTenant(), nome);
 
         if (!campeonato.isPresent()) {
             return notFound("Campeonato não encontrado!");
         }
-
         CampeonatoJson json = CampeonatoJson.of(campeonato.get());
 
         return ok(ObjectJson.toJson(json));

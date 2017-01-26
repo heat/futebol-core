@@ -2,7 +2,6 @@ package models.apostas;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import models.bilhetes.Palpite;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -10,7 +9,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.List;
 
 @Entity
 @Table( name = "taxas")
@@ -48,7 +46,7 @@ public class Taxa implements Serializable{
     }
 
     public Taxa(Long tenant, Odd odd, BigDecimal taxa, BigDecimal linha,
-                Calendar criadoEm, Calendar alteradoEm, List<Palpite> palpites) {
+                Calendar criadoEm, Calendar alteradoEm) {
 
         this.tenant = tenant;
         this.odd = odd;
@@ -56,7 +54,6 @@ public class Taxa implements Serializable{
         this.linha = linha;
         this.criadoEm = criadoEm;
         this.alteradoEm = alteradoEm;
-       // this.palpites = palpites;
     }
 
     public Long getId() {
