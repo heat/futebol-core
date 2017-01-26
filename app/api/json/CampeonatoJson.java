@@ -1,6 +1,5 @@
 package api.json;
 
-import com.google.common.base.Strings;
 import models.eventos.Campeonato;
 
 import java.io.Serializable;
@@ -9,24 +8,34 @@ import java.util.stream.Collectors;
 
 public class CampeonatoJson implements Serializable, Convertable<Campeonato>, Jsonable {
 
-    public static final String tipo = "campeonato";
+    public static final String tipoObjeto = "campeonato";
+    public static final String tipoLista = "campeonatos";
 
     public final String id;
 
     public final String nome;
-
+    
     public CampeonatoJson(String id, String nome) {
         this.id = id;
         this.nome = nome;
     }
 
+    public CampeonatoJson() {
+        id = null;
+        nome = null;
+    }
+
 
     @Override
     public String type() {
-        return tipo;
+        return tipoObjeto;
+    }
+    public String typeLista() {
+        return tipoLista;
     }
 
     public static CampeonatoJson of(Campeonato campeonato) {
+
         return new CampeonatoJson(String.valueOf(campeonato.getId()), campeonato.getNome());
     }
 

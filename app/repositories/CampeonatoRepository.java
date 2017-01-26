@@ -47,6 +47,20 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
         }
     }
 
+    public Optional<Campeonato> buscar(Tenant tenant, String nome) {
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Campeonato> query = em.createQuery("SELECT c FROM Campeonato c WHERE c.tenant = :tenant and c.nome = :nome", Campeonato.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("nome", nome);
+            return Optional.ofNullable(query.getSingleResult());
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     public CompletableFuture<Campeonato> atualizar(Tenant tenant, Long id, Campeonato c) {
 

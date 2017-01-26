@@ -8,7 +8,6 @@ import java.util.List;
 
 public class ObjectJson {
 
-
     public static JsonNode toJson(Jsonable entidade) {
         ObjectNode root = Json.newObject();
         root.set(entidade.type(), Json.toJson(entidade));
@@ -18,6 +17,7 @@ public class ObjectJson {
     public static JsonNode toJson(String tipo, List<Jsonable> entidades) {
         ObjectNode root = Json.newObject();
         root.set(tipo, Json.toJson(entidades));
+        JsonNode meta = root.set("meta", Json.newObject().set("total", Json.toJson(entidades.size())));
         return root;
     }
 }
