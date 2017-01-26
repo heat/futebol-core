@@ -1,5 +1,8 @@
 package api.rest;
 
+import api.json.CampeonatoJson;
+import api.json.Jsonable;
+import api.json.ObjectJson;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
 import dominio.processadores.eventos.CampeonatoInserirProcessador;
@@ -26,6 +29,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class CampeonatoController extends ApplicationController {
 
@@ -69,28 +74,31 @@ public class CampeonatoController extends ApplicationController {
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) {
-        Campeonato campeonato = Json.fromJson(Controller.request()
+        CampeonatoJson json = Json.fromJson(Controller.request()
                 .body()
-                .asJson(), Campeonato.class);
+                .asJson(), CampeonatoJson.class);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), CampeonatoAtualizarProcessador.REGRA);
 
         try {
+            Campeonato campeonato = json.to();
             Chave chave = Chave.of(getTenant(), id);
             atualizarProcessador.executar(chave, campeonato, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        return ok("Campeonato " + campeonato.getNome() + " atualizado! ");
+        return buscar(id);
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
-        List todos = campeonatoRepository.todos(getTenant());
+        List<Campeonato> todos = campeonatoRepository.todos(getTenant());
 
-        return ok(Json.toJson(todos));
+        List<Jsonable> jsons =  CampeonatoJson.of(todos);
+
+        return ok(ObjectJson.toJson(CampeonatoJson.tipo, jsons));
     }
 
     @Secure(clients = "headerClient")
@@ -101,7 +109,10 @@ public class CampeonatoController extends ApplicationController {
         if (!campeonato.isPresent()) {
             return notFound("Campeonato não encontrado!");
         }
-        return ok(Json.toJson(campeonato));
+
+        CampeonatoJson json = CampeonatoJson.of(campeonato.get());
+
+        return ok(ObjectJson.toJson(json));
     }
 
     @Secure(clients = "headerClient")
