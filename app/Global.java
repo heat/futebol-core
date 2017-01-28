@@ -2,6 +2,7 @@ import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.processadores.eventos.*;
 import dominio.validadores.bilhete.CodigoBilhetePolitica;
 import dominio.validadores.eventos.*;
+import models.apostas.Apostavel;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
@@ -112,6 +113,7 @@ public class Global extends GlobalSettings {
         evento.setCasa(palmeiras);
         evento.setFora(coritiba);
         evento.setCampeonato(campeonato);
+        evento.setSituacao(Apostavel.Situacao.ABERTO);
         Calendar dataJogo = Calendar.getInstance();
         dataJogo.add(Calendar.HOUR, random.nextInt(10));
         evento.setDataEvento(dataJogo);

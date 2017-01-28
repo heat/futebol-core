@@ -101,8 +101,8 @@ public class CampeonatoController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result buscar(String nome) {
-        Optional<Campeonato> campeonato = campeonatoRepository.buscar(getTenant(), nome);
+    public Result buscar(Long id) {
+        Optional<Campeonato> campeonato = campeonatoRepository.buscar(getTenant(), id);
 
         if (!campeonato.isPresent()) {
             return notFound("Campeonato não encontrado!");

@@ -10,32 +10,6 @@ import java.util.List;
 @Table( name = "evento_apostas")
 public class EventoAposta implements Apostavel<Evento>, Serializable{
 
-    public enum Situacao {
-
-        /**
-         * Situacao em que o apostavel aceita apostas
-         */
-        A("ABERTO"),
-        /**
-         * Apostavel é valido porém temporariamente não aceita apostas
-         */
-        F("FECHADO"),
-        /**
-         * Já encerrado o apostavél e não é mais possível realizar apostas
-         */
-        E("ENCERRADO"),
-        /**
-         * Apostável foi cancelado pela adminsitracao
-         */
-        C("CANCELADO");
-
-        private String situacao;
-
-        Situacao(String situacao) {
-            this.situacao = situacao;
-        }
-    }
-
     @Id
     @SequenceGenerator(name="eventos_apostas_id_seq", sequenceName = "eventos_apostas_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventos_apostas_id_seq")

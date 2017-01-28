@@ -39,8 +39,8 @@ public class CampeonatoJson implements Serializable, Convertable<Campeonato>, Js
         return new CampeonatoJson(String.valueOf(campeonato.getId()), campeonato.getNome());
     }
 
-    public static List<Jsonable> of(List<Campeonato> campeonatoes) {
-        return campeonatoes.stream().map( c -> CampeonatoJson.of(c) ).collect(Collectors.toList());
+    public static List<Jsonable> of(List<Campeonato> campeonatos) {
+        return campeonatos.stream().map( c -> CampeonatoJson.of(c) ).collect(Collectors.toList());
     }
     public Campeonato to() {
         return new Campeonato(null, nome);

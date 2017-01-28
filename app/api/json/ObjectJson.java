@@ -20,4 +20,16 @@ public class ObjectJson {
         JsonNode meta = root.set("meta", Json.newObject().set("total", Json.toJson(entidades.size())));
         return root;
     }
+
+    /**
+     * Recebe duas listas, uma principal e uma adicional.
+     * A informação com o total de entidades considera a lista 1 passada como parâmetro
+     */
+    public static JsonNode toJson(String tipo1, List<Jsonable> entidades1, String tipo2, List<Jsonable> entidades2) {
+        ObjectNode root = Json.newObject();
+        root.set(tipo1, Json.toJson(entidades1));
+        root.set(tipo2, Json.toJson(entidades2));
+        JsonNode meta = root.set("meta", Json.newObject().set("total", Json.toJson(entidades1.size())));
+        return root;
+    }
 }

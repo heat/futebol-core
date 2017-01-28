@@ -52,6 +52,24 @@ public class TimeRepository implements  Repository<Long, Time>{
         }
     }
 
+    public Optional<Time> buscar(Tenant tenant, String nome) {
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Time> query = em.createQuery("SELECT t FROM Time t WHERE t.tenant = :tenant and t.nome = :nome", Time.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("nome", nome);
+            return Optional.ofNullable(query.getSingleResult());
+
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
     @Override
     public CompletableFuture<Time> atualizar(Tenant tenant, Long id, Time t) {
 

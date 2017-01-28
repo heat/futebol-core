@@ -10,8 +10,6 @@ GET     /logout                      @org.pac4j.play.ApplicationLogoutController
 # ------ CRUD de campeonatos
 GET      /campeonatos                api.rest.CampeonatoController.todos
 
-GET      /campeonatos/:id            api.rest.CampeonatoController.buscar(id: Long)
-
 POST     /campeonatos                api.rest.CampeonatoController.inserir
 
 POST     /campeonatos/:id            api.rest.CampeonatoController.atualizar(id: Long)
@@ -23,9 +21,9 @@ GET      /eventos                    api.rest.EventoController.todos
 
 GET      /eventos/:id                api.rest.EventoController.buscar(id: Long)
 
-POST     /eventos/inserir/:id        api.rest.EventoController.inserir(id: Long)
+POST     /eventos                    api.rest.EventoController.inserir
 
-POST     /eventos/atualizar/:id      api.rest.EventoController.atualizar(id: Long)
+POST     /eventos/:id                api.rest.EventoController.atualizar(id: Long)
 
 DELETE   /eventos/:id                api.rest.EventoController.excluir(id: Long)
 
@@ -44,13 +42,13 @@ POST     /times/:id                     api.rest.TimeController.atualizar(id: Lo
 DELETE   /times/:id                     api.rest.TimeController.excluir(id: Long)
 
 # ------- CRUD de evento_apostas
-GET      /apostas                 api.rest.EventoApostaController.todos
+GET      /apostas                       api.rest.EventoApostaController.todos
 
-GET      /apostas/:id             api.rest.EventoApostaController.buscar(id: Long)
+GET      /apostas/:id                   api.rest.EventoApostaController.buscar(id: Long)
 
-POST     /apostas                 api.rest.EventoApostaController.inserir
+POST     /apostas                       api.rest.EventoApostaController.inserir
 
-POST     /apostas/:id             api.rest.EventoApostaController.atualizar(id: Long)
+POST     /apostas/:id                   api.rest.EventoApostaController.atualizar(id: Long)
 
 # ------- CRUD de taxas
 GET      /taxas                         api.rest.TaxaController.todos

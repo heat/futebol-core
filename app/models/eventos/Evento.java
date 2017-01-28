@@ -2,6 +2,8 @@ package models.eventos;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.apostas.Apostavel;
+import models.apostas.Taxa;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -15,7 +17,7 @@ import java.util.List;
 /*@NamedQueries({
         @NamedQuery(name = "Evento.hasCampeonato", query = "SELECT e FROM Evento e WHERE e.codigo = :codigo ")
 })*/
-public class Evento implements Serializable{
+public class Evento implements Apostavel<Evento>, Serializable{
 
     @Id
     @SequenceGenerator(name = "eventos_evento_id_seq", sequenceName = "eventos_evento_id_seq", allocationSize = 1)
@@ -42,6 +44,9 @@ public class Evento implements Serializable{
     @Column(name = "data_evento")
     private Calendar dataEvento;
 
+    @Column(name= "situacao")
+    private Situacao situacao;
+
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="evento_id")
     private List<Resultado> resultados;
@@ -51,13 +56,15 @@ public class Evento implements Serializable{
     }
 
     public Evento(Long tenant, Time casa, Time fora, Calendar dataEvento,
-                  List<Resultado> resultados) {
+                  Campeonato campeonato, Situacao situacao, List<Resultado> resultados) {
 
         this.tenant = tenant;
         this.casa = casa;
         this.fora = fora;
         this.dataEvento = dataEvento;
         this.resultados = resultados;
+        this.campeonato = campeonato;
+        this.situacao = situacao;
     }
 
     public Long getId() {
@@ -106,6 +113,14 @@ public class Evento implements Serializable{
         this.dataEvento = dataEvento;
     }
 
+    public Situacao getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
+    }
+
     public List<Resultado> getResultados() {
         return resultados;
     }
@@ -136,4 +151,8 @@ public class Evento implements Serializable{
         return result;
     }
 
+    @Override
+    public List<Taxa> getTaxas() {
+        return null;
+    }
 }
