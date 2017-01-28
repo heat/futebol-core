@@ -95,8 +95,8 @@ public class EventoController extends ApplicationController{
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-
-        return ok(ObjectJson.toJson(EventoJson.of(evento)));
+        EventoJson eventoJson = EventoJson.of(eventoRepository.buscar(getTenant(), id).get());
+        return ok(ObjectJson.toJson(eventoJson));
     }
 
     @Secure(clients = "headerClient")
