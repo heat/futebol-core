@@ -48,7 +48,7 @@ public class UsuarioController extends ApplicationController{
 
     }
 
-    @Secure(clients = "DirectBasicAuthClient")
+    @Secure(clients = "directBasicAuthClient")
     public Result authenticar() {
         final Optional<CommonProfile> profile = getProfile();
         final JwtGenerator generator = new JwtGenerator(new SecretSignatureConfiguration(SecurityModule.JWT_SALT));
