@@ -74,7 +74,7 @@ public class EventoController extends ApplicationController{
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-       return created(ObjectJson.toJson(EventoJson.of(evento)));
+       return created(Json.newObject());
     }
 
     @Secure(clients = "headerClient")
@@ -96,7 +96,7 @@ public class EventoController extends ApplicationController{
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
         EventoJson eventoJson = EventoJson.of(eventoRepository.buscar(getTenant(), id).get());
-        return ok(ObjectJson.toJson(eventoJson));
+        return ok(Json.newObject());
     }
 
     @Secure(clients = "headerClient")
@@ -110,7 +110,7 @@ public class EventoController extends ApplicationController{
         }
         List<Jsonable> jsonsCampeonatos = CampeonatoJson.of(campeonatos);
         List<Jsonable> jsonsEventos =  EventoJson.of(eventos);
-        return ok(ObjectJson.toJson(EventoJson.tipoLista, jsonsEventos, CampeonatoJson.tipoLista, jsonsCampeonatos));
+        return ok(Json.newObject());
     }
 
     @Secure(clients = "headerClient")

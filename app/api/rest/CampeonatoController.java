@@ -14,6 +14,7 @@ import models.vo.Chave;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -63,7 +64,7 @@ public class CampeonatoController extends ApplicationController {
         }
         //Atualiza o id do campeonato
         CampeonatoJson campeonatoJson = CampeonatoJson.of(campeonato);
-        return created(ObjectJson.toJson(campeonatoJson));
+        return created(Json.newObject());
     }
 
     @Secure(clients = "headerClient")
@@ -86,7 +87,7 @@ public class CampeonatoController extends ApplicationController {
 
         CampeonatoJson campeonatoJson = CampeonatoJson.of(campeonatoRepository.buscar(getTenant(), id).get());
 
-        return ok(ObjectJson.toJson(campeonatoJson));
+        return ok(Json.newObject());
     }
 
     @Secure(clients = "headerClient")
@@ -96,7 +97,7 @@ public class CampeonatoController extends ApplicationController {
 
         List<Jsonable> jsons =  CampeonatoJson.of(campeonatoes);
 
-        return ok(ObjectJson.toJson(CampeonatoJson.tipoLista, jsons));
+        return ok(Json.newObject());
     }
 
     @Secure(clients = "headerClient")
@@ -109,7 +110,7 @@ public class CampeonatoController extends ApplicationController {
         }
         CampeonatoJson json = CampeonatoJson.of(campeonato.get());
 
-        return ok(ObjectJson.toJson(json));
+        return ok(Json.newObject());
     }
 
     @Secure(clients = "headerClient")

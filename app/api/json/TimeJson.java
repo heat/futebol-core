@@ -8,8 +8,7 @@ import java.util.stream.Collectors;
 
 public class TimeJson implements Serializable, Convertable<Time>, Jsonable {
 
-    public static final String tipoObjeto = "time";
-    public static final String tipoLista = "times";
+    public static final String TIPO = "times";
 
     public final String id;
 
@@ -28,10 +27,7 @@ public class TimeJson implements Serializable, Convertable<Time>, Jsonable {
 
     @Override
     public String type() {
-        return tipoObjeto;
-    }
-    public String typeLista() {
-        return tipoLista;
+        return TIPO;
     }
 
     public static TimeJson of(Time Time) {

@@ -61,10 +61,14 @@ public class TimeController extends ApplicationController{
         try {
             inserirProcessador.executar(getTenant(), time,  validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
+            //TODO é um ok ou um erro ?
             return ok(validadorExcpetion.getMessage());
         }
         TimeJson timeJson = TimeJson.of(time);
-        return created(ObjectJson.toJson(timeJson));
+        JsonNode json = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(timeJson)
+                .build();
+        return created(json);
     }
 
     @Secure(clients = "headerClient")
@@ -85,9 +89,13 @@ public class TimeController extends ApplicationController{
         } catch (ValidadorExcpetion validadorExcpetion) {
             return ok(validadorExcpetion.getMessage());
         }
-
+        //TODO por que não pega o time do retorno do processador
         TimeJson timeJson = TimeJson.of(timeRepository.buscar(getTenant(), id).get());
-        return ok(ObjectJson.toJson(timeJson));
+
+        JsonNode json = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(timeJson)
+                .build();
+        return ok(json);
     }
 
     @Secure(clients = "headerClient")
@@ -95,9 +103,15 @@ public class TimeController extends ApplicationController{
     public Result todos() {
 
         List<Time> times = timeRepository.todos(getTenant());
-        List<Jsonable> jsons =  TimeJson.of(times);
 
-        return ok(ObjectJson.toJson(TimeJson.tipoLista, jsons));
+        List<Jsonable> jsons =  TimeJson.of(times);
+        // usa o builder
+        ObjectJson.JsonBuilder<TimeJson> builder = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        //adiciona as entidades
+        times.forEach( time -> builder.comEntidade(TimeJson.of(time)));
+
+        JsonNode retorno = builder.build();
+        return ok(retorno);
 
     }
 
@@ -109,8 +123,11 @@ public class TimeController extends ApplicationController{
         if (!times.isPresent()) {
             return notFound("Time não encontrado!");
         }
-        TimeJson json = TimeJson.of(times.get());
-        return ok(ObjectJson.toJson(json));
+        TimeJson timeJson = TimeJson.of(times.get());
+        JsonNode json = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(timeJson)
+                .build();
+        return ok(json);
     }
 
     @Secure(clients = "headerClient")
