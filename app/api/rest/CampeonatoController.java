@@ -3,6 +3,7 @@ package api.rest;
 import api.json.CampeonatoJson;
 import api.json.Jsonable;
 import api.json.ObjectJson;
+import api.json.TimeJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
@@ -14,7 +15,6 @@ import models.vo.Chave;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
-import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -64,7 +64,10 @@ public class CampeonatoController extends ApplicationController {
         }
         //Atualiza o id do campeonato
         CampeonatoJson campeonatoJson = CampeonatoJson.of(campeonato);
-        return created(Json.newObject());
+        JsonNode json = ObjectJson.build(CampeonatoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(campeonatoJson)
+                .build();
+        return created(json);
     }
 
     @Secure(clients = "headerClient")
@@ -84,20 +87,27 @@ public class CampeonatoController extends ApplicationController {
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-
         CampeonatoJson campeonatoJson = CampeonatoJson.of(campeonatoRepository.buscar(getTenant(), id).get());
-
-        return ok(Json.newObject());
+        JsonNode json = ObjectJson.build(CampeonatoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(campeonatoJson)
+                .build();
+        return ok(json);
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
-        List<Campeonato> campeonatoes = campeonatoRepository.todos(getTenant());
+        List<Campeonato> campeonatos = campeonatoRepository.todos(getTenant());
 
-        List<Jsonable> jsons =  CampeonatoJson.of(campeonatoes);
+        List<Jsonable> jsons =  CampeonatoJson.of(campeonatos);
 
-        return ok(Json.newObject());
+        // usa o builder
+        ObjectJson.JsonBuilder<CampeonatoJson> builder = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        //adiciona as entidades
+        campeonatos.forEach( campeonato -> builder.comEntidade(CampeonatoJson.of(campeonato)));
+
+        JsonNode retorno = builder.build();
+        return ok(retorno);
     }
 
     @Secure(clients = "headerClient")
@@ -108,9 +118,11 @@ public class CampeonatoController extends ApplicationController {
         if (!campeonato.isPresent()) {
             return notFound("Campeonato não encontrado!");
         }
-        CampeonatoJson json = CampeonatoJson.of(campeonato.get());
-
-        return ok(Json.newObject());
+        CampeonatoJson jsonCampeonato = CampeonatoJson.of(campeonato.get());
+        JsonNode json = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(jsonCampeonato)
+                .build();
+        return ok(json);
     }
 
     @Secure(clients = "headerClient")
