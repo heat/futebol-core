@@ -113,7 +113,7 @@ public class Global extends GlobalSettings {
         evento.setCasa(palmeiras);
         evento.setFora(coritiba);
         evento.setCampeonato(campeonato);
-        evento.setSituacao(Apostavel.Situacao.ABERTO);
+        evento.setSituacao(Apostavel.Situacao.A);
         Calendar dataJogo = Calendar.getInstance();
         dataJogo.add(Calendar.HOUR, random.nextInt(10));
         evento.setDataEvento(dataJogo);

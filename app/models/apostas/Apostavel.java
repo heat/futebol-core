@@ -11,19 +11,26 @@ public interface Apostavel<E> {
         /**
          * Situacao em que o apostavel aceita apostas
          */
-        ABERTO,
+        A("ABERTO"),
         /**
          * Apostavel é valido porém temporariamente não aceita apostas
          */
-        FECHADO,
+        F("FECHADO"),
         /**
          * Já encerrado o apostavél e não é mais possível realizar apostas
          */
-        ENCERRADO,
+        E("ENCERRADO"),
         /**
          * Apostável foi cancelado pela adminsitracao
          */
-        CANCELADO
+        C("CANCELADO");
+
+        private String situacao;
+
+        Situacao(String situacao) {
+
+            this.situacao = situacao;
+        }
     }
 
     List<Taxa> getTaxas();

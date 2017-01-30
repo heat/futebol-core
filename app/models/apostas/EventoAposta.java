@@ -26,6 +26,7 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     @Column(name = "permitir")
     private Boolean permitir;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "situacao")
     private Situacao situacao;
 

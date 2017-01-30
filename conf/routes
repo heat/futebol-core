@@ -10,6 +10,8 @@ GET     /logout                      @org.pac4j.play.ApplicationLogoutController
 # ------ CRUD de campeonatos
 GET      /campeonatos                api.rest.CampeonatoController.todos
 
+GET      /campeonatos/:id            api.rest.CampeonatoController.buscar(id: Long)
+
 POST     /campeonatos                api.rest.CampeonatoController.inserir
 
 POST     /campeonatos/:id            api.rest.CampeonatoController.atualizar(id: Long)

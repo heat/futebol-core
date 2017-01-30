@@ -2,7 +2,6 @@ package api.rest;
 
 import api.json.CampeonatoJson;
 import api.json.EventoJson;
-import api.json.Jsonable;
 import api.json.ObjectJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -32,7 +31,10 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -68,7 +70,7 @@ public class EventoController extends ApplicationController{
         if(!eventoOptional.isPresent())
             badRequest("Parâmetro ausente");
         Evento evento = eventoOptional.get();
-        evento.setSituacao(Apostavel.Situacao.ABERTO);
+        evento.setSituacao(Apostavel.Situacao.A);
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
         try {
@@ -86,7 +88,7 @@ public class EventoController extends ApplicationController{
         CampeonatoJson campeonatoJson = CampeonatoJson.of(evento.getCampeonato());
         ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
 
-        JsonNode retorno = builder.comRelacionamento(CampeonatoJson.TIPO, campeonatoJson)
+        JsonNode retorno = builder.comRelacionamento(EventoJson.TIPO, eventoJson)
             .build();
         return created(retorno);
     }

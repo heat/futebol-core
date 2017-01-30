@@ -45,6 +45,7 @@ public class Evento implements Apostavel<Evento>, Serializable{
     private Calendar dataEvento;
 
     //TODO Mapear para utilizar um CHAR de uma letra ao inves de inteiro
+    @Enumerated(EnumType.STRING)
     @Column(name= "situacao")
     private Situacao situacao;
 
