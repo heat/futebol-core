@@ -61,8 +61,7 @@ public class TimeController extends ApplicationController{
         try {
             inserirProcessador.executar(getTenant(), time,  validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
-            //TODO é um ok ou um erro ?
-            return ok(validadorExcpetion.getMessage());
+            return badRequest(validadorExcpetion.getMessage());
         }
         TimeJson timeJson = TimeJson.of(time);
         JsonNode json = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
@@ -87,7 +86,7 @@ public class TimeController extends ApplicationController{
             Chave chave = Chave.of(getTenant(), id);
             atualizarProcessador.executar(chave, time, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
-            return ok(validadorExcpetion.getMessage());
+            return badRequest(validadorExcpetion.getMessage());
         }
         //TODO por que não pega o time do retorno do processador
         TimeJson timeJson = TimeJson.of(timeRepository.buscar(getTenant(), id).get());
