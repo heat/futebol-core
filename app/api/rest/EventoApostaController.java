@@ -1,5 +1,7 @@
 package api.rest;
 
+import api.json.ApostaJson;
+import api.json.ObjectJson;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
 import dominio.processadores.apostas.EventoApostaAtualizarProcessador;
@@ -85,9 +87,12 @@ public class EventoApostaController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
-        List todos = eventoApostaRepository.todos(getTenant());
+        List<EventoAposta> todos = eventoApostaRepository.todos(getTenant());
 
-        return ok(Json.toJson(todos));
+        ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+
+        todos.forEach(eventoAposta -> builder.comEntidade(ApostaJson.of(eventoAposta)));
+        return ok(builder.build());
     }
 
     @Secure(clients = "headerClient")
