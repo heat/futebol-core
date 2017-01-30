@@ -8,8 +8,7 @@ import java.util.stream.Collectors;
 
 public class CampeonatoJson implements Serializable, Convertable<Campeonato>, Jsonable {
 
-    public static final String tipoObjeto = "campeonato";
-    public static final String tipoLista = "campeonatos";
+    public static final String TIPO = "campeonatos";
 
     public final String id;
 
@@ -28,10 +27,7 @@ public class CampeonatoJson implements Serializable, Convertable<Campeonato>, Js
 
     @Override
     public String type() {
-        return tipoObjeto;
-    }
-    public String typeLista() {
-        return tipoLista;
+        return TIPO;
     }
 
     public static CampeonatoJson of(Campeonato campeonato) {

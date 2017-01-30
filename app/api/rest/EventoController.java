@@ -33,6 +33,8 @@ import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class EventoController extends ApplicationController{
 
@@ -70,11 +72,23 @@ public class EventoController extends ApplicationController{
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
         try {
-            inserirProcessador.executar(getTenant(), evento, validadores);
+            evento = inserirProcessador.executar(getTenant(), evento, validadores)
+                .get();
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
+        } catch (InterruptedException e) {
+            internalServerError(e.getMessage());
+        } catch (ExecutionException e) {
+            internalServerError(e.getMessage());
         }
-       return created(Json.newObject());
+        EventoJson eventoJson = EventoJson.of(evento);
+
+        CampeonatoJson campeonatoJson = CampeonatoJson.of(evento.getCampeonato());
+        ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+
+        JsonNode retorno = builder.comRelacionamento(CampeonatoJson.TIPO, campeonatoJson)
+            .build();
+        return created(retorno);
     }
 
     @Secure(clients = "headerClient")
@@ -104,13 +118,19 @@ public class EventoController extends ApplicationController{
     public Result todos() {
 
         List<Evento> eventos = eventoRepository.todos(getTenant());
-        List<Campeonato> campeonatos = new ArrayList<>();
-        for(Evento evento: eventos){
-            campeonatos.add(evento.getCampeonato());
-        }
-        List<Jsonable> jsonsCampeonatos = CampeonatoJson.of(campeonatos);
-        List<Jsonable> jsonsEventos =  EventoJson.of(eventos);
-        return ok(Json.newObject());
+
+        List<Campeonato> campeonatos = eventos.stream()
+                .map(evento -> evento.getCampeonato())
+                .distinct()
+                .collect(Collectors.toList());
+
+        ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        // adiciona os eventos
+        eventos.forEach(evento -> builder.comEntidade(EventoJson.of(evento)) );
+        // adiciona os relacionamentos
+        campeonatos.forEach(campeonato -> builder.comRelacionamento(CampeonatoJson.TIPO, CampeonatoJson.of(campeonato)));
+
+        return ok(builder.build());
     }
 
     @Secure(clients = "headerClient")

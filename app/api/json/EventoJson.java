@@ -11,8 +11,7 @@ import java.util.stream.Collectors;
 
 public class EventoJson implements Serializable, Convertable<Evento>, Jsonable {
 
-    public static final String tipoObjeto = "evento";
-    public static final String tipoLista = "eventos";
+    public static final String TIPO = "eventos";
 
     public final String id;
     public final String casa;
@@ -32,17 +31,17 @@ public class EventoJson implements Serializable, Convertable<Evento>, Jsonable {
 
     @Override
     public String type() {
-        return tipoObjeto;
-    }
-    public String typeLista() {
-        return tipoLista;
+        return TIPO;
     }
 
     public static EventoJson of(Evento evento) {
 
         return new EventoJson(String.valueOf(evento.getId()),
-                evento.getCasa().getNome(), evento.getFora().getNome(),
-                calendarToString(evento.getDataEvento()), evento.getSituacao(), String.valueOf(evento.getCampeonato().getId()));
+                evento.getNomeCasa(),
+                evento.getNomeFora(),
+                calendarToString(evento.getDataEvento()),
+                evento.getSituacao(),
+                String.valueOf(evento.getCampeonato().getId()));
     }
 
     public static List<Jsonable> of(List<Evento> eventos) {
@@ -59,7 +58,5 @@ public class EventoJson implements Serializable, Convertable<Evento>, Jsonable {
         String dataAsString = s.format(calendar.getTime());
         return dataAsString;
     }
-
-
 
 }

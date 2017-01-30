@@ -83,7 +83,7 @@ public class ObjectJson {
         public JsonNode build() {
             this.comMetaData("total", this.entidades.size());
             ObjectNode root = Json.newObject();
-
+            _buildRelacionamentos(root);
             root.set(tipo, Json.toJson(entidades));
             root.set("meta", Json.toJson(metas));
             return root;
@@ -95,6 +95,8 @@ public class ObjectJson {
         protected final String tipo;
 
         protected Map<String, Object> metas = new HashMap<>();
+
+        protected Map<String, List<Jsonable>> relacionamentos = new HashMap<>();
 
         public JsonBuilder(String tipo) {
             this.tipo = tipo;
@@ -126,5 +128,26 @@ public class ObjectJson {
         public abstract JsonBuilder<T> comEntidade(T entidade);
 
         public abstract JsonNode build();
+
+        protected  ObjectNode _buildRelacionamentos(ObjectNode root) {
+                relacionamentos.forEach((tipo, rels) -> {
+                    int size = rels.size();
+                    if(size == 1) {
+                        root.set(tipo, Json.toJson(rels.get(0)));
+                    } else if (size > 1) {
+                        root.set(tipo, Json.toJson(rels));
+                    }
+                });
+                return root;
+        }
+
+        public JsonBuilder<T> comRelacionamento(String tipo, Jsonable rel) {
+            if(!relacionamentos.containsKey(tipo)) {
+                ArrayList<Jsonable> elementos = new ArrayList<>();
+                relacionamentos.put(tipo, elementos);
+            }
+            relacionamentos.get(tipo).add(rel);
+            return this;
+        }
     }
 }

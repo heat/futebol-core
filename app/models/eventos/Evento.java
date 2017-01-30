@@ -44,6 +44,7 @@ public class Evento implements Apostavel<Evento>, Serializable{
     @Column(name = "data_evento")
     private Calendar dataEvento;
 
+    //TODO Mapear para utilizar um CHAR de uma letra ao inves de inteiro
     @Column(name= "situacao")
     private Situacao situacao;
 
@@ -154,5 +155,13 @@ public class Evento implements Apostavel<Evento>, Serializable{
     @Override
     public List<Taxa> getTaxas() {
         return null;
+    }
+
+    public String getNomeCasa() {
+        return this.getCasa().getNome();
+    }
+
+    public String getNomeFora() {
+        return this.getFora().getNome();
     }
 }
