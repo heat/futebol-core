@@ -1,8 +1,11 @@
 package api.rest;
 
+import api.json.BilheteJson;
+import api.json.ObjectJson;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
+import dominio.processadores.PagarComissaoProcessador;
 import dominio.processadores.bilhetes.BilheteAtualizarProcessador;
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
@@ -30,15 +33,20 @@ import views.html.bilhete;
 import javax.persistence.NoResultException;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class BilheteController extends ApplicationController {
 
     BilheteRepository bilheteRepository;
+
     UsuarioRepository usuarioRepository;
+
     BilheteInserirProcessador inserirProcessador;
     BilheteAtualizarProcessador atualizarProcessador;
+    PagarComissaoProcessador pagarComissaoProcessador;
     ValidadorRepository validadorRepository;
 
     @Inject
@@ -70,13 +78,25 @@ public class BilheteController extends ApplicationController {
 
         if (!usuarioOptional.isPresent())
             return notFound("Usuário não encontrado!");
-        Usuario usuario = usuarioOptional.get();
+        final Usuario usuario = usuarioOptional.get();
 
         bilhete.setUsuario(usuario);
         try {
-            inserirProcessador.executar(getTenant(), bilhete, validadores);
+            bilhete = inserirProcessador.executar(getTenant(), bilhete, validadores)
+                    .thenCompose(b -> {
+                        return pagarComissaoProcessador.executar(getTenant().get(), b, Collections.emptyList());
+                    } ).get();
+            ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+            builder.comEntidade(BilheteJson.of(bilhete));
+
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return internalServerError(e.getMessage());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return internalServerError(e.getMessage());
         }
         return created(Json.toJson(bilhete));
     }
