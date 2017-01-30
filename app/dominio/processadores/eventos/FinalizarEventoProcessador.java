@@ -5,6 +5,7 @@ import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Evento;
 import models.eventos.Resultado;
+import models.vo.Chave;
 import models.vo.Tenant;
 import repositories.EventoRepository;
 
@@ -13,7 +14,7 @@ import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class FinalizarEventoProcessador implements Processador<Tenant, Evento>{
+public class FinalizarEventoProcessador implements Processador<Chave, Evento>{
 
 
     public static final String REGRA = "resultado.inserir";
@@ -26,11 +27,11 @@ public class FinalizarEventoProcessador implements Processador<Tenant, Evento>{
     }
 
     @Override
-    public CompletableFuture<Evento> executar(Tenant tenant, Evento evento, List<Validador> validadores) throws ValidadorExcpetion {
+    public CompletableFuture<Evento> executar(Chave chave, Evento evento, List<Validador> validadores) throws ValidadorExcpetion {
 
         List<Resultado> resultados = evento.getResultados();
         for(Resultado result : resultados){
-            result.setTenant(tenant.get());
+            result.setTenant(chave.getTenant().get());
         }
 
 /*        for (Validador validador : validadores) {
@@ -38,7 +39,7 @@ public class FinalizarEventoProcessador implements Processador<Tenant, Evento>{
         }*/
 
         try{
-         eventoRepository.atualizar(tenant, evento.getId(), evento);
+         eventoRepository.atualizar(chave.getTenant(), evento.getId(), evento);
         }
         catch(NoResultException e){
             throw new ValidadorExcpetion(e.getMessage());

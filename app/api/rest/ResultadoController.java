@@ -85,23 +85,15 @@ public class ResultadoController extends ApplicationController {
         Chave chave = Chave.of(getTenant(), idEvento);
         try {
 
-            finalizarEventoProcessador.executar(getTenant(), evento, validadoresEventos)
-                .thenApply((eventoFinalizado) -> {
-                    // simula que estou atualizando todos os palpites,informando quais bilhetes acertaram ou erraram
-                    try {
-                        atualizarPalpitesProcessador.executar( chave, eventoFinalizado, validadoresPalpites);
-                    } catch (ValidadorExcpetion validadorExcpetion) {
-                        validadorExcpetion.printStackTrace();
-                    }
-                    return eventoFinalizado;
-                }).thenApply((eventoFinalizado) -> {
-                try {
-                    atualizaBilhetesFinalizacaoPartidaProcessador.executar(chave, eventoFinalizado, validadoresBilhetes);
-                } catch (ValidadorExcpetion validadorExcpetion) {
-                    validadorExcpetion.printStackTrace();
-                }
-                return eventoFinalizado;
-            });
+            finalizarEventoProcessador.executar(chave, evento, validadoresEventos)
+                    .thenCompose( eventoFinalizado ->
+                            atualizarPalpitesProcessador.executar(chave, eventoFinalizado, validadoresPalpites)
+                    ).thenCompose( eventoFinalizado ->
+                        atualizaBilhetesFinalizacaoPartidaProcessador.executar(chave, eventoFinalizado, validadoresBilhetes) )
+                    .thenApply( eventoFinalizado -> {
+                        return eventoFinalizado;
+                    });
+
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
