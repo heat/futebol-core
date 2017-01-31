@@ -1,5 +1,7 @@
 package api.rest;
 
+import api.json.TaxaJson;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
 import dominio.processadores.apostas.TaxaAtualizarProcessador;
@@ -20,6 +22,7 @@ import repositories.TaxaRepository;
 import repositories.ValidadorRepository;
 
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,20 +49,33 @@ public class TaxaController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir() {
+    public Result inserir(Long aposta) {
 
-        Taxa taxa = Json.fromJson(Controller.request()
+        JsonNode body = Controller.request()
                 .body()
-                .asJson(), Taxa.class);
+                .asJson();
+
+        List<Taxa> taxas = new ArrayList<>();
+
+        body.get("taxas").forEach( taxaJson -> {
+            TaxaJson t = Json.fromJson(taxaJson, TaxaJson.class);
+            t.aposta = aposta;
+            taxas.add(t.to());
+            System.out.println(t);
+        });
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), TaxaInserirProcessador.REGRA);
 
         try {
-            inserirProcessador.executar(getTenant(), taxa, validadores);
-        } catch (ValidadorExcpetion validadorExcpetion) {
-            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
+            taxas.forEach( taxa -> {
+                inserirProcessador.executar(getTenant(), taxa, validadores);
+            });
+
+        } catch (ValidadorExcpetion ex) {
+            return internalServerError("definir melhor o erro");
         }
-        return created(Json.toJson(taxa));
+
+        return ok();
     }
 
     @Secure(clients = "headerClient")

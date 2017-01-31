@@ -37,6 +37,10 @@ public class Odd implements Serializable{
     public Odd() {
     }
 
+    private Odd(Long id) {
+        this.id = id;
+    }
+
     public Odd(String nome, String mercado, char tipoLinha,
                String abreviacao, String descricao, Long prioridade, Long posicao) {
 
@@ -122,5 +126,9 @@ public class Odd implements Serializable{
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public static Odd ref(Long odd) {
+        return new Odd(odd);
     }
 }

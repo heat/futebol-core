@@ -27,6 +27,9 @@ public class Taxa implements Serializable{
     @JoinColumn(name = "odd_id")
     private Odd odd;
 
+    @Column(name = "evento_aposta_id")
+    private Long aposta;
+
     @Column(name = "taxa")
     private BigDecimal taxa;
 
@@ -41,19 +44,18 @@ public class Taxa implements Serializable{
     @Column(name = "alterado_em")
     private Calendar alteradoEm;
 
-    public Taxa() {
+    protected Taxa() {
 
     }
 
-    public Taxa(Long tenant, Odd odd, BigDecimal taxa, BigDecimal linha,
-                Calendar criadoEm, Calendar alteradoEm) {
+    public Taxa(Long tenant, Odd odd, BigDecimal taxa, BigDecimal linha, Long aposta) {
 
         this.tenant = tenant;
         this.odd = odd;
         this.taxa = taxa;
         this.linha = linha;
-        this.criadoEm = criadoEm;
-        this.alteradoEm = alteradoEm;
+        this.aposta = aposta;
+        this.criadoEm = Calendar.getInstance();
     }
 
     public Long getId() {

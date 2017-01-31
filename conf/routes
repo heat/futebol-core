@@ -53,11 +53,10 @@ POST     /apostas                       api.rest.EventoApostaController.inserir
 POST     /apostas/:id                   api.rest.EventoApostaController.atualizar(id: Long)
 
 # ------- CRUD de taxas
-GET      /taxas                         api.rest.TaxaController.todos
 
 GET      /taxas/:id                     api.rest.TaxaController.buscar(id: Long)
 
-POST     /taxas                         api.rest.TaxaController.inserir
+POST     /taxas/:apostaId               api.rest.TaxaController.inserir(apostaId: Long)
 
 DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long)
 

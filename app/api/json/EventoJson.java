@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EventoJson implements Serializable, Convertable<Evento>, Jsonable {
+public class EventoJson implements Convertable<Evento>, Jsonable {
 
     public static final String TIPO = "eventos";
 

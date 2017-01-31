@@ -163,7 +163,7 @@ public class BilheteController extends ApplicationController {
         bilhete.setCriadoEm(Calendar.getInstance());
         bilhete.setPalpites(
                 Lists.newArrayList(new Palpite(Tenant.SYSBET.get(),
-                        new Taxa(),
+                        null,
                         BigDecimal.TEN,
                         Palpite.Status.A )));
         bilhete.setTenant(Tenant.SYSBET.get());
