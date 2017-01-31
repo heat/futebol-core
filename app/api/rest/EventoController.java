@@ -79,17 +79,18 @@ public class EventoController extends ApplicationController{
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         } catch (InterruptedException e) {
-            internalServerError(e.getMessage());
+            badRequest(e.getMessage());
         } catch (ExecutionException e) {
-            internalServerError(e.getMessage());
+            badRequest(e.getMessage());
         }
         EventoJson eventoJson = EventoJson.of(evento);
 
         CampeonatoJson campeonatoJson = CampeonatoJson.of(evento.getCampeonato());
         ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
 
-        JsonNode retorno = builder.comRelacionamento(EventoJson.TIPO, eventoJson)
-            .build();
+        JsonNode retorno = builder.comEntidade(eventoJson)
+                .comRelacionamento(CampeonatoJson.TIPO, campeonatoJson)
+                .build();
         return created(retorno);
     }
 
@@ -194,8 +195,6 @@ public class EventoController extends ApplicationController{
                 )
         );
     }
-
-
 
     private Calendar deserializeCalendar(String dateAsString)
             throws IOException {

@@ -60,6 +60,7 @@ public class ObjectJson {
             ObjectNode root = Json.newObject();
             root.set(tipo, Json.toJson(entidade));
             root.set("meta", Json.toJson(metas));
+            _buildRelacionamentos(root);
             return root;
         }
     }

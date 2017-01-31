@@ -55,7 +55,7 @@ POST     /apostas/:id                   api.rest.EventoApostaController.atualiza
 # ------- CRUD de taxas
 GET      /taxas                         api.rest.TaxaController.todos
 
-GET      /taxas/:id                     api.rest.TaxaController.buscar(id: Long)
+GET      /taxas/:idAposta               api.rest.TaxaController.buscar(idAposta: Long)
 
 POST     /taxas                         api.rest.TaxaController.inserir
 
