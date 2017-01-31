@@ -27,7 +27,7 @@ public class Taxa implements Serializable{
     @JoinColumn(name = "odd_id")
     private Odd odd;
 
-    @Column(name = "evento_aposta_id")
+    @JoinColumn(name = "evento_aposta_id")
     private Long aposta;
 
     @Column(name = "taxa")

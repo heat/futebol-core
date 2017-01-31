@@ -49,7 +49,7 @@ public class Evento implements Apostavel<Evento>, Serializable{
     private Situacao situacao;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name="evento_id")
+    @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
     private List<Resultado> resultados;
 
     public Evento() {

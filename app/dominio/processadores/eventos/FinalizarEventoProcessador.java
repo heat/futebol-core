@@ -6,7 +6,6 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Evento;
 import models.eventos.Resultado;
 import models.vo.Chave;
-import models.vo.Tenant;
 import repositories.EventoRepository;
 
 import javax.inject.Inject;
@@ -34,9 +33,9 @@ public class FinalizarEventoProcessador implements Processador<Chave, Evento>{
             result.setTenant(chave.getTenant().get());
         }
 
-/*        for (Validador validador : validadores) {
+        for (Validador validador : validadores) {
             validador.validate(evento);
-        }*/
+        }
 
         try{
          eventoRepository.atualizar(chave.getTenant(), evento.getId(), evento);

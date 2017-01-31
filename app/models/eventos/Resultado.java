@@ -1,13 +1,29 @@
 package models.eventos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "resultados")
 public class Resultado implements Serializable{
+
+    public enum Momento {
+        /**
+         * Situacao em que o apostavel aceita apostas
+         */
+        I("INTERVALO"),
+        /**
+         * Apostavel é valido porém temporariamente não aceita apostas
+         */
+        F("FINAL");
+
+        private String momento;
+
+        Momento(String momento) {
+
+            this.momento = momento;
+        }
+    }
 
     @Id
     @SequenceGenerator(name="resultados_resultado_id_seq", sequenceName = "resultados_resultado_id_seq", allocationSize = 1)
@@ -18,8 +34,9 @@ public class Resultado implements Serializable{
     @Column(name="tenant_id")
     private Long tenant;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="momento")
-    private String momento;
+    private Momento momento;
 
     @Column(name="pontos")
     private Long pontos;
@@ -28,19 +45,11 @@ public class Resultado implements Serializable{
     @JoinColumn(name = "time_id")
     private Time time;
 
-    @JsonIgnore
-    @Transient
-    private final String INTERVALO = "IN";
-
-    @JsonIgnore
-    @Transient
-    private final String FINAL = "FN";
-
     public Resultado() {
 
     }
 
-    public Resultado(Long tenant, String momento, Long pontos, Time time) {
+    public Resultado(Long tenant, Momento momento, Long pontos, Time time) {
 
         this.tenant = tenant;
         this.momento = momento;
@@ -60,11 +69,11 @@ public class Resultado implements Serializable{
         this.tenant = tenant;
     }
 
-    public String getMomento() {
+    public Momento getMomento() {
         return momento;
     }
 
-    public void setMomento(String momento) {
+    public void setMomento(Momento momento) {
         this.momento = momento;
     }
 
@@ -82,16 +91,6 @@ public class Resultado implements Serializable{
 
     public void setTime(Time time) {
         this.time = time;
-    }
-
-    @JsonIgnore
-    public boolean isMomentoIntervalo() {
-        return getMomento() == INTERVALO;
-    }
-
-    @JsonIgnore
-    public boolean isMomentoFinal() {
-        return getMomento() == FINAL;
     }
 
     @Override

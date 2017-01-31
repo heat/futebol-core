@@ -20,7 +20,13 @@ public class Time implements Serializable {
     String nome;
 
     protected Time() {
+
     }
+
+    public Time(Long idTime) {
+        this.id = idTime;
+    }
+
 
     public Time(Long tenant, String nome) {
         this.tenant = tenant;
@@ -63,5 +69,9 @@ public class Time implements Serializable {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
+    }
+
+    public static Time ref(Long time) {
+        return new Time(time);
     }
 }

@@ -43,16 +43,16 @@ public class VerificaTodosMomentosValidador extends Validador<Evento>{
         for(Resultado resultado: resultados){
 
             if(resultado.getTime().getId() == evento.getCasa().getId()
-                    && resultado.isMomentoIntervalo()) casaIntervalo = true;
+                    && resultado.getMomento().equals(Resultado.Momento.I)) casaIntervalo = true;
 
             if(resultado.getTime().getId() == evento.getFora().getId()
-                    && resultado.isMomentoFinal()) foraIntervalo = true;
+                    && resultado.getMomento().equals(Resultado.Momento.I)) foraIntervalo = true;
 
             if(resultado.getTime().getId() == evento.getCasa().getId()
-                    && resultado.isMomentoIntervalo()) casaFinal = true;
+                    && resultado.getMomento().equals(Resultado.Momento.F)) casaFinal = true;
 
             if(resultado.getTime().getId() == evento.getFora().getId()
-                    && resultado.isMomentoFinal()) foraFinal = true;
+                    && resultado.getMomento().equals(Resultado.Momento.F)) foraFinal = true;
         }
 
         if(!casaIntervalo || !foraIntervalo || !casaFinal || !foraFinal){

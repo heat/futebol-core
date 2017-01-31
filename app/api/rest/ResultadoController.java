@@ -1,8 +1,8 @@
 package api.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import api.json.ObjectJson;
+import api.json.ResultadoJson;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.ApplicationController;
 import dominio.processadores.apostas.AtualizarBilhetesFinalizacaoPartidaProcessador;
 import dominio.processadores.apostas.AtualizarPalpitesProcessador;
@@ -27,6 +27,7 @@ import repositories.ValidadorRepository;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,12 +61,17 @@ public class ResultadoController extends ApplicationController {
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir(Long idEvento) throws IOException {
 
-        JsonNode json = Controller.request()
+        JsonNode body = Controller.request()
                 .body()
                 .asJson();
-        ObjectMapper mapper = new ObjectMapper();
 
-        List<Resultado> resultados = mapper.readValue(json.toString(), new TypeReference<List<Resultado>>() { });
+        List<Resultado> resultados = new ArrayList<>();
+
+        body.get("resultados").forEach( resultadoJson -> {
+            ResultadoJson t = Json.fromJson(resultadoJson, ResultadoJson.class);
+            resultados.add(t.to());
+            System.out.println(t);
+        });
 
         if(!Optional.ofNullable(resultados).isPresent())
             return notFound("Lista de resultados não pode ser vazia!");
@@ -82,6 +88,7 @@ public class ResultadoController extends ApplicationController {
         for(Resultado resultado: resultados){
             evento.addResultado(resultado);
         }
+
         Chave chave = Chave.of(getTenant(), idEvento);
         try {
 
@@ -97,7 +104,15 @@ public class ResultadoController extends ApplicationController {
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-        return created(Json.toJson(resultados));
+
+        // usa o builder
+        ObjectJson.JsonBuilder<ResultadoJson> builder = ObjectJson.build(ResultadoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        //adiciona as entidades
+        resultados.forEach( resultado -> builder.comEntidade(ResultadoJson.of(resultado)));
+
+        JsonNode retorno = builder.build();
+
+        return created(retorno);
     }
 
     @Secure(clients = "headerClient")
