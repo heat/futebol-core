@@ -86,6 +86,13 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
         return CompletableFuture.completedFuture(eventoAposta);
     }
 
+    public CompletableFuture<EventoAposta> inserirTaxa(Tenant tenant, EventoAposta eventoAposta) {
+
+        EntityManager em = jpaApi.em();
+        em.merge(eventoAposta);
+        return CompletableFuture.completedFuture(eventoAposta);
+    }
+
     /**
      * Um evento aposta nunca é excluido. Ele é apenas cancelado.
      * @param tenant

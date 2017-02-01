@@ -73,6 +73,9 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
         this.taxas = taxas;
     }
 
+    public void addTaxa(Taxa taxa){
+        taxas.add(taxa);
+    }
     public Situacao getSituacao() {
         return situacao;
     }

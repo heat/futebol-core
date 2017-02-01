@@ -5,35 +5,34 @@ import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.EventoAposta;
-import models.apostas.Taxa;
 import models.vo.Tenant;
 import repositories.EventoApostaRepository;
-import repositories.TaxaRepository;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class TaxaInserirProcessador implements Processador<Tenant, Taxa>{
+public class TaxaInserirProcessador implements Processador<Tenant, EventoAposta>{
 
     public static final String REGRA = "taxa.inserir";
-
-    TaxaRepository taxaRepository;
 
     EventoApostaRepository apostaRepository;
 
     @Inject
-    public TaxaInserirProcessador(TaxaRepository taxaRepository, EventoApostaRepository apostaRepository) {
-        this.taxaRepository = taxaRepository;
+    public TaxaInserirProcessador(EventoApostaRepository apostaRepository) {
         this.apostaRepository = apostaRepository;
     }
 
     @Override
-    public CompletableFuture<Taxa> executar(Tenant tenant, Taxa taxa, List<Validador> validadores) throws ValidadorExcpetion {
+    public CompletableFuture<EventoAposta> executar(Tenant tenant, EventoAposta eventoAposta, List<Validador> validadores) throws ValidadorExcpetion {
 
-        for (Validador validador : validadores) {
-            validador.validate(taxa);
-        }
-        taxaRepository.inserir(tenant, taxa);
-        return CompletableFuture.completedFuture(taxa);
+        eventoAposta.getTaxas().forEach(taxa -> {
+            validadores.forEach(validador -> {
+                validador.validate(taxa);
+            });
+            taxa.setTenant(tenant.get());
+        });
+
+        apostaRepository.inserirTaxa(tenant, eventoAposta);
+        return CompletableFuture.completedFuture(eventoAposta);
     }
 }

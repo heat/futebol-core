@@ -1,5 +1,6 @@
 package api.rest;
 
+import api.json.ObjectJson;
 import api.json.TaxaJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
@@ -8,21 +9,22 @@ import dominio.processadores.apostas.TaxaAtualizarProcessador;
 import dominio.processadores.apostas.TaxaInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.apostas.EventoAposta;
+import models.apostas.Odd;
 import models.apostas.Taxa;
-import models.vo.Chave;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
+import repositories.EventoApostaRepository;
+import repositories.OddRepository;
 import repositories.TaxaRepository;
 import repositories.ValidadorRepository;
 
 import javax.persistence.NoResultException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +34,23 @@ public class TaxaController extends ApplicationController {
     TaxaInserirProcessador inserirProcessador;
     TaxaAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
+    EventoApostaRepository eventoApostaRepository;
+    OddRepository oddRepository;
 
     @Inject
 
     public TaxaController(PlaySessionStore playSessionStore, TaxaRepository taxaRepository,
                           TaxaInserirProcessador inserirProcessador, TaxaAtualizarProcessador atualizarProcessador,
-                          ValidadorRepository validadorRepository) {
+                          ValidadorRepository validadorRepository, EventoApostaRepository eventoApostaRepository,
+                          OddRepository oddRepository) {
         super(playSessionStore);
         this.taxaRepository = taxaRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
+        this.eventoApostaRepository = eventoApostaRepository;
+        this.oddRepository = oddRepository;
+
     }
 
 
@@ -51,70 +59,62 @@ public class TaxaController extends ApplicationController {
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir(Long aposta) {
 
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), aposta);
+
+        if(!eventoApostaOptional.isPresent())
+            return badRequest("Aposta não encontrada!");
+
+        EventoAposta eventoAposta = eventoApostaOptional.get();
+
         JsonNode body = Controller.request()
                 .body()
                 .asJson();
 
-        List<Taxa> taxas = new ArrayList<>();
-
         body.get("taxas").forEach( taxaJson -> {
             TaxaJson t = Json.fromJson(taxaJson, TaxaJson.class);
             t.aposta = aposta;
-            taxas.add(t.to());
+            Taxa taxa = t.to();
+            Optional<Odd> oddOptional = oddRepository.buscar(getTenant(),t.odd);
+            if(oddOptional.isPresent()) {
+                taxa.setOdd(oddOptional.get());
+            }
+            eventoAposta.addTaxa(taxa);
             System.out.println(t);
         });
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), TaxaInserirProcessador.REGRA);
 
         try {
-            taxas.forEach( taxa -> {
-                inserirProcessador.executar(getTenant(), taxa, validadores);
-            });
-
+             inserirProcessador.executar(getTenant(), eventoAposta, validadores);
         } catch (ValidadorExcpetion ex) {
             return internalServerError("definir melhor o erro");
         }
 
-        return ok();
+        // usa o builder
+        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        //adiciona as entidades
+        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa,aposta)));
+        JsonNode retorno = builder.build();
+        return created(retorno);
     }
 
     @Secure(clients = "headerClient")
     @Transactional
-    @BodyParser.Of(BodyParser.Json.class)
-    public Result atualizar(Long id) {
-        Taxa taxa = Json.fromJson(Controller.request()
-                .body()
-                .asJson(), Taxa.class);
+    public Result buscar(Long aposta) {
 
-        List<Validador> validadores = validadorRepository.todos(getTenant(), TaxaAtualizarProcessador.REGRA);
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), aposta);
 
-        try {
-            Chave chave = Chave.of(getTenant(), id);
-            atualizarProcessador.executar(chave, taxa, validadores);
-        } catch (ValidadorExcpetion validadorExcpetion) {
-            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
-        }
+        if(!eventoApostaOptional.isPresent())
+            return badRequest("Aposta não encontrada!");
 
-        return ok("Taxa atualizada! ");
-    }
+        EventoAposta eventoAposta = eventoApostaOptional.get();
+        // usa o builder
+        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        //adiciona as entidades
+        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa, aposta)));
+        JsonNode retorno = builder.build();
+        return created(retorno);
 
-    @Secure(clients = "headerClient")
-    @Transactional
-    public Result todos() {
-        List todos = taxaRepository.todos(getTenant());
-
-        return ok(Json.toJson(todos));
-    }
-
-    @Secure(clients = "headerClient")
-    @Transactional
-    public Result buscar(Long id) {
-        Optional<Taxa> taxa = taxaRepository.buscar(getTenant(), id);
-
-        if (!taxa.isPresent()) {
-            return notFound("Taxa não encontrada!");
-        }
-        return ok(Json.toJson(taxa));
     }
 
     @Secure(clients = "headerClient")
@@ -127,8 +127,5 @@ public class TaxaController extends ApplicationController {
             return notFound(e.getMessage());
         }
     }
-    
-    
-
 
 }

@@ -102,7 +102,7 @@ public class CampeonatoController extends ApplicationController {
         List<Jsonable> jsons =  CampeonatoJson.of(campeonatos);
 
         // usa o builder
-        ObjectJson.JsonBuilder<CampeonatoJson> builder = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        ObjectJson.JsonBuilder<CampeonatoJson> builder = ObjectJson.build(CampeonatoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
         campeonatos.forEach( campeonato -> builder.comEntidade(CampeonatoJson.of(campeonato)));
 
