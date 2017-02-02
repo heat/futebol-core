@@ -2,23 +2,26 @@ package api.rest;
 
 import api.json.ApostaJson;
 import api.json.ObjectJson;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
 import dominio.processadores.apostas.EventoApostaAtualizarProcessador;
 import dominio.processadores.apostas.EventoApostaInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
+import models.eventos.Evento;
 import models.vo.Chave;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
-import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.EventoApostaRepository;
+import repositories.EventoRepository;
 import repositories.ValidadorRepository;
 
 import javax.persistence.NoResultException;
@@ -31,17 +34,18 @@ public class EventoApostaController extends ApplicationController {
     EventoApostaInserirProcessador inserirProcessador;
     EventoApostaAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
+    EventoRepository eventoRepository;
 
     @Inject
-
     public EventoApostaController(PlaySessionStore playSessionStore, EventoApostaRepository eventoApostaRepository,
                                   EventoApostaInserirProcessador inserirProcessador, EventoApostaAtualizarProcessador atualizarProcessador,
-                                  ValidadorRepository validadorRepository) {
+                                  ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
         super(playSessionStore);
         this.eventoApostaRepository = eventoApostaRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
+        this.eventoRepository = eventoRepository;
     }
 
 
@@ -50,28 +54,38 @@ public class EventoApostaController extends ApplicationController {
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
-        EventoAposta eventoAposta = Json.fromJson(Controller.request()
-                .body()
-                .asJson(), EventoAposta.class);
-
+        JsonNode json = request().body().asJson();
+        Long eventoId = json.findPath("evento").asLong();
+        Optional<Evento> eventoOptional = eventoRepository.buscar(getTenant(), eventoId);
+        if(!eventoOptional.isPresent())
+            return badRequest("Evento não encontrado");
+        EventoAposta eventoAposta = new EventoAposta();
+        eventoAposta.setEvento(eventoOptional.get());
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoApostaInserirProcessador.REGRA);
-
         try {
             inserirProcessador.executar(getTenant(), eventoAposta, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-        return created(Json.toJson(eventoAposta));
+        ApostaJson apostaJson = ApostaJson.of(eventoAposta);
+        JsonNode jsonNode= ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(apostaJson)
+                .build();
+        return created(jsonNode);
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) {
-        EventoAposta eventoAposta = Json.fromJson(Controller.request()
-                .body()
-                .asJson(), EventoAposta.class);
 
+        JsonNode json = request().body().asJson();
+        String situacao = json.findPath("situacao").asText();
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), id);
+        if(!eventoApostaOptional.isPresent())
+            return badRequest("Aposta não encontrada");
+        EventoAposta eventoAposta = eventoApostaOptional.get();
+        eventoAposta.setSituacao(Apostavel.Situacao.valueOf(situacao));
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoApostaAtualizarProcessador.REGRA);
 
         try {
@@ -80,8 +94,12 @@ public class EventoApostaController extends ApplicationController {
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
+        ApostaJson apostaJson = ApostaJson.of(eventoAposta);
+        JsonNode jsonNode= ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(apostaJson)
+                .build();
 
-        return ok("Aposta atualizada! ");
+        return ok(jsonNode);
     }
 
     @Secure(clients = "headerClient")
@@ -116,8 +134,5 @@ public class EventoApostaController extends ApplicationController {
             return notFound(e.getMessage());
         }
     }
-    
-    
-
 
 }

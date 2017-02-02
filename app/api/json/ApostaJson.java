@@ -13,17 +13,39 @@ public class ApostaJson extends EventoJson {
 
     public static final String TIPO = "apostas";
 
+    public final String id;
+    public final String evento;
+    public final String casa;
+    public final String fora;
+    public final String dataEvento;
+    public final Apostavel.Situacao situacao;
+    public final Boolean permitir;
+
+
     public final ObjectNode links;
 
-    public ApostaJson(String id, String casa, String fora, String dataEvento, Apostavel.Situacao situacao, String campeonato) {
-        super(id, casa, fora, dataEvento, situacao, campeonato);
+    public ApostaJson(String id, Apostavel.Situacao situacao, Boolean permitir,
+                      String idEvento, String casa, String fora, String dataEvento, Apostavel.Situacao situacaoEvento, String campeonato) {
+        super(idEvento, casa, fora, dataEvento, situacaoEvento, campeonato);
+        this.id = id;
+        this.evento = idEvento;
+        this.casa = casa;
+        this.fora = fora;
+        this.dataEvento = dataEvento;
+        this.situacao = situacao;
+        this.permitir = permitir;
         this.links = Json.newObject();
-        this.links.put("taxas", "/apostas/" + id + "/taxas");
+        this.links.put("taxas", "/apostas/" + idEvento + "/taxas");
+
     }
 
     public static ApostaJson of(EventoAposta aposta) {
         Evento evento = aposta.getEvento();
-        return new ApostaJson(String.valueOf(evento.getId()),
+        return new ApostaJson(
+                String.valueOf(aposta.getId()),
+                aposta.getSituacao(),
+                aposta.isPermitir(),
+                String.valueOf(evento.getId()),
                 evento.getNomeCasa(),
                 evento.getNomeFora(),
                 calendarToString(evento.getDataEvento()),

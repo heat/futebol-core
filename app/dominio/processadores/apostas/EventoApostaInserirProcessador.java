@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.vo.Tenant;
 import repositories.EventoApostaRepository;
@@ -26,14 +27,13 @@ public class EventoApostaInserirProcessador implements Processador<Tenant, Event
     @Override
     public CompletableFuture<EventoAposta> executar(Tenant tenant, EventoAposta eventoAposta, List<Validador> validadores) throws ValidadorExcpetion {
 
+        eventoAposta.setTenant(tenant.get());
+        eventoAposta.setSituacao(Apostavel.Situacao.A);
+        eventoAposta.setPermitir(false);
+
         for (Validador validador : validadores) {
             validador.validate(eventoAposta);
         }
-/*        List<Taxa> taxas = eventoAposta.getTaxas();
-        for(Taxa taxa : taxas){
-
-        }*/
-
         eventoApostaRepository.inserir(tenant, eventoAposta);
         return CompletableFuture.completedFuture(eventoAposta);
     }
