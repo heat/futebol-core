@@ -2,6 +2,7 @@ package api.rest;
 
 import api.json.BilheteJson;
 import api.json.ObjectJson;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
@@ -10,7 +11,6 @@ import dominio.processadores.bilhetes.BilheteAtualizarProcessador;
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
-import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.seguranca.Usuario;
@@ -20,23 +20,18 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
-import play.libs.Json;
 import play.mvc.BodyParser;
-import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.BilheteRepository;
 import repositories.UsuarioRepository;
 import repositories.ValidadorRepository;
-import views.html.bilhete;
 
 import javax.persistence.NoResultException;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public class BilheteController extends ApplicationController {
 
@@ -67,47 +62,71 @@ public class BilheteController extends ApplicationController {
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
-        Bilhete bilhete = Json.fromJson(Controller.request()
-                .body()
-                .asJson(), Bilhete.class);
-
-        List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
-
+        JsonNode json = request().body().asJson();
+        String cliente = json.findPath("cliente").asText();
+        BigDecimal valorAposta = json.findPath("valorAposta").decimalValue();
+        BigDecimal valorPremio = json.findPath("valorPremio").decimalValue();
+        Bilhete bilhete = new Bilhete();
+        bilhete.setSituacao(Bilhete.Situacao.A);
+        bilhete.setCliente(cliente);
+        bilhete.setValorAposta(valorAposta);
+        bilhete.setValorPremio(valorPremio);
+        bilhete.setCriadoEm(Calendar.getInstance());
+        bilhete.setAlteradoEm(Calendar.getInstance());
         CommonProfile profile = getProfile().get();
         Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
-
         if (!usuarioOptional.isPresent())
             return notFound("Usuário não encontrado!");
         final Usuario usuario = usuarioOptional.get();
-
         bilhete.setUsuario(usuario);
+
+        List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
+
         try {
-            bilhete = inserirProcessador.executar(getTenant(), bilhete, validadores)
+            inserirProcessador.executar(getTenant(), bilhete, validadores);
+/*            bilhete = inserirProcessador.executar(getTenant(), bilhete, validadores)
                     .thenCompose(b -> {
                         return pagarComissaoProcessador.executar(getTenant().get(), b, Collections.emptyList());
-                    } ).get();
-            ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
-            builder.comEntidade(BilheteJson.of(bilhete));
-
+                    } ).get();*/
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
-        } catch (InterruptedException e) {
+        }
+/*            catch (InterruptedException e) {
             e.printStackTrace();
             return internalServerError(e.getMessage());
         } catch (ExecutionException e) {
             e.printStackTrace();
             return internalServerError(e.getMessage());
-        }
-        return created(Json.toJson(bilhete));
+        }*/
+        ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+        builder.comEntidade(BilheteJson.of(bilhete));
+        JsonNode retorno = builder.build();
+        return created(retorno);
+
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) {
-        Bilhete bilhete = Json.fromJson(Controller.request()
-                .body()
-                .asJson(), Bilhete.class);
+        JsonNode json = request().body().asJson();
+        String cliente = json.findPath("cliente").asText();
+        BigDecimal valorAposta = json.findPath("valorAposta").decimalValue();
+        BigDecimal valorPremio = json.findPath("valorPremio").decimalValue();
+        String situacao = json.findPath("situacao").asText();
+        Bilhete bilhete = new Bilhete();
+        bilhete.setSituacao(Bilhete.Situacao.valueOf(situacao));
+        bilhete.setCliente(cliente);
+        bilhete.setValorAposta(valorAposta);
+        bilhete.setValorPremio(valorPremio);
+        bilhete.setCriadoEm(Calendar.getInstance());
+        bilhete.setAlteradoEm(Calendar.getInstance());
+        CommonProfile profile = getProfile().get();
+        Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
+        if (!usuarioOptional.isPresent())
+            return notFound("Usuário não encontrado!");
+        final Usuario usuario = usuarioOptional.get();
+        bilhete.setUsuario(usuario);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteAtualizarProcessador.REGRA);
 
@@ -117,28 +136,40 @@ public class BilheteController extends ApplicationController {
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
+        ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+        builder.comEntidade(BilheteJson.of(bilhete));
+        JsonNode retorno = builder.build();
 
-        return ok("Bilhete atualizado! ");
+        return ok(retorno);
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
 
-        List todos = bilheteRepository.todos(getTenant());
-        return ok(Json.toJson(todos));
+        List<Bilhete> bilhetes = bilheteRepository.todos(getTenant());
+        ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        bilhetes.forEach(bilhete ->{
+            builder.comEntidade(BilheteJson.of(bilhete));
+        });
+        JsonNode retorno = builder.build();
+        return ok(retorno);
     }
 
     @Secure(clients = "headerClient")
     @Transactional
     public Result buscar(String codigo) {
 
-        Optional<Bilhete> bilhete = bilheteRepository.buscar(getTenant(), codigo);
+        Optional<Bilhete> bilheteOptional = bilheteRepository.buscar(getTenant(), codigo);
 
-        if (!bilhete.isPresent()) {
+        if (!bilheteOptional.isPresent()) {
             return notFound("Bilhete não encontrado!");
         }
-        return ok(Json.toJson(bilhete));
+        ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+        builder.comEntidade(BilheteJson.of(bilheteOptional.get()));
+        JsonNode retorno = builder.build();
+
+        return ok(retorno);
     }
 
     @Secure(clients = "headerClient")
