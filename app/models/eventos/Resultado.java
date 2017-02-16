@@ -111,4 +111,7 @@ public class Resultado implements Serializable{
         return result;
     }
 
+    public boolean isMomentoFinal() {
+        return false;
+    }
 }
