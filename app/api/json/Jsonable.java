@@ -1,5 +1,9 @@
 package api.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import play.Configuration;
+import play.api.Play;
+
 import java.io.Serializable;
 
 /**
@@ -8,4 +12,9 @@ import java.io.Serializable;
 public interface Jsonable extends Serializable {
 
     String type();
+
+    @JsonIgnore
+    default String getContext() {
+        return Play.current().injector().instanceOf(Configuration .class).getString("play.http.context");
+    }
 }

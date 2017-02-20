@@ -1,9 +1,11 @@
 package api.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import play.Configuration;
+import play.api.Play;
 import play.libs.Json;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,15 +60,17 @@ public class ObjectJson {
         @Override
         public JsonNode build() {
             ObjectNode root = Json.newObject();
-            root.set(tipo, Json.toJson(entidade));
+            ObjectNode entidadeNode = Json.toJson(entidade).deepCopy();
+            _buildLinks(entidadeNode);
+            root.set(tipo, entidadeNode);
             root.set("meta", Json.toJson(metas));
+
             _buildRelacionamentos(root);
             return root;
         }
     }
 
     public static class CollectionJsonBuilder<T> extends JsonBuilder<T> {
-
 
         private List<T> entidades = new ArrayList<T>();
 
@@ -85,7 +89,12 @@ public class ObjectJson {
             this.comMetaData("total", this.entidades.size());
             ObjectNode root = Json.newObject();
             _buildRelacionamentos(root);
-            root.set(tipo, Json.toJson(entidades));
+            ArrayNode arrayNode = Json.newArray();
+            entidades.forEach( entidade -> {
+                ObjectNode entidadeNode = Json.toJson(entidade).deepCopy();
+                arrayNode.add(entidadeNode);
+            });
+            root.set(tipo, arrayNode);
             root.set("meta", Json.toJson(metas));
             return root;
         }
@@ -98,6 +107,10 @@ public class ObjectJson {
         protected Map<String, Object> metas = new HashMap<>();
 
         protected Map<String, List<Jsonable>> relacionamentos = new HashMap<>();
+
+        protected Map<String, String> links = new HashMap<>();
+
+        public Configuration conf = Play.current().injector().instanceOf(Configuration .class);
 
         public JsonBuilder(String tipo) {
             this.tipo = tipo;
@@ -130,6 +143,21 @@ public class ObjectJson {
 
         public abstract JsonNode build();
 
+        protected ObjectNode _buildLinks(ObjectNode  elemento) {
+            if(links.isEmpty())
+                return elemento;
+            ObjectNode _links = Json.newObject();
+
+            String context = conf.getString("play.http.context");
+            links.forEach((tipo, link) -> {
+                String linkCompleto = context + "/" + link;
+                _links.put(tipo, linkCompleto);
+            });
+
+            elemento.set("links", _links);
+            return elemento;
+        }
+
         protected  ObjectNode _buildRelacionamentos(ObjectNode root) {
                 relacionamentos.forEach((tipo, rels) -> {
                     int size = rels.size();
@@ -140,6 +168,11 @@ public class ObjectJson {
                     }
                 });
                 return root;
+        }
+
+        public JsonBuilder<T> comLink(String tipo, String link) {
+            links.put(tipo, link);
+            return this;
         }
 
         public JsonBuilder<T> comRelacionamento(String tipo, Jsonable rel) {
