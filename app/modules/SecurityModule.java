@@ -6,6 +6,7 @@ import com.google.inject.AbstractModule;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
+import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.http.client.direct.ParameterClient;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
@@ -45,6 +46,8 @@ public class SecurityModule  extends AbstractModule {
         final DirectBasicAuthClient directBasicAuthClient =
                 new DirectBasicAuthClient(dbauth);
 
+        final DirectFormClient directFormClient = new DirectFormClient("username", "password", dbauth);
+
         HeaderClient headerClient = new HeaderClient("Authorization","Bearer ",
                 new JwtAuthenticator(new SecretSignatureConfiguration(JWT_SALT),
                         new SecretEncryptionConfiguration(JWT_SALT)));
@@ -56,8 +59,7 @@ public class SecurityModule  extends AbstractModule {
 
         parameterClient.setSupportGetRequest(true);
 
-
-        final Clients clients = new Clients(parameterClient, headerClient, directBasicAuthClient);
+        final Clients clients = new Clients(parameterClient, headerClient, directBasicAuthClient, directFormClient);
 
         final Config config = new Config(clients);
         config.setHttpActionAdapter(new DefaultHttpActionAdapter());

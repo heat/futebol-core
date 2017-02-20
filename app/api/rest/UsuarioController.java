@@ -1,10 +1,12 @@
 package api.rest;
 
+import api.json.TokenJson;
 import controllers.ApplicationController;
 import dominio.processadores.usuarios.UsuarioAtualizarProcessador;
 import dominio.processadores.usuarios.UsuarioInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.seguranca.Token;
 import models.seguranca.Usuario;
 import models.vo.Chave;
 import modules.SecurityModule;
@@ -48,16 +50,16 @@ public class UsuarioController extends ApplicationController{
 
     }
 
-    @Secure(clients = "directBasicAuthClient")
+    @Secure(clients = "directFormClient")
     public Result authenticar() {
         final Optional<CommonProfile> profile = getProfile();
         final JwtGenerator generator = new JwtGenerator(new SecretSignatureConfiguration(SecurityModule.JWT_SALT));
-        String token = "";
-        if (profile.isPresent()) {
-            token = generator.generate(profile.get());
-            System.out.println(profile.get().toString());
-        }
-        return ok("access_token : " + token);
+        String access_token = generator.generate(profile.get());
+
+        Token token = new Token(access_token, "Bearer", 1440L, profile.get().getUsername());
+        TokenJson tokenJson = TokenJson.of(token);
+
+        return ok(Json.toJson(tokenJson));
     }
 
     @Secure(clients = "headerClient")

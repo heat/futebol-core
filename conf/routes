@@ -2,10 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-POST    /authentication              api.rest.UsuarioController.authenticar
+POST    /autenticacaos              api.rest.UsuarioController.authenticar
 
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
-
 
 # ------ CRUD de campeonatos
 GET      /campeonatos                api.rest.CampeonatoController.todos
