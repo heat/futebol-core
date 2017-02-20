@@ -3,6 +3,7 @@ import dominio.processadores.eventos.*;
 import dominio.validadores.bilhete.CodigoBilhetePolitica;
 import dominio.validadores.eventos.*;
 import models.apostas.Apostavel;
+import models.apostas.EventoAposta;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
@@ -102,6 +103,7 @@ public class Global extends GlobalSettings {
 
     private void dummyData(EntityManager em) {
 
+        em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
         em.createQuery("DELETE FROM Evento t").executeUpdate();
         em.createQuery("DELETE FROM Time t").executeUpdate();
         em.createQuery("DELETE FROM Campeonato t").executeUpdate();
@@ -123,11 +125,19 @@ public class Global extends GlobalSettings {
         evento.setCasa(palmeiras);
         evento.setFora(coritiba);
         evento.setCampeonato(campeonato);
-        evento.setSituacao(Apostavel.Situacao.A);
+        evento.setSituacao(Evento.Situacao.A);
         Calendar dataJogo = Calendar.getInstance();
         dataJogo.add(Calendar.HOUR, random.nextInt(10));
         evento.setDataEvento(dataJogo);
 
         em.persist(evento);
+
+        EventoAposta eventoAposta = new EventoAposta();
+        eventoAposta.setEvento(evento);
+        eventoAposta.setPermitir(true);
+        eventoAposta.setSituacao(Apostavel.Situacao.A);
+        eventoAposta.setTenant(Tenant.SYSBET.get());
+
+        em.persist(eventoAposta);
     }
 }
