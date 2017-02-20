@@ -91,11 +91,21 @@ public class Global extends GlobalSettings {
                             null,
                             "xxx-xxxx-xxx-00");
             em.persist(codigoBilhetePolitica);
+
+            dummyData(em);
+
             return jpaApi;
         });
+
+
     }
 
     private void dummyData(EntityManager em) {
+
+        em.createQuery("DELETE FROM Evento t").executeUpdate();
+        em.createQuery("DELETE FROM Time t").executeUpdate();
+        em.createQuery("DELETE FROM Campeonato t").executeUpdate();
+
         Time palmeiras = new Time(Tenant.SYSBET.get(), "Palmeiras");
         Time coritiba = new Time(Tenant.SYSBET.get(), "Coritiba");
         em.persist(palmeiras);
