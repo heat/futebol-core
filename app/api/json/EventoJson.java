@@ -17,10 +17,10 @@ public class EventoJson implements Convertable<Evento>, Jsonable {
     public final String casa;
     public final String fora;
     public final String dataEvento;
-    public final Apostavel.Situacao situacao;
+    public final Evento.Situacao situacao;
     public final String campeonato;
 
-    public EventoJson(String id, String casa, String fora, String dataEvento, Apostavel.Situacao situacao, String campeonato) {
+    public EventoJson(String id, String casa, String fora, String dataEvento, Evento.Situacao situacao, String campeonato) {
         this.id = id;
         this.casa = casa;
         this.fora = fora;

@@ -2,8 +2,6 @@ package models.eventos;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import models.apostas.Apostavel;
-import models.apostas.Taxa;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -14,10 +12,33 @@ import java.util.List;
 
 @Entity
 @Table(name = "eventos")
-/*@NamedQueries({
-        @NamedQuery(name = "Evento.hasCampeonato", query = "SELECT e FROM Evento e WHERE e.codigo = :codigo ")
-})*/
-public class Evento implements Apostavel<Evento>, Serializable{
+public class Evento implements Serializable {
+
+    public enum Situacao {
+        /**
+         * Evento ainda não aconteceu
+         */
+        A("ABERTO"),
+        /**
+         * Evento adiado
+         */
+        D("ADIADO"),
+        /**
+         * Evento já finalizado
+         */
+        E("ENCERRADO"),
+        /**
+         * Evento cancelado
+         */
+        C("CANCELADO");
+
+        private String situacao;
+
+        Situacao(String situacao) {
+
+            this.situacao = situacao;
+        }
+    }
 
     @Id
     @SequenceGenerator(name = "eventos_evento_id_seq", sequenceName = "eventos_evento_id_seq", allocationSize = 1)
@@ -44,13 +65,13 @@ public class Evento implements Apostavel<Evento>, Serializable{
     @Column(name = "data_evento")
     private Calendar dataEvento;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name= "situacao")
-    private Situacao situacao;
-
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
     private List<Resultado> resultados;
+
+    @Enumerated(EnumType.STRING )
+    @Column(name = "situacao")
+    private Situacao situacao;
 
     public Evento() {
 
@@ -63,9 +84,9 @@ public class Evento implements Apostavel<Evento>, Serializable{
         this.casa = casa;
         this.fora = fora;
         this.dataEvento = dataEvento;
-        this.resultados = resultados;
         this.campeonato = campeonato;
         this.situacao = situacao;
+        this.resultados = resultados;
     }
 
     public Long getId() {
@@ -114,14 +135,6 @@ public class Evento implements Apostavel<Evento>, Serializable{
         this.dataEvento = dataEvento;
     }
 
-    public Situacao getSituacao() {
-        return situacao;
-    }
-
-    public void setSituacao(Situacao situacao) {
-        this.situacao = situacao;
-    }
-
     public List<Resultado> getResultados() {
         return resultados;
     }
@@ -132,6 +145,14 @@ public class Evento implements Apostavel<Evento>, Serializable{
 
     public void addResultado(Resultado resultado){
         this.resultados.add(resultado);
+    }
+
+    public Situacao getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
     }
 
     @Override
@@ -150,11 +171,6 @@ public class Evento implements Apostavel<Evento>, Serializable{
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public List<Taxa> getTaxas() {
-        return null;
     }
 
     public String getNomeCasa() {

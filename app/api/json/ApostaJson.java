@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.eventos.Evento;
+import play.api.Application;
+import play.api.Play;
 import play.libs.Json;
 
 import java.text.SimpleDateFormat;
@@ -18,24 +20,25 @@ public class ApostaJson extends EventoJson {
     public final String casa;
     public final String fora;
     public final String dataEvento;
-    public final Apostavel.Situacao situacao;
+    public final Apostavel.Situacao situacaoAposta;
+    public final Evento.Situacao situacaoEvento;
     public final Boolean permitir;
-
 
     public final ObjectNode links;
 
-    public ApostaJson(String id, Apostavel.Situacao situacao, Boolean permitir,
-                      String idEvento, String casa, String fora, String dataEvento, Apostavel.Situacao situacaoEvento, String campeonato) {
+    public ApostaJson(String id, Apostavel.Situacao situacaoAposta, Boolean permitir,
+                      String idEvento, String casa, String fora, String dataEvento, Evento.Situacao situacaoEvento, String campeonato) {
         super(idEvento, casa, fora, dataEvento, situacaoEvento, campeonato);
         this.id = id;
         this.evento = idEvento;
         this.casa = casa;
         this.fora = fora;
         this.dataEvento = dataEvento;
-        this.situacao = situacao;
+        this.situacaoAposta = situacaoAposta;
+        this.situacaoEvento = situacaoEvento;
         this.permitir = permitir;
         this.links = Json.newObject();
-        this.links.put("taxas", "/apostas/" + idEvento + "/taxas");
+        this.links.put("taxas", getContext() + "/taxas?aposta=" + id );
 
     }
 
@@ -49,7 +52,7 @@ public class ApostaJson extends EventoJson {
                 evento.getNomeCasa(),
                 evento.getNomeFora(),
                 calendarToString(evento.getDataEvento()),
-                aposta.getSituacao(),
+                evento.getSituacao(),
                 evento.getCampeonato().getNome());
     }
 

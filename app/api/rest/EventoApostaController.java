@@ -2,6 +2,7 @@ package api.rest;
 
 import api.json.ApostaJson;
 import api.json.ObjectJson;
+import api.json.TaxaJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
@@ -109,7 +110,8 @@ public class EventoApostaController extends ApplicationController {
 
         ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
 
-        todos.forEach(eventoAposta -> builder.comEntidade(ApostaJson.of(eventoAposta)));
+        todos.forEach(eventoAposta -> builder.comEntidade(ApostaJson.of(eventoAposta))
+        .comLink(TaxaJson.TIPO, TaxaJson.TIPO + "?aposta=" + eventoAposta.getId()));
         return ok(builder.build());
     }
 
@@ -121,7 +123,15 @@ public class EventoApostaController extends ApplicationController {
         if (!eventoAposta.isPresent()) {
             return notFound("Aposta não encontrada!");
         }
-        return ok(Json.toJson(eventoAposta));
+
+        ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+
+        ApostaJson apostaJson = ApostaJson.of(eventoAposta.get());
+        builder.comEntidade(apostaJson)
+                .comLink(TaxaJson.TIPO, TaxaJson.TIPO + "?aposta=" + apostaJson.id)
+        ;
+
+        return ok(builder.build());
     }
 
     @Secure(clients = "headerClient")
