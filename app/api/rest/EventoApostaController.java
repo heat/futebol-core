@@ -1,8 +1,6 @@
 package api.rest;
 
-import api.json.ApostaJson;
-import api.json.ObjectJson;
-import api.json.TaxaJson;
+import api.json.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
@@ -12,6 +10,8 @@ import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
+import models.apostas.Taxa;
+import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.vo.Chave;
 import org.pac4j.play.java.Secure;
@@ -26,8 +26,10 @@ import repositories.EventoRepository;
 import repositories.ValidadorRepository;
 
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EventoApostaController extends ApplicationController {
 
@@ -107,11 +109,23 @@ public class EventoApostaController extends ApplicationController {
     @Transactional
     public Result todos() {
         List<EventoAposta> todos = eventoApostaRepository.todos(getTenant());
-
         ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
 
-        todos.forEach(eventoAposta -> builder.comEntidade(ApostaJson.of(eventoAposta))
-        .comLink(TaxaJson.TIPO, TaxaJson.TIPO + "?aposta=" + eventoAposta.getId()));
+        todos.forEach(eventoAposta -> {
+            builder.comEntidade(ApostaJson.of(eventoAposta));
+            eventoAposta.getTaxas().stream()
+                    .filter(p -> p.getOdd().isFavorita()).collect(Collectors.toList())
+                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJson.TIPO, TaxaJson.of(taxaAposta, eventoAposta.getId())));
+        });
+
+        List<Campeonato> campeonatos = todos.stream()
+                .map(eventoAposta -> eventoAposta.getEvento().getCampeonato())
+                .distinct()
+                .collect(Collectors.toList());
+
+        // adiciona os relacionamentos
+        campeonatos.forEach(campeonato -> builder.comRelacionamento(CampeonatoJson.TIPO, CampeonatoJson.of(campeonato)));
+
         return ok(builder.build());
     }
 

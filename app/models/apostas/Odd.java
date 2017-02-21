@@ -34,6 +34,12 @@ public class Odd implements Serializable{
     @Column(name = "posicao")
     private Long posicao;
 
+    @Column(name = "tenant_id")
+    private Long tenant;
+
+    @Column(name = "favorita")
+    private boolean favorita;
+
     public Odd() {
     }
 
@@ -51,6 +57,20 @@ public class Odd implements Serializable{
         this.descricao = descricao;
         this.prioridade = prioridade;
         this.posicao = posicao;
+    }
+
+    public Odd(String nome, String mercado, char tipoLinha,
+               String abreviacao, String descricao, Long prioridade, Long posicao, Long tenant, boolean favorita) {
+
+        this.nome = nome;
+        this.mercado = mercado;
+        this.tipoLinha = tipoLinha;
+        this.abreviacao = abreviacao;
+        this.descricao = descricao;
+        this.prioridade = prioridade;
+        this.posicao = posicao;
+        this.tenant = tenant;
+        this.favorita = favorita;
     }
 
     public Long getId() {
@@ -111,6 +131,22 @@ public class Odd implements Serializable{
 
     public void setPosicao(Long posicao) {
         this.posicao = posicao;
+    }
+
+    public Long getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
+    }
+
+    public boolean isFavorita() {
+        return favorita;
+    }
+
+    public void setFavorita(boolean favorita) {
+        this.favorita = favorita;
     }
 
     @Override

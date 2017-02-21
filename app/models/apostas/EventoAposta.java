@@ -4,6 +4,7 @@ import models.eventos.Evento;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,7 +36,7 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     private List<Taxa> taxas;
 
     public EventoAposta() {
-
+        this.taxas = new ArrayList<Taxa>();
     }
 
     public EventoAposta(Long tenant, boolean permitir, List<Taxa> taxas) {
