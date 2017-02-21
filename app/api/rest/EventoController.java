@@ -70,7 +70,7 @@ public class EventoController extends ApplicationController{
         if(!eventoOptional.isPresent())
             badRequest("Parâmetro ausente");
         Evento evento = eventoOptional.get();
-        evento.setSituacao(Apostavel.Situacao.A);
+        evento.setSituacao(Evento.Situacao.A);
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
 
         try {
