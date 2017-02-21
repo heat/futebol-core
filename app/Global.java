@@ -4,6 +4,8 @@ import dominio.validadores.bilhete.CodigoBilhetePolitica;
 import dominio.validadores.eventos.*;
 import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
+import models.apostas.Odd;
+import models.apostas.Taxa;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
@@ -13,6 +15,7 @@ import play.GlobalSettings;
 import play.db.jpa.JPAApi;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -103,6 +106,8 @@ public class Global extends GlobalSettings {
 
     private void dummyData(EntityManager em) {
 
+        em.createQuery("DELETE FROM Taxa t").executeUpdate();
+        em.createQuery("DELETE FROM Odd t").executeUpdate();
         em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
         em.createQuery("DELETE FROM Evento t").executeUpdate();
         em.createQuery("DELETE FROM Time t").executeUpdate();
@@ -132,6 +137,19 @@ public class Global extends GlobalSettings {
 
         em.persist(evento);
 
+        Odd odd = new Odd();
+        odd.setAbreviacao("casa");
+        odd.setDescricao("casa");
+        odd.setMercado("casa");
+        odd.setNome("casa");
+        odd.setPosicao(1L);
+        odd.setPrioridade(1L);
+        odd.setTipoLinha('N');
+        odd.setTenant(Tenant.SYSBET.get());
+        odd.setFavorita(true);
+
+        em.persist(odd);
+
         EventoAposta eventoAposta = new EventoAposta();
         eventoAposta.setEvento(evento);
         eventoAposta.setPermitir(true);
@@ -139,5 +157,10 @@ public class Global extends GlobalSettings {
         eventoAposta.setTenant(Tenant.SYSBET.get());
 
         em.persist(eventoAposta);
+
+        eventoAposta.addTaxa(new Taxa(Tenant.SYSBET.get(), odd, BigDecimal.ONE, BigDecimal.ZERO));
+
+        em.merge(eventoAposta);
+
     }
 }
