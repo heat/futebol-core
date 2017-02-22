@@ -50,9 +50,6 @@ public class Perfil implements Serializable{
     @Column(name = "localizacao")
     private String localizacao;
 
-    @Transient
-    private String nomeUsuario;
-
     public Perfil() {
 
     }
@@ -161,12 +158,8 @@ public class Perfil implements Serializable{
         this.usuario = usuario;
     }
 
-    public String getNomeUsuario() {
-        return nomeUsuario;
-    }
-
-    public void setNomeUsuario(String nomeUsuario) {
-        this.nomeUsuario = nomeUsuario;
+    public String getLogin(){
+        return this.usuario.getLogin();
     }
 
     @Override
