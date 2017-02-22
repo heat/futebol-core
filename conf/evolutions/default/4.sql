@@ -53,6 +53,7 @@ CREATE TABLE public.odds
   prioridade INTEGER NOT NULL,
   tenant_id INTEGER NOT NULL,
   tipo_linha CHAR(1) NOT NULL,
+  favorita BOOLEAN NOT NULL,
   CONSTRAINT odds_pkey PRIMARY KEY (odd_id)
 )
 WITH (

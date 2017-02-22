@@ -67,10 +67,12 @@ CREATE TABLE public.perfis -- perfis informacoes usuario
   sobre_nome character varying(255) NOT NULL,
   exibicao_nome character varying(255) NOT NULL,
   genero integer NOT NULL,
-  localidade character(255) NOT NULL,
+  localidade character varying(255) NOT NULL,
   localizacao character varying(255),
   imagem_url character varying(255),
   perfil_url character varying(255),
+
+
   CONSTRAINT perfis_perfil_id_pk PRIMARY KEY (usuario_id),
   CONSTRAINT usuarios_perfis_fk FOREIGN KEY (usuario_id)
       REFERENCES public.usuarios (usuario_id) MATCH SIMPLE
