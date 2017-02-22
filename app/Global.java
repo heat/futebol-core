@@ -1,7 +1,9 @@
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.processadores.eventos.*;
+import dominio.processadores.usuarios.PerfilAtualizarProcessador;
 import dominio.validadores.bilhete.CodigoBilhetePolitica;
 import dominio.validadores.eventos.*;
+import dominio.validadores.usuarios.PerfilLocalidadeValidador;
 import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
@@ -95,6 +97,15 @@ public class Global extends GlobalSettings {
                             null,
                             "xxx-xxxx-xxx-00");
             em.persist(codigoBilhetePolitica);
+
+            PerfilLocalidadeValidador perfilLocalidadeValidador =
+                    new PerfilLocalidadeValidador( Tenant.SYSBET.get(),
+                            PerfilAtualizarProcessador.REGRA,
+                            null,
+                            true,
+                            null,
+                            null);
+            em.persist(perfilLocalidadeValidador);
 
             dummyData(em);
 
