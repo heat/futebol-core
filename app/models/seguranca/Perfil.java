@@ -1,5 +1,7 @@
 package models.seguranca;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Locale;
@@ -18,6 +20,7 @@ public class Perfil implements Serializable{
 
     @OneToOne
     @JoinColumn(name="usuario_id")
+    @JsonIgnore
     private Usuario usuario;
 
     @Column(name = "email")
@@ -46,6 +49,9 @@ public class Perfil implements Serializable{
 
     @Column(name = "localizacao")
     private String localizacao;
+
+    @Transient
+    private String nomeUsuario;
 
     public Perfil() {
 
@@ -153,6 +159,14 @@ public class Perfil implements Serializable{
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public String getNomeUsuario() {
+        return nomeUsuario;
+    }
+
+    public void setNomeUsuario(String nomeUsuario) {
+        this.nomeUsuario = nomeUsuario;
     }
 
     @Override
