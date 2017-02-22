@@ -83,6 +83,8 @@ GET     /usuarios/0                     api.rest.UsuarioController.usuario
 #---------- CRUD perfil
 GET     /perfil/0                       api.rest.PerfilController.perfil
 
+POST    /perfil/0                       api.rest.PerfilController.atualizar
+
 
 # ------- CRUD de PIN
 #POST     /pins                         api.rest.BilheteController.inserir
