@@ -1,6 +1,8 @@
 package repositories;
 
+import filters.FiltroBilhete;
 import models.bilhetes.Bilhete;
+import models.seguranca.Usuario;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
@@ -29,6 +31,26 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         EntityManager em = jpaApi.em();
         Query query = em.createQuery("FROM Bilhete as b WHERE b.tenant = :tenant");
         query.setParameter("tenant", tenant.get());
+        return query.getResultList();
+    }
+
+    public List<Bilhete> todos(Tenant tenant, Usuario usuario, FiltroBilhete filtro) {
+
+        EntityManager em = jpaApi.em();
+        /*
+        * Todos os bilhetes se for administrador
+        * e apenas do usuário caso contrário
+        * 1L -> Papel de administrador
+        * */
+        Query query = em.createQuery("FROM Bilhete as b WHERE b.tenant = :tenant " +
+                " and (:papel = 1L or b.usuario.id = :usuario) " +
+                " and (FUNCTION('to_char', b.criadoEm, 'YYYY-MM-DD') between :inicio and :termino or :inicio = null)");
+        query.setParameter("tenant", tenant.get());
+        query.setParameter("papel", usuario.getPapel().getId());
+        query.setParameter("usuario", usuario.getId());
+        query.setParameter("inicio", filtro.inicio);
+        query.setParameter("termino", filtro.termino);
+
         return query.getResultList();
     }
 

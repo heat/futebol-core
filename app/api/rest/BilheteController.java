@@ -11,6 +11,7 @@ import dominio.processadores.bilhetes.BilheteAtualizarProcessador;
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import filters.FiltroBilhete;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.seguranca.Usuario;
@@ -145,12 +146,20 @@ public class BilheteController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result todos() {
+    public Result todos(String inicio, String termino, String aposta, String dono) {
 
-        List<Bilhete> bilhetes = bilheteRepository.todos(getTenant());
+        CommonProfile profile = getProfile().get();
+        Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
+        if (!usuarioOptional.isPresent())
+            return notFound("Usuário não encontrado!");
+        final Usuario usuario = usuarioOptional.get();
+
+        FiltroBilhete filtro = new FiltroBilhete(inicio, termino, aposta, dono);
+
+        List<Bilhete> bilhetes = bilheteRepository.todos(getTenant(), usuario, filtro);
         ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         bilhetes.forEach(bilhete ->{
-            builder.comEntidade(BilheteJson.of(bilhete));
+            builder.comEntidade(BilheteJson.of(bilhete, profile.getUsername()));
         });
         JsonNode retorno = builder.build();
         return ok(retorno);
