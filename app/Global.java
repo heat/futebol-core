@@ -8,9 +8,12 @@ import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.bilhetes.Bilhete;
+import models.bilhetes.Palpite;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
+import models.seguranca.Usuario;
 import models.vo.Tenant;
 import play.Application;
 import play.GlobalSettings;
@@ -19,6 +22,7 @@ import play.db.jpa.JPAApi;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 public class Global extends GlobalSettings {
@@ -117,6 +121,8 @@ public class Global extends GlobalSettings {
 
     private void dummyData(EntityManager em) {
 
+        em.createQuery("DELETE FROM Palpite t").executeUpdate();
+        em.createQuery("DELETE FROM Bilhete t").executeUpdate();
         em.createQuery("DELETE FROM Taxa t").executeUpdate();
         em.createQuery("DELETE FROM Odd t").executeUpdate();
         em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
@@ -173,5 +179,26 @@ public class Global extends GlobalSettings {
 
         em.merge(eventoAposta);
 
+        Bilhete bilhete = new Bilhete();
+        bilhete.setCliente("Sysbet");
+        bilhete.setCodigo("ERT-4G12-RF3");
+        bilhete.setSituacao(Bilhete.Situacao.A);
+        bilhete.setTenant(Tenant.SYSBET.get());
+        bilhete.setValorAposta(BigDecimal.TEN);
+        bilhete.setValorPremio(BigDecimal.valueOf(1000L));
+        Usuario usuario = em.find(Usuario.class, 1L);
+        bilhete.setUsuario(usuario);
+        bilhete.setAlteradoEm(Calendar.getInstance());
+        bilhete.setCriadoEm(Calendar.getInstance());
+
+        em.persist(bilhete);
+
+        /*Palpite palpite = new Palpite();
+        palpite.setTenant(Tenant.SYSBET.get());
+        palpite.setStatus(Palpite.Status.A);
+        palpite.setTaxa(eventoAposta.getTaxas().get(0));
+        palpite.setValorTaxa(BigDecimal.TEN);
+
+        em.persist(palpite);*/
     }
 }

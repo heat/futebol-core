@@ -60,7 +60,7 @@ POST     /taxas/:apostaId               api.rest.TaxaController.inserir(apostaId
 DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long)
 
 # ------- CRUD de bilhetes
-GET      /bilhetes                      api.rest.BilheteController.todos
+GET      /bilhetes                      api.rest.BilheteController.todos(inicio: String ?= null, termino: String ?= null, aposta: String ?= null, dono: String ?= null)
 
 GET      /bilhetes/:codigo              api.rest.BilheteController.buscar(codigo: String)
 
