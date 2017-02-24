@@ -12,6 +12,7 @@ import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import filters.FiltroBilhete;
+import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.seguranca.Usuario;
@@ -25,6 +26,7 @@ import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.BilheteRepository;
+import repositories.TaxaRepository;
 import repositories.UsuarioRepository;
 import repositories.ValidadorRepository;
 
@@ -37,26 +39,26 @@ import java.util.Optional;
 public class BilheteController extends ApplicationController {
 
     BilheteRepository bilheteRepository;
-
     UsuarioRepository usuarioRepository;
-
     BilheteInserirProcessador inserirProcessador;
     BilheteAtualizarProcessador atualizarProcessador;
     PagarComissaoProcessador pagarComissaoProcessador;
     ValidadorRepository validadorRepository;
+    TaxaRepository taxaRepository;
 
     @Inject
-    public BilheteController(PlaySessionStore playSessionStore, BilheteRepository bilheteRepository,
-                             BilheteInserirProcessador inserirProcessador,
-                             UsuarioRepository usuarioRepository, BilheteAtualizarProcessador atualizarProcessador, ValidadorRepository validadorRepository) {
+    public BilheteController(PlaySessionStore playSessionStore, BilheteRepository bilheteRepository, UsuarioRepository usuarioRepository,
+                             BilheteInserirProcessador inserirProcessador, BilheteAtualizarProcessador atualizarProcessador,
+                             PagarComissaoProcessador pagarComissaoProcessador, ValidadorRepository validadorRepository, TaxaRepository taxaRepository) {
         super(playSessionStore);
         this.bilheteRepository = bilheteRepository;
         this.usuarioRepository = usuarioRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
+        this.pagarComissaoProcessador = pagarComissaoProcessador;
         this.validadorRepository = validadorRepository;
+        this.taxaRepository = taxaRepository;
     }
-
 
     @Secure(clients = "headerClient")
     @Transactional
@@ -80,6 +82,8 @@ public class BilheteController extends ApplicationController {
             return notFound("Usuário não encontrado!");
         final Usuario usuario = usuarioOptional.get();
         bilhete.setUsuario(usuario);
+
+        List<Taxa> taxas = taxaRepository.buscar(getTenant(), palpitesIds);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
 
