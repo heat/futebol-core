@@ -38,7 +38,6 @@ CREATE SEQUENCE public.palpites_palpite_id_seq;
 CREATE TABLE public.palpites
 (
   palpite_id INTEGER NOT NULL DEFAULT nextval('public.palpites_palpite_id_seq'),
-  evento_aposta_id INTEGER NOT NULL,
   taxa_id INTEGER NOT NULL,
   tenant_id INTEGER NOT NULL,
   bilhete_id INTEGER NOT NULL,
@@ -58,14 +57,6 @@ REFERENCES public.bilhetes (bilhete_id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
-
-ALTER TABLE public.palpites ADD CONSTRAINT evento_apostas_palpites_fk
-FOREIGN KEY (evento_aposta_id)
-REFERENCES public.evento_apostas (evento_aposta_id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
 
 ALTER TABLE public.palpites ADD CONSTRAINT taxas_palpites_fk
 FOREIGN KEY (taxa_id)
