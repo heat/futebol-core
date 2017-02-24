@@ -2,6 +2,8 @@ package api.rest;
 
 import api.json.BilheteJson;
 import api.json.ObjectJson;
+import api.json.OddJson;
+import api.json.PalpiteJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -12,6 +14,7 @@ import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import filters.FiltroBilhete;
+import models.apostas.Odd;
 import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
@@ -225,6 +228,30 @@ public class BilheteController extends ApplicationController {
         bilhete.setValorAposta(BigDecimal.TEN);
         bilhete.setValorPremio(BigDecimal.TEN.multiply(BigDecimal.TEN));
         return ok(views.txt.bilhetes.render(bilhete));
+    }
+
+    @Secure(clients = "headerClient")
+    @Transactional
+    public Result buscarPalpites(String codigo) {
+
+        Optional<Bilhete> bilheteOptional = bilheteRepository.buscar(getTenant(), codigo);
+
+        if (!bilheteOptional.isPresent()) {
+            return notFound("Bilhete não encontrado!");
+        }
+
+        List<Palpite> palpites = bilheteOptional.get().getPalpites();
+        List<Odd> odds = new ArrayList<>();
+
+        ObjectJson.JsonBuilder<PalpiteJson> builder = ObjectJson.build(PalpiteJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        palpites.forEach(palpite ->{
+            builder.comEntidade(PalpiteJson.of(palpite));
+            odds.add(palpite.getTaxa().getOdd());
+        });
+
+        odds.forEach(odd -> builder.comRelacionamento(OddJson.TIPO, OddJson.of(odd)));
+
+        return ok(builder.build());
     }
 
 

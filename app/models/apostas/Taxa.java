@@ -30,6 +30,9 @@ public class Taxa implements Serializable{
     @Column(name = "taxa")
     private BigDecimal taxa;
 
+    @Column(name = "evento_aposta_id", insertable = false, updatable = false)
+    private Long eventoAposta;
+
     @Column(name = "linha")
     private BigDecimal linha;
 
@@ -109,6 +112,14 @@ public class Taxa implements Serializable{
     @JsonSerialize(using= CalendarSerializer.class)
     public void setAlteradoEm(Calendar alteradoEm) {
         this.alteradoEm = alteradoEm;
+    }
+
+    public Long getEventoAposta() {
+        return eventoAposta;
+    }
+
+    public void setEventoAposta(Long eventoAposta) {
+        this.eventoAposta = eventoAposta;
     }
 
     @Override

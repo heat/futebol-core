@@ -8,20 +8,21 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
 
     public static final String TIPO = "odds";
 
+    public final Long id;
     public final String nome;
-
     public final String descricao;
+    public final String abreviacao;
 
-
-    public OddJson(String nome, String descricao) {
-
+    public OddJson(Long id, String nome, String descricao, String abreviacao) {
+        this.id = id;
         this.nome = nome;
-        this.descricao = nome;
+        this.descricao = descricao;
+        this.abreviacao = abreviacao;
     }
 
     public static OddJson of(Odd odd) {
 
-        return new OddJson(odd.getNome(), odd.getDescricao());
+        return new OddJson(odd.getId(), odd.getNome(), odd.getDescricao(), odd.getDescricao());
     }
 
 
