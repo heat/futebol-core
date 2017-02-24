@@ -23,8 +23,10 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
     public String login;
     public List<Long> palpites;
 
+    public BilheteJson() {
+    }
 
-    public BilheteJson(String id, String codigo, Bilhete.Situacao situacao, String cliente,BigDecimal valorPremio, BigDecimal valorAposta, String criadoEm, List<Palpite> palpites) {
+    public BilheteJson(String id, String codigo, Bilhete.Situacao situacao, String cliente, BigDecimal valorPremio, BigDecimal valorAposta, String criadoEm, List<Palpite> palpites) {
         this.id = id;
         this.codigo = codigo;
         this.situacao = situacao;

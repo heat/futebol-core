@@ -22,6 +22,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -32,6 +33,7 @@ import repositories.ValidadorRepository;
 
 import javax.persistence.NoResultException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -66,24 +68,32 @@ public class BilheteController extends ApplicationController {
     public Result inserir() {
 
         JsonNode json = request().body().asJson();
-        String cliente = json.findPath("cliente").asText();
-        BigDecimal valorAposta = json.findPath("valorAposta").decimalValue();
-        BigDecimal valorPremio = json.findPath("valorPremio").decimalValue();
-        Bilhete bilhete = new Bilhete();
-        bilhete.setSituacao(Bilhete.Situacao.A);
-        bilhete.setCliente(cliente);
-        bilhete.setValorAposta(valorAposta);
-        bilhete.setValorPremio(valorPremio);
-        bilhete.setCriadoEm(Calendar.getInstance());
-        bilhete.setAlteradoEm(Calendar.getInstance());
+        BilheteJson bilheteJson = Json.fromJson(json.get("bilhetes"), BilheteJson.class);
+
         CommonProfile profile = getProfile().get();
         Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
         if (!usuarioOptional.isPresent())
             return notFound("Usuário não encontrado!");
         final Usuario usuario = usuarioOptional.get();
-        bilhete.setUsuario(usuario);
 
-        List<Taxa> taxas = taxaRepository.buscar(getTenant(), palpitesIds);
+        List<Taxa> taxas = taxaRepository.buscar(getTenant(), bilheteJson.palpites);
+        List<Palpite> palpites = new ArrayList<>();
+        BigDecimal valorPremio = bilheteJson.valorAposta;
+        taxas.forEach(t -> {
+            valorPremio.multiply(t.getTaxa());
+            Palpite palpite = new Palpite(getTenant().get(), t, t.getTaxa(), Palpite.Status.A);
+            palpites.add(palpite);
+        });
+
+        Bilhete bilhete = new Bilhete();
+        bilhete.setSituacao(Bilhete.Situacao.A);
+        bilhete.setCriadoEm(Calendar.getInstance());
+        bilhete.setAlteradoEm(Calendar.getInstance());
+        bilhete.setUsuario(usuario);
+        bilhete.setValorAposta(bilheteJson.valorAposta);
+        bilhete.setValorPremio(valorPremio);
+        bilhete.setPalpites(palpites);
+        bilhete.setCliente(bilheteJson.cliente);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
 
@@ -104,7 +114,7 @@ public class BilheteController extends ApplicationController {
             return internalServerError(e.getMessage());
         }*/
         ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
-        builder.comEntidade(BilheteJson.of(bilhete));
+        builder.comEntidade(BilheteJson.of(bilhete, profile.getUsername()));
         JsonNode retorno = builder.build();
         return created(retorno);
 
