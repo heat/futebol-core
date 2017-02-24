@@ -83,4 +83,14 @@ public class TaxaRepository implements Repository<Long, Taxa>{
         em.remove(taxaOptional.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
+
+    public List<Taxa> buscar(Tenant tenant, List<Long> ids) {
+
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("SELECT t FROM Taxa t WHERE t.tenant = :tenant and t.id IN :ids");
+        query.setParameter("tenant", tenant.get());
+        query.setParameter("ids", ids);
+        return query.getResultList();
+
+    }
 }
