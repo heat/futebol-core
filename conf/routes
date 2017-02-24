@@ -68,7 +68,9 @@ POST     /bilhetes                      api.rest.BilheteController.inserir()
 
 DELETE   /bilhetes/:id                  api.rest.BilheteController.cancelar(id: Long)
 
-GET      /bilhetes/:codigo/impressao     api.rest.BilheteController.imprimir(codigo: String)
+GET      /bilhetes/:codigo/impressao    api.rest.BilheteController.imprimir(codigo: String)
+
+GET     /palpites                       api.rest.BilheteController.buscarPalpites(bilhete: String)
 
 # ------- CRUD de usuarios
 

@@ -21,9 +21,7 @@ import play.db.jpa.JPAApi;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 public class Global extends GlobalSettings {
 
@@ -193,12 +191,15 @@ public class Global extends GlobalSettings {
 
         em.persist(bilhete);
 
-        /*Palpite palpite = new Palpite();
+        Palpite palpite = new Palpite();
         palpite.setTenant(Tenant.SYSBET.get());
         palpite.setStatus(Palpite.Status.A);
         palpite.setTaxa(eventoAposta.getTaxas().get(0));
         palpite.setValorTaxa(BigDecimal.TEN);
+        List<Palpite> palpites = new ArrayList<>();
+        palpites.add(palpite);
+        bilhete.setPalpites(palpites);
 
-        em.persist(palpite);*/
+        em.merge(bilhete);
     }
 }
