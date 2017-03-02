@@ -32,6 +32,15 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
         return query.getResultList();
     }
 
+    public List<Campeonato> todos(Tenant tenant, String nome) {
+
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("FROM Campeonato as c WHERE c.tenant = :tenant AND (c.nome = :nome or :nome IS NULL) ");
+        query.setParameter("tenant", tenant.get());
+        query.setParameter("nome", nome);
+        return query.getResultList();
+    }
+
     @Override
     public Optional<Campeonato> buscar(Tenant tenant, Long id) {
 

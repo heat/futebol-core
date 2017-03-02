@@ -96,8 +96,8 @@ public class CampeonatoController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result todos() {
-        List<Campeonato> campeonatos = campeonatoRepository.todos(getTenant());
+    public Result todos(String nome) {
+        List<Campeonato> campeonatos = campeonatoRepository.todos(getTenant(), nome);
 
         List<Jsonable> jsons =  CampeonatoJson.of(campeonatos);
 
@@ -119,7 +119,7 @@ public class CampeonatoController extends ApplicationController {
             return notFound("Campeonato não encontrado!");
         }
         CampeonatoJson jsonCampeonato = CampeonatoJson.of(campeonato.get());
-        JsonNode json = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+        JsonNode json = ObjectJson.build(CampeonatoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
                 .comEntidade(jsonCampeonato)
                 .build();
         return ok(json);
