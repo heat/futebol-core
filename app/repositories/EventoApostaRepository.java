@@ -60,6 +60,16 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
         }
     }
 
+    public List<EventoAposta> buscar(Long tenant, List<Long> ids) {
+
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("SELECT ea FROM EventoAposta ea WHERE ea.tenant = :tenant and ea.id IN :ids");
+        query.setParameter("tenant", tenant);
+        query.setParameter("ids", ids);
+        return query.getResultList();
+
+    }
+
     @Override
     public CompletableFuture<EventoAposta> atualizar(Tenant tenant, Long id, EventoAposta ea) {
 
