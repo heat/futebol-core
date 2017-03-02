@@ -6,7 +6,7 @@ CREATE SEQUENCE public.validadores_validador_id_seq START WITH 1000;
 CREATE TABLE public.validadores (
                 "validador_id" INTEGER NOT NULL DEFAULT nextval('public.validadores_validador_id_seq'),
                 "tenant_id" INTEGER NOT NULL,
-                "dtype" VARCHAR(31) NOT NULL,
+                "dtype" VARCHAR(50) NOT NULL,
                 "regra" VARCHAR(255) NOT NULL,
                 "valor_decimal" NUMERIC(10,2),
                 "valor_inteiro" INTEGER,
