@@ -80,7 +80,11 @@ public class EventoRepository implements Repository<Long, Evento>{
         Optional<Evento> evento = buscar(tenant, id);
         if(!evento.isPresent())
             throw new NoResultException("Evento não encontrado");
-        em.remove(evento.get());
+
+        Evento ev = evento.get();
+        ev.setSituacao(Evento.Situacao.C);
+        em.merge(ev);
+
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 

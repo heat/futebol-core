@@ -38,7 +38,7 @@ GET      /times/:id                     api.rest.TimeController.buscar(id: Long)
 
 POST     /times                         api.rest.TimeController.inserir
 
-POST     /times/:id                     api.rest.TimeController.atualizar(id: Long)
+PUT      /times/:id                     api.rest.TimeController.atualizar(id: Long)
 
 DELETE   /times/:id                     api.rest.TimeController.excluir(id: Long)
 
