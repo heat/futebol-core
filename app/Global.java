@@ -253,7 +253,7 @@ public class Global extends GlobalSettings {
         em.persist(coritiba);
 
         //Não é possível inserir dois campeonatos com o mesmo nome
-        Campeonato campeonato = new Campeonato(Tenant.SYSBET.get(), "Brasileirao");
+        Campeonato campeonato = new Campeonato(Tenant.SYSBET.get(), "Brasileirao", Campeonato.Situacao.A);
 
         em.persist(campeonato);
 

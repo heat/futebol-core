@@ -21,6 +21,7 @@ CREATE TABLE public.campeonatos (
                 campeonato_id INTEGER NOT NULL DEFAULT nextval('public.campeonatos_campeonato_id_seq'),
                 nome VARCHAR(200) NOT NULL,
                 tenant_id INTEGER NOT NULL,
+                situacao character(1) NOT NULL DEFAULT 'A',
                 CONSTRAINT campeonatos_pk PRIMARY KEY (campeonato_id)
 );
 COMMENT ON TABLE public.campeonatos IS 'Lista de campeonatos';

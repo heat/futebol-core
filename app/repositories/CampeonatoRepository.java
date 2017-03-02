@@ -27,7 +27,7 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     public List<Campeonato> todos(Tenant tenant) {
 
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("FROM Campeonato as c WHERE c.tenant = :tenant");
+        Query query = em.createQuery("FROM Campeonato as c WHERE c.tenant = :tenant AND c.situacao = 'A' ");
         query.setParameter("tenant", tenant.get());
         return query.getResultList();
     }
@@ -35,7 +35,7 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     public List<Campeonato> todos(Tenant tenant, String nome) {
 
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("FROM Campeonato as c WHERE c.tenant = :tenant AND (c.nome = :nome or :nome IS NULL) ");
+        Query query = em.createQuery("FROM Campeonato as c WHERE c.tenant = :tenant AND (c.nome = :nome or :nome IS NULL) AND c.situacao = 'A' ");
         query.setParameter("tenant", tenant.get());
         query.setParameter("nome", nome);
         return query.getResultList();
@@ -46,7 +46,7 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
 
         try {
             EntityManager em = jpaApi.em();
-            TypedQuery<Campeonato> query = em.createQuery("SELECT c FROM Campeonato c WHERE c.tenant = :tenant and c.id = :id", Campeonato.class);
+            TypedQuery<Campeonato> query = em.createQuery("SELECT c FROM Campeonato c WHERE c.tenant = :tenant and c.id = :id AND c.situacao = 'A' ", Campeonato.class);
             query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
             return Optional.ofNullable(query.getSingleResult());
@@ -60,7 +60,7 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
 
         try {
             EntityManager em = jpaApi.em();
-            TypedQuery<Campeonato> query = em.createQuery("SELECT c FROM Campeonato c WHERE c.tenant = :tenant and c.nome = :nome", Campeonato.class);
+            TypedQuery<Campeonato> query = em.createQuery("SELECT c FROM Campeonato c WHERE c.tenant = :tenant and c.nome = :nome AND c.situacao = 'A'", Campeonato.class);
             query.setParameter("tenant", tenant.get());
             query.setParameter("nome", nome);
             return Optional.ofNullable(query.getSingleResult());
@@ -99,7 +99,11 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
         Optional<Campeonato> campeonato = buscar(tenant, id);
         if(!campeonato.isPresent())
             throw new NoResultException("Campeonato não encontrado");
-        em.remove(campeonato.get());
+
+        Campeonato camp = campeonato.get();
+        camp.setSituacao(Campeonato.Situacao.I);
+        em.merge(camp);
+
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
 }

@@ -7,6 +7,16 @@ import java.io.Serializable;
 @Table(name = "campeonatos")
 public class Campeonato implements Serializable{
 
+    public enum Situacao {
+        A("ATIVO"), I("INATIVO");
+
+        private String situacao;
+
+        Situacao(String situacao) {
+            this.situacao = situacao;
+        }
+    }
+
     @Id
     @SequenceGenerator(name="campeonatos_campeonato_id_seq", sequenceName = "campeonatos_campeonato_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "campeonatos_campeonato_id_seq")
@@ -19,12 +29,22 @@ public class Campeonato implements Serializable{
     @Column(name = "nome")
     private String nome;
 
+    @Enumerated(EnumType.STRING )
+    @Column(name = "situacao")
+    private Situacao situacao;
+
     protected Campeonato() {
     }
 
     public Campeonato(Long tenant, String nome) {
         this.nome = nome;
         this.tenant = tenant;
+    }
+
+    public Campeonato(Long tenant, String nome, Situacao situacao) {
+        this.nome = nome;
+        this.tenant = tenant;
+        this.situacao = situacao;
     }
 
     public Long getId() {
@@ -45,6 +65,14 @@ public class Campeonato implements Serializable{
 
     public void setTenant(Long tenant) {
         this.tenant = tenant;
+    }
+
+    public Situacao getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
     }
 
     @Override
