@@ -96,16 +96,16 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
 
 
 
-    public Optional<Usuario> registro(Tenant sysbet, String login, String senha) {
+    public Optional<Usuario> registro(Tenant tenant, String login, String senha) {
         try {
             return jpaApi.withTransaction((em) -> {
 
-                Usuario usuario = em.createNamedQuery("Usuario.validarLoginSenha", Usuario.class)
-                                    .setParameter("login", login)
-                                    .setParameter("senha", senha)
-                                    .getSingleResult();
+                TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.idTenant = :tenant and u.login = :login AND u.senha = :senha", Usuario.class);
+                query.setParameter("tenant", tenant.get());
+                query.setParameter("login", login);
+                query.setParameter("senha", senha);
 
-                return Optional.of(usuario);
+                return Optional.of(query.getSingleResult());
             });
         } catch (NoResultException e) {
             e.printStackTrace();
