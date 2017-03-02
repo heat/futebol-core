@@ -2,6 +2,7 @@ package models.bilhetes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.apostas.EventoAposta;
 import models.seguranca.Usuario;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
@@ -88,6 +89,9 @@ public class Bilhete implements Serializable{
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "bilhete_id", nullable = false, updatable = false, insertable = false)
     private List<Palpite> palpites;
+
+    @Transient
+    private List<EventoAposta> eventosAposta;
 
     public Bilhete() {
 
@@ -193,6 +197,14 @@ public class Bilhete implements Serializable{
     @JsonSerialize(using= CalendarSerializer.class)
     public void setAlteradoEm(Calendar alteradoEm) {
         this.alteradoEm = alteradoEm;
+    }
+
+    public List<EventoAposta> getEventosAposta() {
+        return eventosAposta;
+    }
+
+    public void setEventosAposta(List<EventoAposta> eventosAposta) {
+        this.eventosAposta = eventosAposta;
     }
 
     @Override

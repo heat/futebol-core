@@ -1,3 +1,4 @@
+import dominio.processadores.bilhetes.BilheteCancelarProcessador;
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.processadores.eventos.*;
 import dominio.processadores.usuarios.PerfilAtualizarProcessador;
@@ -111,7 +112,7 @@ public class Global extends GlobalSettings {
 
             TempoCancelamentoValidador tempoCancelamentoValidador =
                     new TempoCancelamentoValidador( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
+                            BilheteCancelarProcessador.REGRA,
                             0L,
                             null,
                             null,
@@ -148,7 +149,7 @@ public class Global extends GlobalSettings {
             QtdMinimaPalpitesValidador qtdMinimaPalpitesValidador =
                     new QtdMinimaPalpitesValidador( Tenant.SYSBET.get(),
                             BilheteInserirProcessador.REGRA,
-                            3L,
+                            1L,
                             null,
                             null,
                             null);
@@ -202,11 +203,29 @@ public class Global extends GlobalSettings {
             TempoLimiteApostasValidador tempoLimiteApostasValidador =
                     new TempoLimiteApostasValidador( Tenant.SYSBET.get(),
                             BilheteInserirProcessador.REGRA,
-                            10L,
+                            0L,
                             null,
                             null,
                             null);
             em.persist(tempoLimiteApostasValidador);
+
+            PremioMaximoPolitica premioMaximoPolitica =
+                    new PremioMaximoPolitica( Tenant.SYSBET.get(),
+                            BilheteInserirProcessador.REGRA,
+                            null,
+                            true,
+                            BigDecimal.valueOf(10000),
+                            null);
+            em.persist(premioMaximoPolitica);
+
+            TaxaMaximaApostaPolitica taxaMaximaApostaPolitica =
+                    new TaxaMaximaApostaPolitica( Tenant.SYSBET.get(),
+                            BilheteInserirProcessador.REGRA,
+                            null,
+                            true,
+                            BigDecimal.valueOf(100),
+                            null);
+            em.persist(taxaMaximaApostaPolitica);
 
 
             dummyData(em);

@@ -10,10 +10,12 @@ import com.google.inject.Inject;
 import controllers.ApplicationController;
 import dominio.processadores.PagarComissaoProcessador;
 import dominio.processadores.bilhetes.BilheteAtualizarProcessador;
+import dominio.processadores.bilhetes.BilheteCancelarProcessador;
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import filters.FiltroBilhete;
+import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
@@ -21,7 +23,9 @@ import models.bilhetes.Palpite;
 import models.seguranca.Usuario;
 import models.vo.Chave;
 import models.vo.Tenant;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.play.PlayWebContext;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -29,10 +33,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
-import repositories.BilheteRepository;
-import repositories.TaxaRepository;
-import repositories.UsuarioRepository;
-import repositories.ValidadorRepository;
+import repositories.*;
 
 import javax.persistence.NoResultException;
 import java.math.BigDecimal;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BilheteController extends ApplicationController {
 
@@ -47,22 +49,28 @@ public class BilheteController extends ApplicationController {
     UsuarioRepository usuarioRepository;
     BilheteInserirProcessador inserirProcessador;
     BilheteAtualizarProcessador atualizarProcessador;
+    BilheteCancelarProcessador cancelarProcessador;
     PagarComissaoProcessador pagarComissaoProcessador;
     ValidadorRepository validadorRepository;
     TaxaRepository taxaRepository;
+    EventoApostaRepository eventoApostaRepository;
 
     @Inject
-    public BilheteController(PlaySessionStore playSessionStore, BilheteRepository bilheteRepository, UsuarioRepository usuarioRepository,
-                             BilheteInserirProcessador inserirProcessador, BilheteAtualizarProcessador atualizarProcessador,
-                             PagarComissaoProcessador pagarComissaoProcessador, ValidadorRepository validadorRepository, TaxaRepository taxaRepository) {
+    public BilheteController(PlaySessionStore playSessionStore, BilheteRepository bilheteRepository,
+                             UsuarioRepository usuarioRepository, BilheteInserirProcessador inserirProcessador,
+                             BilheteAtualizarProcessador atualizarProcessador, BilheteCancelarProcessador cancelarProcessador,
+                             PagarComissaoProcessador pagarComissaoProcessador, ValidadorRepository validadorRepository,
+                             TaxaRepository taxaRepository, EventoApostaRepository eventoApostaRepository) {
         super(playSessionStore);
         this.bilheteRepository = bilheteRepository;
         this.usuarioRepository = usuarioRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
+        this.cancelarProcessador = cancelarProcessador;
         this.pagarComissaoProcessador = pagarComissaoProcessador;
         this.validadorRepository = validadorRepository;
         this.taxaRepository = taxaRepository;
+        this.eventoApostaRepository = eventoApostaRepository;
     }
 
     @Secure(clients = "headerClient")
@@ -88,6 +96,9 @@ public class BilheteController extends ApplicationController {
             palpites.add(palpite);
         });
 
+        List<Long> idsEventoAposta = palpites.stream().map(p -> p.getTaxa().getEventoAposta()).collect(Collectors.toList());
+        List<EventoAposta> eventosAposta = eventoApostaRepository.buscar(getTenant().get(), idsEventoAposta);
+
         Bilhete bilhete = new Bilhete();
         bilhete.setSituacao(Bilhete.Situacao.A);
         bilhete.setCriadoEm(Calendar.getInstance());
@@ -97,6 +108,7 @@ public class BilheteController extends ApplicationController {
         bilhete.setValorPremio(valorPremio);
         bilhete.setPalpites(palpites);
         bilhete.setCliente(bilheteJson.cliente);
+        bilhete.setEventosAposta(eventosAposta);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
 
@@ -201,11 +213,20 @@ public class BilheteController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     public Result cancelar(Long id) {
+
+        List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteCancelarProcessador.REGRA);
+        Optional<Bilhete> bilhete = bilheteRepository.buscar(getTenant(), id);
+
+        if (!bilhete.isPresent()) {
+            return notFound("Bilhete não encontrado!");
+        }
+
         try {
-            bilheteRepository.excluir(getTenant(), id);
-            return noContent(); // padrao para quando exclui uma entidade
-        } catch (NoResultException e) {
-            return notFound(e.getMessage());
+            Chave chave = Chave.of(getTenant(), id);
+            cancelarProcessador.executar(chave, bilhete.get(), validadores);
+            return noContent();
+        } catch (ValidadorExcpetion validadorExcpetion) {
+            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
     }
 

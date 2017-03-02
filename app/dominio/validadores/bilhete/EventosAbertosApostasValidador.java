@@ -10,15 +10,13 @@ import models.eventos.Evento;
 import repositories.EventoApostaRepository;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
 public class EventosAbertosApostasValidador extends Validador<Bilhete> {
-
-    @Inject
-    EventoApostaRepository eventoApostaRepository;
 
     public EventosAbertosApostasValidador() {
     }
@@ -30,11 +28,7 @@ public class EventosAbertosApostasValidador extends Validador<Bilhete> {
     @Override
     public void validate(Bilhete entity) throws ValidadorExcpetion {
 
-        List<Long> idsEventoAposta = entity.getPalpites().stream().map(p -> p.getTaxa().getEventoAposta()).collect(Collectors.toList());
-
-        List<EventoAposta> eventosAposta = eventoApostaRepository.buscar(entity.getTenant(), idsEventoAposta);
-
-        eventosAposta.forEach(e -> {
+        entity.getEventosAposta().forEach(e -> {
             if (e.getSituacao() != Apostavel.Situacao.A){
                 throw new ValidadorExcpetion("A aposta possui partida(s) fechada(s).");
             }
