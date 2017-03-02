@@ -7,8 +7,8 @@ import java.io.Serializable;
 import java.util.List;
 
 
-@Entity(name="Usuario")
-@Table(name="usuarios")
+@Entity
+@Table(name = "usuarios")
 public class Usuario implements Serializable{
 
     public enum Status {
