@@ -1,5 +1,6 @@
-package dominio.processadores;
+package dominio.processadores.financeiro;
 
+import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.bilhetes.Bilhete;
