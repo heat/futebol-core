@@ -100,11 +100,12 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
         try {
             return jpaApi.withTransaction((em) -> {
 
-                TypedQuery<Usuario> query = em.createNamedQuery("validarLoginSenha", Usuario.class);
-                query.setParameter("login", login);
-                query.setParameter("senha", senha);
+                Usuario usuario = em.createNamedQuery("Usuario.validarLoginSenha", Usuario.class)
+                                    .setParameter("login", login)
+                                    .setParameter("senha", senha)
+                                    .getSingleResult();
 
-                return Optional.of(query.getSingleResult());
+                return Optional.of(usuario);
             });
         } catch (NoResultException e) {
             e.printStackTrace();

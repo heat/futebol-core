@@ -8,10 +8,9 @@ import java.util.List;
 
 
 @Entity(name="Usuario")
-@NamedQuery(
-        name="validarLoginSenha",
-        query="SELECT us FROM Usuario us WHERE us.login = :login AND us.senha = :senha"
-)
+@NamedQueries({
+        @NamedQuery(name="Usuario.validarLoginSenha", query="SELECT us FROM Usuario us WHERE us.login = :login AND us.senha = :senha")
+})
 @Table(name="usuarios")
 public class Usuario implements Serializable{
 
