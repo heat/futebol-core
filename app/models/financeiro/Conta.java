@@ -26,6 +26,13 @@ public class Conta {
     @JoinColumn(name = "conta_id", nullable = false, updatable = false, insertable = false)
     private List<Lancamento> lancamentos;
 
+    public Conta() {
+    }
+
+    public Conta(Usuario proprietario) {
+        this.proprietario = proprietario;
+    }
+
     public Long getId() {
         return id;
     }
@@ -48,5 +55,9 @@ public class Conta {
 
     public void setLancamentos(List<Lancamento> lancamentos) {
         this.lancamentos = lancamentos;
+    }
+
+    public void addLancamento(Lancamento lancamento){
+        this.lancamentos.add(lancamento);
     }
 }

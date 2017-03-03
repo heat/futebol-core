@@ -27,9 +27,52 @@ public abstract class Lancamento<E> {
     private BigDecimal valor;
 
     @Embedded
-    public Saldo saldo;
+    private Saldo saldo;
+
+    //@Column(name = "conta_id", insertable=false, updatable = false)
+    //private Long conta;
 
     public abstract E getOrigem();
 
     public abstract TipoLancamento getTipo();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Calendar getDataLancamento() {
+        return dataLancamento;
+    }
+
+    public void setDataLancamento(Calendar dataLancamento) {
+        this.dataLancamento = dataLancamento;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
+    public Saldo getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(Saldo saldo) {
+        this.saldo = saldo;
+    }
+
+   /* public Long getConta() {
+        return conta;
+    }
+
+    public void setConta(Long conta) {
+        this.conta = conta;
+    }*/
 }

@@ -50,9 +50,18 @@ public class ContaRepository implements Repository<Long, Conta>{
         return null;
     }
 
+    public void atualizar(Conta updetable) {
+
+        EntityManager em = jpaApi.em();
+        em.merge(updetable);
+    }
+
     @Override
     public CompletableFuture<Conta> inserir(Tenant tenant, Conta novo) {
-        return null;
+
+        EntityManager em = jpaApi.em();
+        em.persist(novo);
+        return CompletableFuture.completedFuture(novo);
     }
 
     @Override

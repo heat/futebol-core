@@ -29,6 +29,7 @@ public class BilheteInserirProcessador implements Processador<Tenant, Bilhete>{
         for (Validador<Bilhete> validador: validadores) {
             validador.validate(bilhete);
         }
+
         return bilheteRepository.inserir(tenant, bilhete) ;
     }
 }

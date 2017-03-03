@@ -129,6 +129,8 @@ public class BilheteController extends ApplicationController {
                     } ).get();*/
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
+        } catch (Exception ex){
+            return status(Http.Status.UNPROCESSABLE_ENTITY, ex.getMessage());
         }
 /*            catch (InterruptedException e) {
             e.printStackTrace();

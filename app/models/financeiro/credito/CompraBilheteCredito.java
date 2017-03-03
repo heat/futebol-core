@@ -27,4 +27,12 @@ public class CompraBilheteCredito extends Lancamento<Bilhete> implements Credito
     public Credito getTipo() {
         return this;
     }
+
+    public Bilhete getOrigemBilhete() {
+        return origemBilhete;
+    }
+
+    public void setOrigemBilhete(Bilhete origemBilhete) {
+        this.origemBilhete = origemBilhete;
+    }
 }
