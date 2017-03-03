@@ -14,6 +14,7 @@ import models.bilhetes.Palpite;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
+import models.financeiro.Conta;
 import models.seguranca.Usuario;
 import models.vo.Tenant;
 import play.Application;
@@ -238,6 +239,8 @@ public class Global extends GlobalSettings {
 
     private void dummyData(EntityManager em) {
 
+        em.createQuery("DELETE FROM Lancamento t").executeUpdate();
+        em.createQuery("DELETE FROM Conta t").executeUpdate();
         em.createQuery("DELETE FROM Palpite t").executeUpdate();
         em.createQuery("DELETE FROM Bilhete t").executeUpdate();
         em.createQuery("DELETE FROM Taxa t").executeUpdate();
@@ -320,5 +323,10 @@ public class Global extends GlobalSettings {
         bilhete.setPalpites(palpites);
 
         em.merge(bilhete);
+
+        Conta conta = new Conta();
+        conta.setProprietario(usuario);
+
+        em.persist(conta);
     }
 }
