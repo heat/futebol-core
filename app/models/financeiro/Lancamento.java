@@ -13,6 +13,12 @@ import java.util.Calendar;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Lancamento<E> {
 
+    @Id
+    @SequenceGenerator(name="lancamentos_lancamento_id_seq", sequenceName = "lancamentos_lancamento_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lancamentos_lancamento_id_seq")
+    @Column(name = "lancamento_id",updatable = false)
+    private Long id;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "criado_em")
     private Calendar dataLancamento;

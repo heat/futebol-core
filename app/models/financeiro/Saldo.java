@@ -6,5 +6,5 @@ import java.math.BigDecimal;
 @Embeddable
 public class Saldo {
 
-    public BigDecimal valor;
+    public BigDecimal saldo;
 }
