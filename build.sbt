@@ -21,3 +21,5 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
   "be.objectify" %% "deadbolt-java" % "2.5.1"
 )
+
+PlayKeys.externalizeResources := false
