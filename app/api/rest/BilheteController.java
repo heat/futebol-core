@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
+import dominio.processadores.financeiro.LancarVendaBilheteProcessador;
 import dominio.processadores.financeiro.PagarComissaoProcessador;
 import dominio.processadores.bilhetes.BilheteAtualizarProcessador;
 import dominio.processadores.bilhetes.BilheteCancelarProcessador;
@@ -20,6 +21,7 @@ import models.apostas.Odd;
 import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
+import models.financeiro.Conta;
 import models.seguranca.Usuario;
 import models.vo.Chave;
 import models.vo.Tenant;
@@ -51,13 +53,17 @@ public class BilheteController extends ApplicationController {
     ValidadorRepository validadorRepository;
     TaxaRepository taxaRepository;
     EventoApostaRepository eventoApostaRepository;
+    LancarVendaBilheteProcessador lancarVendaBilheteProcessador;
+    ContaRepository contaRepository;
 
     @Inject
     public BilheteController(PlaySessionStore playSessionStore, BilheteRepository bilheteRepository,
                              UsuarioRepository usuarioRepository, BilheteInserirProcessador inserirProcessador,
                              BilheteAtualizarProcessador atualizarProcessador, BilheteCancelarProcessador cancelarProcessador,
                              PagarComissaoProcessador pagarComissaoProcessador, ValidadorRepository validadorRepository,
-                             TaxaRepository taxaRepository, EventoApostaRepository eventoApostaRepository) {
+                             TaxaRepository taxaRepository, EventoApostaRepository eventoApostaRepository,
+                             LancarVendaBilheteProcessador lancarVendaBilheteProcessador,
+                             ContaRepository contaRepository) {
         super(playSessionStore);
         this.bilheteRepository = bilheteRepository;
         this.usuarioRepository = usuarioRepository;
@@ -68,6 +74,8 @@ public class BilheteController extends ApplicationController {
         this.validadorRepository = validadorRepository;
         this.taxaRepository = taxaRepository;
         this.eventoApostaRepository = eventoApostaRepository;
+        this.lancarVendaBilheteProcessador = lancarVendaBilheteProcessador;
+        this.contaRepository = contaRepository;
     }
 
     @Secure(clients = "headerClient")
@@ -110,7 +118,11 @@ public class BilheteController extends ApplicationController {
         List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
 
         try {
-            inserirProcessador.executar(getTenant(), bilhete, validadores);
+            inserirProcessador.executar(getTenant(), bilhete, validadores)
+                    .thenApply(b -> {
+                        Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), bilhete.getUsuario().getId());
+                        return lancarVendaBilheteProcessador.executar(contaOptional.get(), b, validadores);
+                    });
 /*            bilhete = inserirProcessador.executar(getTenant(), bilhete, validadores)
                     .thenCompose(b -> {
                         return pagarComissaoProcessador.executar(getTenant().get(), b, Collections.emptyList());
