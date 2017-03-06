@@ -22,4 +22,6 @@ libraryDependencies ++= Seq(
   "be.objectify" %% "deadbolt-java" % "2.5.1"
 )
 
+libraryDependencies += filters
+
 PlayKeys.externalizeResources := false

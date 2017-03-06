@@ -1,5 +1,7 @@
 import javax.inject.*;
 import play.*;
+import play.filters.cors.CORSFilter;
+import play.http.DefaultHttpFilters;
 import play.mvc.EssentialFilter;
 import play.http.HttpFilters;
 import play.mvc.*;
@@ -16,7 +18,7 @@ import filters.ExampleFilter;
  * the <code>application.conf</code> configuration file.
  */
 @Singleton
-public class Filters implements HttpFilters {
+public class Filters extends DefaultHttpFilters implements HttpFilters {
 
     private final Environment env;
     private final EssentialFilter exampleFilter;
@@ -26,7 +28,8 @@ public class Filters implements HttpFilters {
      * @param exampleFilter A demonstration filter that adds a header to
      */
     @Inject
-    public Filters(Environment env, ExampleFilter exampleFilter) {
+    public Filters(Environment env, ExampleFilter exampleFilter, CORSFilter corsFilter) {
+        super(corsFilter);
         this.env = env;
         this.exampleFilter = exampleFilter;
     }
