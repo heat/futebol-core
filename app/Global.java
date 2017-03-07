@@ -306,7 +306,7 @@ public class Global extends GlobalSettings {
         bilhete.setTenant(Tenant.SYSBET.get());
         bilhete.setValorAposta(BigDecimal.TEN);
         bilhete.setValorPremio(BigDecimal.valueOf(1000L));
-        Usuario usuario = em.find(Usuario.class, 1L);
+        Usuario usuario = em.find(Usuario.class, 4L);
         bilhete.setUsuario(usuario);
         bilhete.setAlteradoEm(Calendar.getInstance());
         bilhete.setCriadoEm(Calendar.getInstance());
