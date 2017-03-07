@@ -8,12 +8,12 @@ import javax.persistence.Entity;
 import java.math.BigDecimal;
 
 @Entity
-public class HabilitadoUsuarioApostasValidador extends Validador<Bilhete> {
+public class HabilitadoUsuarioApostasVal extends Validador<Bilhete> {
 
-    public HabilitadoUsuarioApostasValidador() {
+    public HabilitadoUsuarioApostasVal() {
     }
 
-    public HabilitadoUsuarioApostasValidador(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+    public HabilitadoUsuarioApostasVal(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
         super(idTenant, regra, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 

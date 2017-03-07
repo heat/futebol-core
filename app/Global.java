@@ -165,8 +165,8 @@ public class Global extends GlobalSettings {
                             null);
             em.persist(qtdMaximaPalpitesValidador);
 
-            HabilitadoUsuarioApostasValidador habilitadoUsuarioApostasValidador =
-                    new HabilitadoUsuarioApostasValidador( Tenant.SYSBET.get(),
+            HabilitadoUsuarioApostasVal habilitadoUsuarioApostasValidador =
+                    new HabilitadoUsuarioApostasVal( Tenant.SYSBET.get(),
                             BilheteInserirProcessador.REGRA,
                             null,
                             true,
@@ -174,8 +174,8 @@ public class Global extends GlobalSettings {
                             null);
             em.persist(habilitadoUsuarioApostasValidador);
 
-            HabilitadoRevendedorApostasValidador habilitadoRevendedorApostasValidador =
-                    new HabilitadoRevendedorApostasValidador( Tenant.SYSBET.get(),
+            HabilitadoRevendedorApostasVal habilitadoRevendedorApostasValidador =
+                    new HabilitadoRevendedorApostasVal( Tenant.SYSBET.get(),
                             BilheteInserirProcessador.REGRA,
                             null,
                             true,
@@ -183,8 +183,8 @@ public class Global extends GlobalSettings {
                             null);
             em.persist(habilitadoRevendedorApostasValidador);
 
-            HabilitadoAdministradorApostasValidador habilitadoAdministradorApostasValidador =
-                    new HabilitadoAdministradorApostasValidador( Tenant.SYSBET.get(),
+            HabilitadoAdminApostasVal habilitadoAdministradorApostasValidador =
+                    new HabilitadoAdminApostasVal( Tenant.SYSBET.get(),
                             BilheteInserirProcessador.REGRA,
                             null,
                             true,
@@ -192,8 +192,8 @@ public class Global extends GlobalSettings {
                             null);
             em.persist(habilitadoAdministradorApostasValidador);
 
-            HabilitadoSupervisorApostasValidador habilitadoSupervisorApostasValidador =
-                    new HabilitadoSupervisorApostasValidador( Tenant.SYSBET.get(),
+            HabilitadoSupervisorApostasVal habilitadoSupervisorApostasValidador =
+                    new HabilitadoSupervisorApostasVal( Tenant.SYSBET.get(),
                             BilheteInserirProcessador.REGRA,
                             null,
                             true,

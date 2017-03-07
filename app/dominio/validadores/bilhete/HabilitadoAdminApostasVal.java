@@ -8,19 +8,19 @@ import javax.persistence.Entity;
 import java.math.BigDecimal;
 
 @Entity
-public class HabilitadoSupervisorApostasValidador extends Validador<Bilhete> {
+public class HabilitadoAdminApostasVal extends Validador<Bilhete> {
 
-    public HabilitadoSupervisorApostasValidador() {
+    public HabilitadoAdminApostasVal() {
     }
 
-    public HabilitadoSupervisorApostasValidador(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
+    public HabilitadoAdminApostasVal(Long idTenant, String regra, Long valorInteiro, Boolean valorLogico, BigDecimal valorDecimal, String valorTexto) {
         super(idTenant, regra, valorInteiro, valorLogico, valorDecimal, valorTexto);
     }
 
     @Override
     public void validate(Bilhete entity) throws ValidadorExcpetion {
         if(!getValorLogico()) {
-            throw new ValidadorExcpetion("Supervisor não habilitado para fazer apostas.");
+            throw new ValidadorExcpetion("Administrador não habilitado para fazer apostas.");
         }
     }
 }
