@@ -29,9 +29,6 @@ public abstract class Lancamento<E> {
     @Embedded
     private Saldo saldo;
 
-    //@Column(name = "conta_id", insertable=false, updatable = false)
-    //private Long conta;
-
     public abstract E getOrigem();
 
     public abstract TipoLancamento getTipo();
@@ -68,11 +65,4 @@ public abstract class Lancamento<E> {
         this.saldo = saldo;
     }
 
-   /* public Long getConta() {
-        return conta;
-    }
-
-    public void setConta(Long conta) {
-        this.conta = conta;
-    }*/
 }

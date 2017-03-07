@@ -18,12 +18,12 @@ public class Conta {
     @Column(name = "conta_id",updatable = false)
     private Long id;
 
-    @OneToOne( cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
     private Usuario proprietario;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "conta_id", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "conta_id", nullable = false, updatable = true, insertable = true)
     private List<Lancamento> lancamentos;
 
     public Conta() {

@@ -37,7 +37,7 @@ public class PremioMaximoPolitica extends Validador<Bilhete> implements IPolitic
             valorPremio.multiply(p.getTaxa().getTaxa());
         });
 
-        if (valorPremio.compareTo(valorMaximoPremio) < 0){
+        if (valorPremio.compareTo(valorMaximoPremio) > 0){
             bilhete.setValorPremio(valorMaximoPremio);
         }
 
