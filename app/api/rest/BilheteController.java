@@ -115,13 +115,25 @@ public class BilheteController extends ApplicationController {
         bilhete.setCliente(bilheteJson.cliente);
         bilhete.setEventosAposta(eventosAposta);
 
-        List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
+
 
         try {
+
+            List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
+            Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), bilhete.getUsuario().getId());
+
+            if (!contaOptional.isPresent()){
+                return notFound("Usuário sem conta.");
+            }
+
+            Conta conta = contaOptional.get();
+            /*if (conta.getSaldo().compareTo(bilhete.getValorAposta()) < 0){
+                return notFound("Usuário não possui saldo suficiente para reazliar apostas.");
+            }*/
+
             inserirProcessador.executar(getTenant(), bilhete, validadores)
                     .thenApply(b -> {
-                        Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), bilhete.getUsuario().getId());
-                        return lancarVendaBilheteProcessador.executar(contaOptional.get(), b, validadores);
+                        return lancarVendaBilheteProcessador.executar(conta, b, validadores);
                     });
 /*            bilhete = inserirProcessador.executar(getTenant(), bilhete, validadores)
                     .thenCompose(b -> {

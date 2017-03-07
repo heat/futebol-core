@@ -3,6 +3,8 @@ package models.financeiro;
 import models.seguranca.Usuario;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -59,5 +61,15 @@ public class Conta {
 
     public void addLancamento(Lancamento lancamento){
         this.lancamentos.add(lancamento);
+    }
+
+    public BigDecimal getSaldo(){
+        BigDecimal saldo = BigDecimal.ZERO;
+        saldo.add(this.lancamentos.stream()
+                .sorted()
+                .map(l -> l.getSaldo().getSaldo())
+                .reduce((first, second) -> second).get());
+
+        return saldo;
     }
 }
