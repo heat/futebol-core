@@ -12,9 +12,6 @@ CREATE TABLE public.times (
 );
 COMMENT ON TABLE public.times IS 'tabela de times disponiveis';
 
-
-ALTER SEQUENCE public.times_time_id_seq OWNED BY public.times.time_id;
-
 CREATE SEQUENCE public.campeonatos_campeonato_id_seq;
 
 CREATE TABLE public.campeonatos (
@@ -114,10 +111,11 @@ DROP TABLE IF EXISTS times CASCADE;
 
 DROP TABLE IF EXISTS campeonatos CASCADE;
 
+DROP SEQUENCE IF EXISTS public.times_time_id_seq CASCADE;
+
 DROP SEQUENCE IF EXISTS public.resultados_resultado_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.eventos_evento_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.campeonatos_campeonato_id_seq CASCADE;
 
-DROP SEQUENCE IF EXISTS public.times_time_id_seq CASCADE;

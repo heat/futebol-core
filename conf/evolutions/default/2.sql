@@ -52,6 +52,7 @@ CREATE TABLE public.usuarios (
                 senha VARCHAR(255) NOT NULL,
                 status VARCHAR(255) NOT NULL,
                 papel_id integer NOT NULL, -- papel de acesso do usuario
+                plano_comissao_id integer,
                 CONSTRAINT usuario_id_pk PRIMARY KEY (usuario_id),
                 CONSTRAINT papeis_usuarios_fk FOREIGN KEY (papel_id)
                   REFERENCES public.papeis (papel_id) MATCH SIMPLE

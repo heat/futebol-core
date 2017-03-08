@@ -27,6 +27,7 @@ CREATE TABLE public.lancamentos (
                 dtype VARCHAR(31) NOT NULL,
                 criado_em TIMESTAMP NOT NULL,
 		origem_bilhete INTEGER,
+		origem_comissao INTEGER,
                 CONSTRAINT lancamentos_pk PRIMARY KEY (lancamento_id)
 );
 

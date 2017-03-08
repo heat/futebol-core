@@ -15,7 +15,10 @@ import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
 import models.financeiro.Conta;
+import models.financeiro.comissao.ParametroComissao;
+import models.financeiro.comissao.PlanoComissaoBilhete;
 import models.seguranca.Usuario;
+import models.vo.Parametro;
 import models.vo.Tenant;
 import play.Application;
 import play.GlobalSettings;
@@ -249,6 +252,9 @@ public class Global extends GlobalSettings {
         em.createQuery("DELETE FROM Evento t").executeUpdate();
         em.createQuery("DELETE FROM Time t").executeUpdate();
         em.createQuery("DELETE FROM Campeonato t").executeUpdate();
+        em.createQuery("UPDATE Usuario t SET t.planoComissao.id = NULL ").executeUpdate();
+        em.createQuery("DELETE FROM ParametroComissao t").executeUpdate();
+        em.createQuery("DELETE FROM PlanoComissao t").executeUpdate();
 
         Time palmeiras = new Time(Tenant.SYSBET.get(), "Palmeiras");
         Time coritiba = new Time(Tenant.SYSBET.get(), "Coritiba");
@@ -328,5 +334,21 @@ public class Global extends GlobalSettings {
         conta.setProprietario(usuario);
 
         em.persist(conta);
+
+        PlanoComissaoBilhete planoComissaoBilhete = new PlanoComissaoBilhete();
+        planoComissaoBilhete.setNome("ComissaoBilhete");
+
+        em.persist(planoComissaoBilhete);
+
+        usuario.setPlanoComissao(planoComissaoBilhete);
+
+        ParametroComissao parametroComissao = new ParametroComissao();
+        parametroComissao.setParametro(new Parametro(1L));
+        parametroComissao.setValor(5L);
+        planoComissaoBilhete.addParametros(parametroComissao);
+
+        em.merge(planoComissaoBilhete);
+
+
     }
 }
