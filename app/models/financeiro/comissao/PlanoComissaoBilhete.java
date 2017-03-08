@@ -35,7 +35,7 @@ public class PlanoComissaoBilhete extends PlanoComissao {
             BigDecimal valorComissao = BigDecimal.valueOf(percentComissao)
                     .multiply(b.valor())
                     .divide(BigDecimal.valueOf(1000));
-            Comissao comissao = new Comissao(null, valorComissao);
+            Comissao comissao = new Comissao(null, valorComissao, evento);
             return Optional.of(comissao);
         }
         return Optional.empty();

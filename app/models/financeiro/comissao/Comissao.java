@@ -14,10 +14,13 @@ public class Comissao {
 
     BigDecimal valor;
 
-    public Comissao(Conta destino, BigDecimal valor) {
+    PlanoComissao.EVENTO_COMISSAO evento;
+
+    public Comissao(Conta destino, BigDecimal valor, PlanoComissao.EVENTO_COMISSAO evento) {
         this.destino = destino;
         this.criadoEm = Calendar.getInstance();
         this.valor = valor;
+        this.evento = evento;
     }
 
     public Conta getDestino() {
