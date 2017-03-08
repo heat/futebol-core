@@ -1,6 +1,7 @@
 package models.seguranca;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import models.financeiro.comissao.PlanoComissao;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -56,6 +57,8 @@ public class Usuario implements Serializable{
     @OneToOne(mappedBy = "usuario")
     private Perfil perfil;
 
+    private PlanoComissao planoComissao;
+
     public Usuario(){
 
     }
@@ -109,6 +112,14 @@ public class Usuario implements Serializable{
 
     public void setPapel(Papel papel) {
         this.papel = papel;
+    }
+
+    public PlanoComissao getPlanoComissao() {
+        return planoComissao;
+    }
+
+    public void setPlanoComissao(PlanoComissao planoComissao) {
+        this.planoComissao = planoComissao;
     }
 
     @JsonIgnore

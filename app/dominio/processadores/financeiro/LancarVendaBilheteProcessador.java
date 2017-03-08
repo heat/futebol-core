@@ -19,6 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class LancarVendaBilheteProcessador implements Processador<Conta, Bilhete> {
 
+    public static final String REGRA = "financeiro.bilhete";
     LancamentoRepository lancamentoRepository;
     ContaRepository contaRepository;
 

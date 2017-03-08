@@ -16,12 +16,15 @@ import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import filters.FiltroBilhete;
+import models.financeiro.comissao.Comissao;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.financeiro.Conta;
+import models.financeiro.comissao.Comissionavel;
+import models.financeiro.comissao.PlanoComissao;
 import models.seguranca.Usuario;
 import models.vo.Chave;
 import models.vo.Tenant;
@@ -118,39 +121,43 @@ public class BilheteController extends ApplicationController {
 
 
         try {
+            Tenant tenant = getTenant();
 
-            List<Validador> validadores = validadorRepository.todos(getTenant(), BilheteInserirProcessador.REGRA);
-            Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), bilhete.getUsuario().getId());
+            List<Validador> validadores = validadorRepository.todos(tenant, BilheteInserirProcessador.REGRA);
+            Optional<Conta> contaOptional = contaRepository.buscar(tenant, bilhete.getUsuario().getId());
 
             if (!contaOptional.isPresent()){
                 return notFound("Usuário sem conta.");
             }
 
             Conta conta = contaOptional.get();
-            /*if (conta.getSaldo().compareTo(bilhete.getValorAposta()) < 0){
-                return notFound("Usuário não possui saldo suficiente para reazliar apostas.");
-            }*/
+            bilhete = inserirProcessador.executar(getTenant(), bilhete, validadores)
+                   .thenCompose((b) -> {
+                       // lancamento de venda
+                       List<Validador> _validadores = validadorRepository.todos(tenant, LancarVendaBilheteProcessador.REGRA);
+                     return lancarVendaBilheteProcessador.executar(conta, b, _validadores);
+                   }).thenApply( b -> {
+                       // pagamento de comissao
+                        List<Validador> _validadores = validadorRepository.todos(tenant, PagarComissaoProcessador.REGRA);
 
-            inserirProcessador.executar(getTenant(), bilhete, validadores)
-                    .thenApply(b -> {
-                        return lancarVendaBilheteProcessador.executar(conta, b, validadores);
-                    });
-/*            bilhete = inserirProcessador.executar(getTenant(), bilhete, validadores)
-                    .thenCompose(b -> {
-                        return pagarComissaoProcessador.executar(getTenant().get(), b, Collections.emptyList());
-                    } ).get();*/
+                        PlanoComissao planoComissao = usuario.getPlanoComissao();
+                        // transforma o bilhete em um comissionavel
+                        Comissionavel<Bilhete> comissaoBilhete = Comissionavel.aposta(b);
+                        // calcula comissao
+                        Optional<Comissao> comissao = planoComissao.calcular(comissaoBilhete, PlanoComissao.EVENTO_COMISSAO.VENDA_BILHETE);
+                        if(comissao.isPresent()) {
+                            // salva comissao somente se tiver comissao a pagar
+                            pagarComissaoProcessador.executar(conta, comissao.get(), _validadores);
+                        }
+                      return b;
+            }).get();
+
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         } catch (Exception ex){
             return status(Http.Status.UNPROCESSABLE_ENTITY, ex.getMessage());
         }
-/*            catch (InterruptedException e) {
-            e.printStackTrace();
-            return internalServerError(e.getMessage());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return internalServerError(e.getMessage());
-        }*/
+
         ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
         builder.comEntidade(BilheteJson.of(bilhete, profile.getUsername()));
         JsonNode retorno = builder.build();

@@ -15,8 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "bilhetes")
-public class Bilhete implements Serializable{
-
+public class Bilhete implements Serializable {
 
     public enum Situacao {
 
@@ -205,6 +204,10 @@ public class Bilhete implements Serializable{
 
     public void setEventosAposta(List<EventoAposta> eventosAposta) {
         this.eventosAposta = eventosAposta;
+    }
+
+    public int size() {
+        return this.palpites.size();
     }
 
     @Override
