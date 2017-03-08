@@ -3,23 +3,57 @@ package models.financeiro.comissao;
 import models.financeiro.Conta;
 import models.seguranca.Usuario;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+@Entity
+@Table(name = "comissao")
 public class Comissao {
 
-    Conta destino;
+    @Id
+    @SequenceGenerator(name="comissao_id_seq", sequenceName = "comissao_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comissao_id_seq")
+    @Column(name = "comissao_id",updatable = false)
+    private Long id;
 
-    Calendar criadoEm;
+    @OneToOne
+    @JoinColumn(name = "conta_id")
+    private Conta destino;
 
-    BigDecimal valor;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "criado_em")
+    private Calendar criadoEm;
 
-    PlanoComissao.EVENTO_COMISSAO evento;
+    private BigDecimal valor;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "evento_comissao")
+    private PlanoComissao.EVENTO_COMISSAO evento;
+
+    public Comissao() {
+    }
 
     public Comissao(Conta destino, BigDecimal valor, PlanoComissao.EVENTO_COMISSAO evento) {
         this.destino = destino;
         this.criadoEm = Calendar.getInstance();
         this.valor = valor;
+        this.evento = evento;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public PlanoComissao.EVENTO_COMISSAO getEvento() {
+        return evento;
+    }
+
+    public void setEvento(PlanoComissao.EVENTO_COMISSAO evento) {
         this.evento = evento;
     }
 

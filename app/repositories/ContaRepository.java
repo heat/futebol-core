@@ -4,6 +4,7 @@ package repositories;
 import com.google.inject.Inject;
 import models.apostas.Odd;
 import models.financeiro.Conta;
+import models.financeiro.comissao.Comissao;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
@@ -15,6 +16,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 public class ContaRepository implements Repository<Long, Conta>{
 
@@ -67,6 +69,13 @@ public class ContaRepository implements Repository<Long, Conta>{
     @Override
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
         return null;
+    }
+
+    public CompletableFuture<Comissao> inserirComissao(Comissao comissao) {
+
+        EntityManager em = jpaApi.em();
+        em.persist(comissao);
+        return CompletableFuture.completedFuture(comissao);
     }
 
 }

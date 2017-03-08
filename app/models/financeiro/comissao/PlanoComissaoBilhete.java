@@ -3,10 +3,12 @@ package models.financeiro.comissao;
 import models.bilhetes.Bilhete;
 import models.vo.Parametro;
 
+import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+@Entity
 public class PlanoComissaoBilhete extends PlanoComissao {
 
     @Override

@@ -57,6 +57,8 @@ public class Usuario implements Serializable{
     @OneToOne(mappedBy = "usuario")
     private Perfil perfil;
 
+    @OneToOne
+    @JoinColumn(name = "plano_comissao_id")
     private PlanoComissao planoComissao;
 
     public Usuario(){
@@ -134,6 +136,8 @@ public class Usuario implements Serializable{
     public List<Permissao> getPermissoes() {
         return getPapel().getPermissoes();
     }
+
+
 
     @Override
     public boolean equals(Object o) {

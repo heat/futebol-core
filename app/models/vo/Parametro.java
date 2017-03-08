@@ -1,13 +1,21 @@
 package models.vo;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 /**
  * Parametro onde um valor 0 é considerando um parametro vazio.
  */
+@Embeddable
 public class Parametro implements Comparable<Parametro> {
 
-    public static final Parametro EMPTY = new Parametro(0L);
+    public static Parametro EMPTY = new Parametro(0L);
 
-    private final Long parametroValor;
+    @Column(name = "parametro_valor")
+    private Long parametroValor;
+
+    public Parametro() {
+    }
 
     public Parametro(Long parametroValor) {
         this.parametroValor = parametroValor;
