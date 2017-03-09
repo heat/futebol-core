@@ -338,16 +338,19 @@ public class Global extends GlobalSettings {
         PlanoComissaoBilhete planoComissaoBilhete = new PlanoComissaoBilhete();
         planoComissaoBilhete.setNome("ComissaoBilhete");
 
+        ParametroComissao parametroComissao = new ParametroComissao();
+        parametroComissao.setParametro(new Parametro(1L));
+        parametroComissao.setValor(5L);
+
+        planoComissaoBilhete.addParametros(parametroComissao);
+
         em.persist(planoComissaoBilhete);
 
         usuario.setPlanoComissao(planoComissaoBilhete);
 
-        ParametroComissao parametroComissao = new ParametroComissao();
-        parametroComissao.setParametro(new Parametro(1L));
-        parametroComissao.setValor(5L);
-        planoComissaoBilhete.addParametros(parametroComissao);
 
-        em.merge(planoComissaoBilhete);
+
+        //em.merge(planoComissaoBilhete);
 
 
     }

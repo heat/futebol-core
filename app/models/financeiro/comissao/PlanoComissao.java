@@ -28,8 +28,8 @@ public abstract class PlanoComissao {
 
     private String nome;
 
-    @OneToMany
-    @JoinColumn(name = "plano_comissao_id")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "plano_comissao_id", nullable = false, updatable = false, insertable = false)
     private List<ParametroComissao> parametros = new ArrayList<>();
 
     public Long getId() {
