@@ -13,7 +13,9 @@ import models.apostas.EventoAposta;
 import models.apostas.Taxa;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
+import models.seguranca.RegistroAplicativo;
 import models.vo.Chave;
+import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -23,6 +25,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import repositories.EventoApostaRepository;
 import repositories.EventoRepository;
+import repositories.TenantRepository;
 import repositories.ValidadorRepository;
 
 import javax.persistence.NoResultException;
@@ -38,17 +41,19 @@ public class EventoApostaController extends ApplicationController {
     EventoApostaAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
+    TenantRepository tenantRepository;
 
     @Inject
     public EventoApostaController(PlaySessionStore playSessionStore, EventoApostaRepository eventoApostaRepository,
                                   EventoApostaInserirProcessador inserirProcessador, EventoApostaAtualizarProcessador atualizarProcessador,
-                                  ValidadorRepository validadorRepository, EventoRepository eventoRepository) {
+                                  ValidadorRepository validadorRepository, EventoRepository eventoRepository, TenantRepository tenantRepository) {
         super(playSessionStore);
         this.eventoApostaRepository = eventoApostaRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
+        this.tenantRepository = tenantRepository;
     }
 
 
@@ -105,10 +110,24 @@ public class EventoApostaController extends ApplicationController {
         return ok(jsonNode);
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
-        List<EventoAposta> todos = eventoApostaRepository.todos(getTenant());
+
+        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
+
+        if (!appKeyOptional.isPresent()){
+            return badRequest("Key not found.");
+        }
+
+        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
+
+        if (!registroAplicativoOptional.isPresent()){
+            return notFound("Aplicativo não registrado.");
+        }
+
+        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+
+        List<EventoAposta> todos = eventoApostaRepository.todos(tenant);
         ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
 
         todos.forEach(eventoAposta -> {
