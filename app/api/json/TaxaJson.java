@@ -10,20 +10,17 @@ import java.util.stream.Collectors;
 public class TaxaJson implements Jsonable, Convertable<Taxa>{
 
     public static final String TIPO = "taxas";
-
+    public Long id;
     public Long odd;
-
     public BigDecimal taxa;
-
     public BigDecimal linha;
-
     public Long aposta;
 
     public TaxaJson() {
     }
 
-    public TaxaJson(Long odd, BigDecimal taxa, BigDecimal linha, Long aposta) {
-
+    public TaxaJson(Long id, Long odd, BigDecimal taxa, BigDecimal linha, Long aposta) {
+        this.id = id;
         this.odd = odd;
         this.taxa = taxa;
         this.linha = linha;
@@ -53,7 +50,7 @@ public class TaxaJson implements Jsonable, Convertable<Taxa>{
 
     public static TaxaJson of(Taxa taxa, Long aposta) {
 
-        return new TaxaJson( taxa.getOdd().getId(), taxa.getTaxa(), taxa.getLinha(), aposta);
+        return new TaxaJson(taxa.getId(), taxa.getOdd().getId(), taxa.getTaxa(), taxa.getLinha(), aposta);
     }
 
     public static List<Jsonable> of(List<Taxa> taxas, Long aposta) {
