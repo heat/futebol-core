@@ -42,7 +42,7 @@ public class PerfilAtualizarProcessador implements Processador<Chave, Perfil> {
             p.setLocalizacao(perfil.getLocalizacao());
             p.setNomeExibicao(perfil.getNomeExibicao());
             p.setPrimeiroNome(perfil.getPrimeiroNome());
-            p.setSobrenome(perfil.getSobrenome());
+            p.setSobreNome(perfil.getSobreNome());
 
         }
         catch(NoResultException e){
