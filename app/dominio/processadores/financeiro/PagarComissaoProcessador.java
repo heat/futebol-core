@@ -31,6 +31,7 @@ public class PagarComissaoProcessador implements Processador<Conta, Comissao> {
     public CompletableFuture<Comissao> executar(Conta conta, Comissao comissao, List<Validador> validadores) throws ValidadorExcpetion {
         //TODO realizar LOG da comissao e persistir o lançamento
 
+        comissao.setDestino(conta);
         contaRepository.inserirComissao(comissao);
 
         PagamentoComissaoDebito lancamento = new PagamentoComissaoDebito();

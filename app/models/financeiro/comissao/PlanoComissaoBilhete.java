@@ -29,7 +29,7 @@ public class PlanoComissaoBilhete extends PlanoComissao {
         for( ParametroComissao parametro : parametros) {
             Long _v = parametro.getValor();
             //Verifica se o parametro de partida ainda esta maior que o parametro da comissao;
-            if(parametro.getParametro().compareTo(partidas) < 0 && _v > percentComissao) {
+            if(parametro.getParametro().compareTo(partidas) <= 0 && _v > percentComissao) {
                 percentComissao = _v;
             }
         }
