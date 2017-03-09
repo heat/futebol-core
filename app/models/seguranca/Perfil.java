@@ -30,7 +30,7 @@ public class Perfil implements Serializable{
     private String primeiroNome;
 
     @Column(name = "sobre_nome")
-    private String sobrenome;
+    private String sobreNome;
 
     @Column(name = "exibicao_nome")
     private String nomeExibicao;
@@ -54,14 +54,14 @@ public class Perfil implements Serializable{
 
     }
 
-    public Perfil(Long id, Usuario usuario, String email, String primeiroNome, String sobrenome, String nomeExibicao,
+    public Perfil(Long id, Usuario usuario, String email, String primeiroNome, String sobreNome, String nomeExibicao,
                   Genero genero, Locale localidade, String imagemUrl, String perfilUrl, String localizacao) {
 
         this.id = id;
         this.usuario = usuario;
         this.email = email;
         this.primeiroNome = primeiroNome;
-        this.sobrenome = sobrenome;
+        this.sobreNome = sobreNome;
         this.nomeExibicao = nomeExibicao;
         this.genero = genero;
         this.localidade = localidade;
@@ -94,12 +94,12 @@ public class Perfil implements Serializable{
         this.primeiroNome = primeiroNome;
     }
 
-    public String getSobrenome() {
-        return sobrenome;
+    public String getSobreNome() {
+        return sobreNome;
     }
 
-    public void setSobrenome(String sobrenome) {
-        this.sobrenome = sobrenome;
+    public void setSobreNome(String sobreNome) {
+        this.sobreNome = sobreNome;
     }
 
     public String getNomeExibicao() {
