@@ -11,7 +11,9 @@ import dominio.processadores.eventos.CampeonatoInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Campeonato;
+import models.seguranca.RegistroAplicativo;
 import models.vo.Chave;
+import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -19,6 +21,7 @@ import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.CampeonatoRepository;
+import repositories.TenantRepository;
 import repositories.ValidadorRepository;
 
 import javax.inject.Inject;
@@ -33,16 +36,18 @@ public class CampeonatoController extends ApplicationController {
     CampeonatoInserirProcessador inserirProcessador;
     CampeonatoAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
+    TenantRepository tenantRepository;
 
     @Inject
     public CampeonatoController(CampeonatoRepository campeonatoRepository, PlaySessionStore playSessionStore,
                                 CampeonatoInserirProcessador inserirProcessador, CampeonatoAtualizarProcessador atualizarProcessador,
-                                ValidadorRepository validadorRepository) {
+                                ValidadorRepository validadorRepository, TenantRepository tenantRepository) {
         super(playSessionStore);
         this.campeonatoRepository = campeonatoRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
         this.validadorRepository = validadorRepository;
+        this.tenantRepository = tenantRepository;
     }
 
     @Secure(clients = "headerClient")
@@ -94,10 +99,24 @@ public class CampeonatoController extends ApplicationController {
         return ok(json);
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
     public Result todos(String nome) {
-        List<Campeonato> campeonatos = campeonatoRepository.todos(getTenant(), nome);
+
+        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
+
+        if (!appKeyOptional.isPresent()){
+            return badRequest("Key not found.");
+        }
+
+        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
+
+        if (!registroAplicativoOptional.isPresent()){
+            return notFound("Aplicativo não registrado.");
+        }
+
+        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+
+        List<Campeonato> campeonatos = campeonatoRepository.todos(tenant, nome);
 
         List<Jsonable> jsons =  CampeonatoJson.of(campeonatos);
 
