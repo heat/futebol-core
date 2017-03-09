@@ -4,7 +4,7 @@ CREATE SEQUENCE public.planos_comissao_id_seq;
 
 CREATE TABLE public.plano_comissao
 (
-  plano_comissao_id bigint NOT NULL,
+  plano_comissao_id INTEGER NOT NULL,
   nome VARCHAR(255) NOT NULL,
   dtype VARCHAR(31) NOT NULL,
   CONSTRAINT plano_comissao_pkey PRIMARY KEY (plano_comissao_id)

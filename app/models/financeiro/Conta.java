@@ -63,13 +63,13 @@ public class Conta {
         this.lancamentos.add(lancamento);
     }
 
-    public BigDecimal getSaldo(){
+    public Saldo getSaldo(){
         BigDecimal saldo = BigDecimal.ZERO;
         saldo.add(this.lancamentos.stream()
                 .sorted()
                 .map(l -> l.getSaldo().getSaldo())
                 .reduce((first, second) -> second).get());
 
-        return saldo;
+        return new Saldo(saldo);
     }
 }
