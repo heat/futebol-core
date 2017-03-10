@@ -12,6 +12,8 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.seguranca.RegistroAplicativo;
+import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -19,10 +21,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import repositories.EventoApostaRepository;
-import repositories.OddRepository;
-import repositories.TaxaRepository;
-import repositories.ValidadorRepository;
+import repositories.*;
 
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -36,13 +35,14 @@ public class TaxaController extends ApplicationController {
     ValidadorRepository validadorRepository;
     EventoApostaRepository eventoApostaRepository;
     OddRepository oddRepository;
+    TenantRepository tenantRepository;
 
     @Inject
 
     public TaxaController(PlaySessionStore playSessionStore, TaxaRepository taxaRepository,
                           TaxaInserirProcessador inserirProcessador, TaxaAtualizarProcessador atualizarProcessador,
                           ValidadorRepository validadorRepository, EventoApostaRepository eventoApostaRepository,
-                          OddRepository oddRepository) {
+                          OddRepository oddRepository, TenantRepository tenantRepository) {
         super(playSessionStore);
         this.taxaRepository = taxaRepository;
         this.inserirProcessador = inserirProcessador;
@@ -50,6 +50,7 @@ public class TaxaController extends ApplicationController {
         this.validadorRepository = validadorRepository;
         this.eventoApostaRepository = eventoApostaRepository;
         this.oddRepository = oddRepository;
+        this.tenantRepository = tenantRepository;
 
     }
 
@@ -98,11 +99,25 @@ public class TaxaController extends ApplicationController {
         return created(retorno);
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
     public Result buscar(Long aposta) {
 
-        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), aposta);
+        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
+
+        if (!appKeyOptional.isPresent()){
+            return badRequest("Key not found.");
+        }
+
+        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
+
+        if (!registroAplicativoOptional.isPresent()){
+            return notFound("Aplicativo não registrado.");
+        }
+
+        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+
+
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(tenant, aposta);
 
         if(!eventoApostaOptional.isPresent())
             return badRequest("Aposta não encontrada!");

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class ApostaJson extends EventoJson {
 
-    public static final String TIPO = "apostas";
+    public static final String TIPO = "jogos";
 
     public final String id;
     public final String evento;
