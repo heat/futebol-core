@@ -137,7 +137,7 @@ public class UsuarioController extends ApplicationController{
         CommonProfile commonProfile = profile.get();
 
         JsonNode json = request().body().asJson();
-        String senha = json.findPath("senha").asText();
+        String senha = json.findPath("senha").findPath("senha").asText();
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), SenhaAtualizarProcessador.REGRA);
 
@@ -148,7 +148,7 @@ public class UsuarioController extends ApplicationController{
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        ((ObjectNode) json.path("senhas"))
+        ((ObjectNode) json.path("senha"))
                 .put("id", UUID.randomUUID().toString())
                 .remove("senha");
 
