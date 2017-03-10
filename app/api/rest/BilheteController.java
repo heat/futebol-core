@@ -205,7 +205,9 @@ public class BilheteController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result todos(String inicio, String termino, String aposta, String dono) {
+    public Result todos(String inicio, String termino, String aposta, String dono, String evento) {
+
+        Long event = (evento == null) ? 0L : Long.parseLong(evento);
 
         CommonProfile profile = getProfile().get();
         Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
@@ -213,7 +215,7 @@ public class BilheteController extends ApplicationController {
             return notFound("Usuário não encontrado!");
         final Usuario usuario = usuarioOptional.get();
 
-        FiltroBilhete filtro = new FiltroBilhete(inicio, termino, aposta, dono);
+        FiltroBilhete filtro = new FiltroBilhete(inicio, termino, aposta, dono, event);
 
         List<Bilhete> bilhetes = bilheteRepository.todos(getTenant(), usuario, filtro);
         ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);

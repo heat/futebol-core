@@ -44,12 +44,14 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         * */
         Query query = em.createQuery("FROM Bilhete as b WHERE b.tenant = :tenant " +
                 " and (:papel = 1L or b.usuario.id = :usuario) " +
-                " and (FUNCTION('to_char', b.criadoEm, 'YYYY-MM-DD') between :inicio and :termino or :inicio = null)");
+                " and (FUNCTION('to_char', b.criadoEm, 'YYYY-MM-DD') between :inicio and :termino or :inicio = null) " +
+                " AND EXISTS (SELECT p FROM Palpite p WHERE p.taxa.eventoAposta = :evento or :evento = 0) ");
         query.setParameter("tenant", tenant.get());
         query.setParameter("papel", usuario.getPapel().getId());
         query.setParameter("usuario", usuario.getId());
         query.setParameter("inicio", filtro.inicio);
         query.setParameter("termino", filtro.termino);
+        query.setParameter("evento", filtro.evento);
 
         return query.getResultList();
     }
