@@ -90,7 +90,7 @@ POST    /senhas                         api.rest.UsuarioController.alterarSenha
 #---------- CRUD perfil
 GET     /perfils/0                       api.rest.PerfilController.perfil
 
-POST    /perfils/0                       api.rest.PerfilController.atualizar
+PUT     /perfils/0                       api.rest.PerfilController.atualizar
 
 
 # ------- CRUD de PIN
