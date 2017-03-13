@@ -149,6 +149,10 @@ public class Odd implements Serializable{
         this.favorita = favorita;
     }
 
+    public Boolean isLinha(){
+        return (this.tipoLinha == 'S') ? true : false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
