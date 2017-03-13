@@ -16,21 +16,21 @@ public class PerfilJson implements Serializable, Convertable<Perfil>, Jsonable {
     public String sobreNome;
     public String nomeExibicao;
     public Perfil.Genero genero;
-    public Locale localidade;
+    public Locale locale;
     public String localizacao;
     public String nomeUsuario;
 
     public PerfilJson() {
     }
 
-    public PerfilJson(String email, String primeiroNome, String sobreNome, String nomeExibicao, Perfil.Genero genero, Locale localidade, String localizacao, String nomeUsuario) {
+    public PerfilJson(String email, String primeiroNome, String sobreNome, String nomeExibicao, Perfil.Genero genero, Locale locale, String localizacao, String nomeUsuario) {
         this.id = "0";
         this.email = email;
         this.primeiroNome = primeiroNome;
         this.sobreNome = sobreNome;
         this.nomeExibicao = nomeExibicao;
         this.genero = genero;
-        this.localidade = localidade;
+        this.locale = locale;
         this.localizacao = localizacao;
         this.nomeUsuario = nomeUsuario;
     }
@@ -44,7 +44,7 @@ public class PerfilJson implements Serializable, Convertable<Perfil>, Jsonable {
 
     @Override
     public Perfil to() {
-        return new Perfil(null, null, email, primeiroNome, sobreNome, nomeExibicao, genero, localidade, null, null, localizacao);
+        return new Perfil(null, null, email, primeiroNome, sobreNome, nomeExibicao, genero, locale, null, null, localizacao);
     }
 
     @Override
