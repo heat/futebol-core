@@ -96,7 +96,7 @@ PUT     /perfils/0                       api.rest.PerfilController.atualizar
 
 
 # ------- CRUD de PIN
-#POST     /pins                         api.rest.BilheteController.inserir
+POST     /pins                         api.rest.PinController.inserir
 
 #GET      /pins/:id                     api.rest.BilheteController.buscar(id: Long)
 
