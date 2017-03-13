@@ -49,13 +49,15 @@ GET      /jogos                         api.rest.EventoApostaController.todos
 
 GET      /apostas/:id                   api.rest.EventoApostaController.buscar(id: Long)
 
+GET      /jogos/:id                     api.rest.EventoApostaController.buscar(id: Long)
+
 POST     /apostas                       api.rest.EventoApostaController.inserir
 
 POST     /apostas/:id                   api.rest.EventoApostaController.atualizar(id: Long)
 
 #------- CRUD de taxas
 
-GET      /taxas/:apostaId               api.rest.TaxaController.buscar(apostaId: Long)
+GET      /taxas                         api.rest.TaxaController.buscar(aposta: Long)
 
 POST     /taxas/:apostaId               api.rest.TaxaController.inserir(apostaId: Long)
 

@@ -18,9 +18,9 @@ public class EventoJson implements Convertable<Evento>, Jsonable {
     public final String fora;
     public final String dataEvento;
     public final Evento.Situacao situacao;
-    public final String campeonato;
+    public final Long campeonato;
 
-    public EventoJson(String id, String casa, String fora, String dataEvento, Evento.Situacao situacao, String campeonato) {
+    public EventoJson(String id, String casa, String fora, String dataEvento, Evento.Situacao situacao, Long campeonato) {
         this.id = id;
         this.casa = casa;
         this.fora = fora;
@@ -41,7 +41,7 @@ public class EventoJson implements Convertable<Evento>, Jsonable {
                 evento.getNomeFora(),
                 calendarToString(evento.getDataEvento()),
                 evento.getSituacao(),
-                String.valueOf(evento.getCampeonato().getId()));
+                evento.getCampeonato().getId());
     }
 
     public static List<Jsonable> of(List<Evento> eventos) {

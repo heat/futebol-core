@@ -20,9 +20,10 @@ public class ApostaJson extends EventoJson {
 
     public final String id;
     public final String evento;
-    public final String casa;
-    public final String fora;
+    public final String timeCasa;
+    public final String timeFora;
     public final String dataEvento;
+    public final String dataJogo;
     public final Apostavel.Situacao situacaoAposta;
     public final Evento.Situacao situacaoEvento;
     public final Boolean permitir;
@@ -31,14 +32,15 @@ public class ApostaJson extends EventoJson {
     public final ObjectNode links;
 
     public ApostaJson(String id, Apostavel.Situacao situacaoAposta, Boolean permitir,
-                      String idEvento, String casa, String fora, String dataEvento, Evento.Situacao situacaoEvento, String campeonato, List<Taxa> taxas) {
+                      String idEvento, String timeCasa, String timeFora, String dataEvento, Evento.Situacao situacaoEvento, Long campeonato, List<Taxa> taxas) {
 
-        super(idEvento, casa, fora, dataEvento, situacaoEvento, campeonato);
+        super(idEvento, timeCasa, timeFora, dataEvento, situacaoEvento, campeonato);
         this.id = id;
         this.evento = idEvento;
-        this.casa = casa;
-        this.fora = fora;
+        this.timeCasa = timeCasa;
+        this.timeFora = timeFora;
         this.dataEvento = dataEvento;
+        this.dataJogo = dataEvento;
         this.situacaoAposta = situacaoAposta;
         this.situacaoEvento = situacaoEvento;
         this.permitir = permitir;
@@ -61,7 +63,7 @@ public class ApostaJson extends EventoJson {
                 evento.getNomeFora(),
                 calendarToString(evento.getDataEvento()),
                 evento.getSituacao(),
-                evento.getCampeonato().getNome(),
+                evento.getCampeonato().getId(),
                 aposta.getTaxas());
 
     }
