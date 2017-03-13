@@ -148,10 +148,24 @@ public class EventoApostaController extends ApplicationController {
         return ok(builder.build());
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
     public Result buscar(Long id) {
-        Optional<EventoAposta> eventoAposta = eventoApostaRepository.buscar(getTenant(), id);
+
+        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
+
+        if (!appKeyOptional.isPresent()){
+            return badRequest("Key not found.");
+        }
+
+        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
+
+        if (!registroAplicativoOptional.isPresent()){
+            return notFound("Aplicativo não registrado.");
+        }
+
+        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+
+        Optional<EventoAposta> eventoAposta = eventoApostaRepository.buscar(tenant, id);
 
         if (!eventoAposta.isPresent()) {
             return notFound("Aposta não encontrada!");
