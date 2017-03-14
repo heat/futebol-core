@@ -87,7 +87,7 @@ public class BilheteController extends ApplicationController {
     public Result inserir() {
 
         JsonNode json = request().body().asJson();
-        BilheteJson bilheteJson = Json.fromJson(json.get("bilhetes"), BilheteJson.class);
+        BilheteJson bilheteJson = Json.fromJson(json.get("bilhete"), BilheteJson.class);
 
         CommonProfile profile = getProfile().get();
         Optional<Usuario> usuarioOptional = usuarioRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
