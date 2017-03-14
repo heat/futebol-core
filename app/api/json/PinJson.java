@@ -10,6 +10,7 @@ public class PinJson implements Jsonable, Convertable<Pin> {
 
     public static final String TIPO = "pins";
 
+    public String id;
     public String cliente;
     public BigDecimal valorAposta;
     public List<Long> palpites;
@@ -17,10 +18,11 @@ public class PinJson implements Jsonable, Convertable<Pin> {
     public PinJson() {
     }
 
-    public PinJson(String cliente, BigDecimal valorAposta, List<Long> palpites) {
+    public PinJson(String id, String cliente, BigDecimal valorAposta, List<Long> palpites) {
         this.cliente = cliente;
         this.valorAposta = valorAposta;
         this.palpites = palpites;
+        this.id = id;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class PinJson implements Jsonable, Convertable<Pin> {
         List<Long> palpites = pin.getPalpitesPin().stream().map(p -> p.getTaxa()).collect(Collectors.toList());
 
         return new PinJson(
+                pin.getId().toString(),
                 pin.getCliente(),
                 pin.getValorAposta(),
                 palpites);
