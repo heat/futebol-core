@@ -243,6 +243,7 @@ public class Global extends GlobalSettings {
     private void dummyData(EntityManager em) {
 
         em.createQuery("DELETE FROM Lancamento t").executeUpdate();
+        em.createQuery("DELETE FROM Comissao t").executeUpdate();
         em.createQuery("DELETE FROM Conta t").executeUpdate();
         em.createQuery("DELETE FROM Palpite t").executeUpdate();
         em.createQuery("DELETE FROM Bilhete t").executeUpdate();

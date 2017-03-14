@@ -1,5 +1,6 @@
 package api.json;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 
@@ -9,6 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BilheteJson implements Jsonable, Convertable<Bilhete> {
 
     public static final String TIPO = "bilhetes";
