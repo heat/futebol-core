@@ -89,7 +89,7 @@ public class PinController extends ApplicationController {
             return status(Http.Status.UNPROCESSABLE_ENTITY, ex.getMessage());
         }
 
-        ((ObjectNode) json.path("pins")).removeAll()
+        ((ObjectNode) json.path("pin")).removeAll()
                 .put("id", pin.getId());
 
         return ok(json);
