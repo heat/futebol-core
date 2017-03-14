@@ -98,7 +98,7 @@ PUT     /perfils/0                       api.rest.PerfilController.atualizar
 # ------- CRUD de PIN
 POST     /pins                         api.rest.PinController.inserir
 
-#GET      /pins/:id                     api.rest.BilheteController.buscar(id: Long)
+GET      /pins/:id                     api.rest.PinController.buscar(id: Long)
 
 
 # An example controller showing a sample home page

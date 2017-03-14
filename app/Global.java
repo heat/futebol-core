@@ -246,6 +246,8 @@ public class Global extends GlobalSettings {
         em.createQuery("DELETE FROM Conta t").executeUpdate();
         em.createQuery("DELETE FROM Palpite t").executeUpdate();
         em.createQuery("DELETE FROM Bilhete t").executeUpdate();
+        em.createQuery("DELETE FROM PalpitePin t").executeUpdate();
+        em.createQuery("DELETE FROM Pin t").executeUpdate();
         em.createQuery("DELETE FROM Taxa t").executeUpdate();
         em.createQuery("DELETE FROM Odd t").executeUpdate();
         em.createQuery("DELETE FROM EventoAposta t").executeUpdate();

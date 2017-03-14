@@ -1,6 +1,5 @@
 package api.json;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import models.apostas.Odd;
 import models.apostas.Taxa;
 
