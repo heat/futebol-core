@@ -27,6 +27,12 @@ public abstract class ApplicationController extends Controller {
         return Tenant.of((Long) profile.getAttribute("TENANT_ID"));
     }
 
+    protected Tenant getTenantAppCode() {
+
+        Tenant tenant = (Tenant) ctx().args.get("tenant");
+        return tenant;
+    }
+
     protected Optional<CommonProfile> getProfile() {
         final PlayWebContext context = new PlayWebContext(ctx(), playSessionStore);
         final ProfileManager<CommonProfile> profileManager = new ProfileManager(context);

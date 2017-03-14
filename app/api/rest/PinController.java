@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.ObjectJson;
 import api.json.PinJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,6 +25,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.*;
 
 import java.util.Calendar;
@@ -55,25 +57,14 @@ public class PinController extends ApplicationController {
     }
 
     @Transactional
+    @With(TenantAction.class)
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
         JsonNode json = request().body().asJson();
-        PinJson pinJson = Json.fromJson(json.get("pins"), PinJson.class);
+        PinJson pinJson = Json.fromJson(json.get("pin"), PinJson.class);
 
-        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
-
-        if (!appKeyOptional.isPresent()){
-            return badRequest("Key not found.");
-        }
-
-        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
-
-        if (!registroAplicativoOptional.isPresent()){
-            return notFound("Aplicativo não registrado.");
-        }
-
-        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+        Tenant tenant = getTenantAppCode();
 
         Pin pin = new Pin();
         pin.setCliente(pinJson.cliente);
@@ -86,7 +77,6 @@ public class PinController extends ApplicationController {
 
 //        List<EventoAposta> eventosAposta = eventoApostaRepository.buscar(getTenant().get(), pinJson.palpites);
         //TODO: Calcular a menor data dos jogos e setar em ExpiraEm
-
 
         try {
             List<Validador> validadores = validadorRepository.todos(tenant, PinInserirProcessador.REGRA);
