@@ -8,7 +8,9 @@ import java.util.Locale;
 
 @Entity
 @Table(name = "perfis")
-public class Perfil implements Serializable{
+public class Perfil implements Serializable {
+
+    private static final long serialVersionUID = 8456064568826763970L;
 
     public enum Genero {
         MASCULINO, FEMININO

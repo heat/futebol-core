@@ -14,9 +14,9 @@ libraryDependencies ++= Seq(
   evolutions,
   "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final",
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
-  "org.pac4j" % "play-pac4j" % "2.6.0",
-  "org.pac4j" % "pac4j-jwt" % "1.9.4" exclude("commons-io" , "commons-io"),
-  "org.pac4j" % "pac4j-http" % "1.9.4",
+  "org.pac4j" % "play-pac4j" % "2.6.2",
+  "org.pac4j" % "pac4j-jwt" % "1.9.6" exclude("commons-io" , "commons-io"),
+  "org.pac4j" % "pac4j-http" % "1.9.6",
   "com.typesafe.play" % "play-cache_2.11" % "2.5.10",
   "commons-io" % "commons-io" % "2.4",
   "be.objectify" %% "deadbolt-java" % "2.5.1"

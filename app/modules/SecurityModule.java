@@ -1,10 +1,14 @@
 package modules;
 
 import authenticators.SysbetDatabaseAuthenticator;
+import authenticators.SysbetExtractor;
+import authenticators.SysbetRoleHandler;
 import be.objectify.deadbolt.java.cache.HandlerCache;
 import com.google.inject.AbstractModule;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.extractor.CredentialsExtractor;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
@@ -14,6 +18,7 @@ import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.pac4j.play.ApplicationLogoutController;
 import org.pac4j.play.deadbolt2.Pac4jHandlerCache;
+import org.pac4j.play.deadbolt2.Pac4jRoleHandler;
 import org.pac4j.play.http.DefaultHttpActionAdapter;
 import org.pac4j.play.store.PlayCacheStore;
 import org.pac4j.play.store.PlaySessionStore;
@@ -38,15 +43,16 @@ public class SecurityModule  extends AbstractModule {
     protected void configure() {
         bind(PlaySessionStore.class).to(PlayCacheStore.class);
         //deadbolt configuration
+        bind(Pac4jRoleHandler.class).to(SysbetRoleHandler.class);
         bind(HandlerCache.class).to(Pac4jHandlerCache.class);
 
 
        SysbetDatabaseAuthenticator dbauth = new SysbetDatabaseAuthenticator(getProvider(JPAApi.class));
 
-        final DirectBasicAuthClient directBasicAuthClient =
-                new DirectBasicAuthClient(dbauth);
-
         final DirectFormClient directFormClient = new DirectFormClient("username", "password", dbauth);
+        //extração dos parametros do oauth
+        CredentialsExtractor extractor = new SysbetExtractor(directFormClient.getName());
+        directFormClient.setCredentialsExtractor(extractor);
 
         HeaderClient headerClient = new HeaderClient("Authorization","Bearer ",
                 new JwtAuthenticator(new SecretSignatureConfiguration(JWT_SALT),
@@ -56,10 +62,9 @@ public class SecurityModule  extends AbstractModule {
         ParameterClient parameterClient = new ParameterClient("token",
                 new JwtAuthenticator(new SecretSignatureConfiguration(JWT_SALT),
                         new SecretEncryptionConfiguration(JWT_SALT)));
-
         parameterClient.setSupportGetRequest(true);
 
-        final Clients clients = new Clients(parameterClient, headerClient, directBasicAuthClient, directFormClient);
+        final Clients clients = new Clients(parameterClient, headerClient, directFormClient);
 
         final Config config = new Config(clients);
         config.setHttpActionAdapter(new DefaultHttpActionAdapter());

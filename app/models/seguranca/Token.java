@@ -6,15 +6,14 @@ public class Token {
     private String token_type;
     private Long expires_in;
     private String username;
+    private String app_session;
 
-    public Token() {
-    }
-
-    public Token(String access_token, String token_type, Long expires_in, String username) {
+    public Token(String access_token, String token_type, Long expires_in, String username, String appSession) {
         this.access_token = access_token;
         this.token_type = token_type;
         this.expires_in = expires_in;
         this.username = username;
+        this.app_session = appSession;
     }
 
     public String getAccess_token() {
@@ -47,5 +46,9 @@ public class Token {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getApp_session() {
+        return app_session;
     }
 }

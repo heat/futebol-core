@@ -24,7 +24,7 @@ public abstract class ApplicationController extends Controller {
 
         Optional<CommonProfile> commonProfile = getProfile();
         CommonProfile profile = commonProfile.get();
-        return Tenant.of((Long) profile.getAttribute("TENANT_ID"));
+        return Tenant.of((Long) profile.getAttribute(Tenant.NAME));
     }
 
     protected Tenant getTenantAppCode() {

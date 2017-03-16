@@ -9,12 +9,14 @@ import dominio.processadores.usuarios.UsuarioAtualizarProcessador;
 import dominio.processadores.usuarios.UsuarioInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.seguranca.RegistroAplicativo;
 import models.seguranca.Token;
 import models.seguranca.Usuario;
 import models.vo.Chave;
 import modules.SecurityModule;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.http.credentials.CredentialUtil;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
 import org.pac4j.play.PlayWebContext;
@@ -26,6 +28,7 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import repositories.TenantRepository;
 import repositories.UsuarioRepository;
 import repositories.ValidadorRepository;
 
@@ -40,6 +43,7 @@ public class UsuarioController extends ApplicationController{
     UsuarioInserirProcessador usuarioInserirProcessador;
     UsuarioAtualizarProcessador usuarioAtualizarProcessador;
     SenhaAtualizarProcessador senhaAtualizarProcessador;
+    TenantRepository tenantRepository;
     UsuarioRepository usuarioRepository;
     ValidadorRepository validadorRepository;
 
@@ -48,12 +52,14 @@ public class UsuarioController extends ApplicationController{
                              UsuarioInserirProcessador usuarioInserirProcessador,
                              UsuarioAtualizarProcessador usuarioAtualizarProcessador,
                              SenhaAtualizarProcessador senhaAtualizarProcessador,
+                             TenantRepository tenantRepository,
                              UsuarioRepository usuarioRepository, ValidadorRepository validadorRepository) {
         super(playSessionStore);
         this.usuarioInserirProcessador = usuarioInserirProcessador;
         this.usuarioAtualizarProcessador = usuarioAtualizarProcessador;
         this.senhaAtualizarProcessador = senhaAtualizarProcessador;
         this.usuarioRepository = usuarioRepository;
+        this.tenantRepository = tenantRepository;
         this.validadorRepository = validadorRepository;
     }
 
@@ -61,9 +67,14 @@ public class UsuarioController extends ApplicationController{
     public Result authenticar() {
         final Optional<CommonProfile> profile = getProfile();
         final JwtGenerator generator = new JwtGenerator(new SecretSignatureConfiguration(SecurityModule.JWT_SALT));
-        String access_token = generator.generate(profile.get());
 
-        Token token = new Token(access_token, "Bearer", 1440L, profile.get().getUsername());
+        String access_token = generator.generate(profile.get());
+        //TODO especificar o que é 1440L ?
+        CommonProfile loggedProfile = profile.get();
+        String appSession = null;
+        if(loggedProfile.containsAttribute("app_session"))
+            appSession = (String) loggedProfile.getAttribute("app_session");
+        Token token = new Token(access_token, "Bearer", 1440L, loggedProfile.getUsername(), appSession);
         TokenJson tokenJson = TokenJson.of(token);
 
         return ok(Json.toJson(tokenJson));
@@ -77,8 +88,8 @@ public class UsuarioController extends ApplicationController{
         return ok(Json.toJson(commonProfile));
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
+    @Secure(clients = "headerClient")
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
@@ -96,8 +107,8 @@ public class UsuarioController extends ApplicationController{
         return created(Json.toJson(usuario));
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
+    @Secure(clients = "headerClient")
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) {
 
@@ -117,8 +128,8 @@ public class UsuarioController extends ApplicationController{
         return ok(Json.toJson(usuario));
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
+    @Secure(clients = "headerClient")
     public Result cancelar(Long id) {
         try {
             usuarioRepository.excluir(getTenant(), id);
@@ -128,8 +139,8 @@ public class UsuarioController extends ApplicationController{
         }
     }
 
-    @Secure(clients = "headerClient")
     @Transactional
+    @Secure(clients = "headerClient")
     @BodyParser.Of(BodyParser.Json.class)
     public Result alterarSenha() {
 

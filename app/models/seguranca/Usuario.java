@@ -54,6 +54,7 @@ public class Usuario implements Serializable{
     @JoinColumn(name="papel_id")
     private Papel papel;
 
+    //TODO Remover referencia cicular
     @OneToOne(mappedBy = "usuario")
     private Perfil perfil;
 

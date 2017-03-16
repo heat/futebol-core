@@ -7,6 +7,10 @@ import java.util.Calendar;
 @Table(name = "registro_aplicativo")
 public class RegistroAplicativo {
 
+    @Transient
+    public static final String HEADER_NAME = "X-AppCode";
+    public static final String HEADER_SESSION = "X-AppSession";
+
     @Id
     @SequenceGenerator(name="registro_aplicativo_id_seq", sequenceName = "registro_aplicativo_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "registro_aplicativo_id_seq")
@@ -111,5 +115,14 @@ public class RegistroAplicativo {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    /**
+     * Um aplicativo de sessao é que não está registrado para uma tenant específico podendo servir para
+     * login de qualquer tenant
+     * @return
+     */
+    public boolean isSessao() {
+        return getScope().endsWith(":session");
     }
 }

@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.CampeonatoJson;
 import api.json.Jsonable;
 import api.json.ObjectJson;
@@ -20,6 +21,7 @@ import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.CampeonatoRepository;
 import repositories.TenantRepository;
 import repositories.ValidadorRepository;
@@ -100,21 +102,10 @@ public class CampeonatoController extends ApplicationController {
     }
 
     @Transactional
+    @With(TenantAction.class)
     public Result todos(String nome) {
 
-        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
-
-        if (!appKeyOptional.isPresent()){
-            return badRequest("Key not found.");
-        }
-
-        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
-
-        if (!registroAplicativoOptional.isPresent()){
-            return notFound("Aplicativo não registrado.");
-        }
-
-        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+        Tenant tenant = getTenantAppCode();
 
         List<Campeonato> campeonatos = campeonatoRepository.todos(tenant, nome);
 

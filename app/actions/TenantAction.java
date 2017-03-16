@@ -10,6 +10,7 @@ import repositories.TenantRepository;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -25,27 +26,51 @@ public class TenantAction extends play.mvc.Action.Simple {
     @Override
     public CompletionStage<Result> call(Http.Context ctx) {
 
-        //TODO: Retornar bad request nos comentarios
 
-        Optional<String> appKeyOptional = Optional.ofNullable(ctx.request().getHeader("X-AppCode"));
+        Optional<String> appKeyOptional = Optional.ofNullable(ctx.request().getHeader(RegistroAplicativo.HEADER_NAME));
 
         if (!appKeyOptional.isPresent()){
-//            return badRequest("Key not found.");
+        //TODO: Retornar bad request
         }
 
         JPAApi jpaApi = jpaApiProvider.get();
-        TenantRepository tenantRepository = new TenantRepository(jpaApi);
 
-        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
+        Optional<RegistroAplicativo> aplicativo = jpaApi.withTransaction( em -> {
 
-        if (!registroAplicativoOptional.isPresent()){
-  //          return notFound("Aplicativo não registrado.");
+            TenantRepository tenantRepository = new TenantRepository(jpaApi);
+            return tenantRepository.buscar(appKeyOptional.get());
+        });
+
+        if(!aplicativo.isPresent())
+        {
+            //TODO: Retornar bad request
         }
 
-        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+        RegistroAplicativo aplicativoIdentificado = aplicativo.get();
+
+        Tenant tenant;
+        if(aplicativoIdentificado.isSessao()) {
+            // busca tenant da sessao
+            Optional<String> appSession = Optional.ofNullable(ctx.request().getHeader(RegistroAplicativo.HEADER_SESSION));
+            if(!appSession.isPresent())
+            {
+                //TODO: Retornar bad request
+            }
+            tenant = extractFrom(appSession.get());
+        } else {
+            tenant = Tenant.of(aplicativoIdentificado.getTenant());
+        }
 
         ctx.args.put("tenant", tenant);
 
         return  delegate.call(ctx);
+    }
+
+    private Tenant extractFrom(String s) {
+        //TODO desacoplar codigo criando um extrator de sessao
+        String code = new String(Base64.getDecoder().decode(s.getBytes()));
+        String t = code.split(":")[1];
+        Long tenantId = Long.parseLong(t);
+        return Tenant.of(tenantId);
     }
 }
