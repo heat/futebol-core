@@ -16,8 +16,13 @@ CREATE TABLE public.registro_aplicativo
   scope VARCHAR(255),
   CONSTRAINT registro_aplicativo_pk PRIMARY KEY (registro_aplicativo_id)
 );
+-- CNLFJKE2SQCTSNKQBN8TG6M86FW2UC8C demo front
+-- 4VX796TEPA8K7CXGBRNCTN2FXNNMM2C6 demo admin
+--
 
-INSERT INTO public.registro_aplicativo (app_key, nome, autor, email, telefone, tenant_id) VALUES ('c3lzYmV0d2ViLXN5c2JldA==', 'Sysbet', 'Kley', 'kley@sysbet.in', '123451', 1);
+INSERT INTO public.registro_aplicativo (app_key, nome, autor, email, telefone, tenant_id, scope) VALUES
+  ('CNLFJKE2SQCTSNKQBN8TG6M86FW2UC8C', 'SYSBET APP APOSTA', 'Kley', 'kley@sysbet.in', '123451', 1, 'aposta:static'),
+  ('4VX796TEPA8K7CXGBRNCTN2FXNNMM2C6', 'SYSBET APP ADMIN', 'Kley', 'kley@sysbet.in', '123451', 1, 'aposta:session');
 
 CREATE SEQUENCE public.pins_pin_id_seq;
 

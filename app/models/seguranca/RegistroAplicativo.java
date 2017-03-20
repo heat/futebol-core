@@ -28,6 +28,7 @@ public class RegistroAplicativo {
     private String descricao;
     @Column(name = "tenant_id")
     private Long tenant;
+
     private String scope;
 
     public RegistroAplicativo() {
