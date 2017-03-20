@@ -31,7 +31,7 @@ public class Campeonato implements Serializable{
 
     @Enumerated(EnumType.STRING )
     @Column(name = "situacao")
-    private Situacao situacao;
+    private Situacao situacao = Situacao.A;
 
     protected Campeonato() {
     }

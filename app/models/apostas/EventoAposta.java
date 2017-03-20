@@ -25,11 +25,11 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     private Evento evento;
 
     @Column(name = "permitir")
-    private Boolean permitir;
+    private Boolean permitir = true;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "situacao")
-    private Situacao situacao;
+    private Situacao situacao = Situacao.A;
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "evento_aposta_id", nullable = false, updatable = true, insertable = true)

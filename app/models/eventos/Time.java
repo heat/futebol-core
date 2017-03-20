@@ -7,17 +7,32 @@ import java.io.Serializable;
 @Table(name = "times")
 public class Time implements Serializable {
 
+    public enum Situacao {
+
+        A("ATIVO"), I("INATIVO");
+
+        private String situacao;
+
+        Situacao(String situacao) {
+
+            this.situacao = situacao;
+        }
+    }
+
     @Id
     @SequenceGenerator(name="times_time_id_seq", sequenceName = "times_time_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "times_time_id_seq")
     @Column(name = "time_id",updatable = false)
-    Long id;
+    private Long id;
 
     @Column(name = "tenant_id")
-    Long tenant;
+    private Long tenant;
 
     @Column
-    String nome;
+    private String nome;
+
+    @Enumerated(EnumType.STRING)
+    private Situacao situacao = Situacao.A;
 
     protected Time() {
 
@@ -51,6 +66,14 @@ public class Time implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public Situacao getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
     }
 
     @Override
