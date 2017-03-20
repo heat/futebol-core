@@ -86,10 +86,19 @@ public class TimeRepository implements  Repository<Long, Time>{
     @Override
     public CompletableFuture<Time> inserir(Tenant tenant, Time time) {
 
-        EntityManager em = jpaApi.em();
-        time.setTenant(tenant.get());
-        em.persist(time);
-        return CompletableFuture.completedFuture(time);
+        Optional<Time> t = this.buscar(tenant, time.getNome());
+
+        if (!t.isPresent()){
+            EntityManager em = jpaApi.em();
+            time.setTenant(tenant.get());
+            em.persist(time);
+            return CompletableFuture.completedFuture(time);
+        }
+
+        Time timePresent = t.get();
+        timePresent.setSituacao(Time.Situacao.A);
+
+        return CompletableFuture.completedFuture(timePresent);
     }
 
     @Override
