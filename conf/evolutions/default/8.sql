@@ -53,6 +53,41 @@ CREATE TABLE public.palpites_pin
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+CREATE SEQUENCE public.registro_tenant_id_seq;
+
+CREATE TABLE public.registro_tenant
+(
+  registro_tenant_id INTEGER NOT NULL DEFAULT nextval('public.registro_tenant_id_seq'),
+  feed_key VARCHAR(255) NOT NULL,
+  nome VARCHAR(255) NOT NULL,
+  criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  usuario_id INTEGER NOT NULL,
+  pin INTEGER NOT NULL,
+  CONSTRAINT registro_tenant_pk PRIMARY KEY (registro_tenant_id),
+  CONSTRAINT registro_tenant_usuarios_fk FOREIGN KEY (usuario_id)
+  REFERENCES public.usuarios (usuario_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+INSERT INTO public.registro_tenant (nome, feed_key, usuario_id, pin) VALUES ('Sysbet', 'DEMO', 1, 1234);
+
+CREATE SEQUENCE public.importacao_id_seq;
+
+CREATE TABLE public.importacao
+(
+  importacao_id INTEGER NOT NULL DEFAULT nextval('public.importacao_id_seq'),
+  chave VARCHAR(255) NOT NULL,
+  criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  tenant_id INTEGER NOT NULL,
+  situacao CHAR(1) NOT NULL,
+  variacao DECIMAL(10,2) NOT NULL,
+  evento_id INTEGER NOT NULL,
+  CONSTRAINT importacao_pk PRIMARY KEY (importacao_id),
+  CONSTRAINT importacao_eventos_fk FOREIGN KEY (evento_id)
+  REFERENCES public.eventos (evento_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
 # --- !Downs
 
 DROP TABLE IF EXISTS registro_aplicativo CASCADE;
@@ -60,6 +95,14 @@ DROP TABLE IF EXISTS registro_aplicativo CASCADE;
 DROP TABLE IF EXISTS pins CASCADE;
 
 DROP TABLE IF EXISTS palpites_pin CASCADE;
+
+DROP TABLE IF EXISTS registro_tenant CASCADE;
+
+DROP TABLE IF EXISTS importacao CASCADE;
+
+DROP SEQUENCE IF EXISTS public.importacao_id_seq CASCADE;
+
+DROP SEQUENCE IF EXISTS public.registro_tenant_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.registro_aplicativo_id_seq CASCADE;
 

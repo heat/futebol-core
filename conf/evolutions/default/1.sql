@@ -8,6 +8,7 @@ CREATE TABLE public.times (
                 time_id INTEGER NOT NULL DEFAULT nextval('public.times_time_id_seq'),
                 nome VARCHAR(200) NOT NULL,
                 tenant_id INTEGER NOT NULL,
+                situacao CHAR(1) NOT NULL DEFAULT 'A',
                 CONSTRAINT times_pk PRIMARY KEY (time_id)
 );
 COMMENT ON TABLE public.times IS 'tabela de times disponiveis';
@@ -28,6 +29,10 @@ ALTER SEQUENCE public.campeonatos_campeonato_id_seq OWNED BY public.campeonatos.
 
 CREATE UNIQUE INDEX campeonatos_nome_idx
  ON public.campeonatos
+ ( nome, tenant_id );
+
+CREATE UNIQUE INDEX times_nome_idx
+ ON public.times
  ( nome, tenant_id );
 
 CREATE SEQUENCE public.eventos_evento_id_seq;
