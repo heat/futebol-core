@@ -12,6 +12,7 @@ import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class TaxaAtualizarProcessador implements Processador<Chave, Taxa>{
 
     public static final String REGRA = "taxa.atualizar";

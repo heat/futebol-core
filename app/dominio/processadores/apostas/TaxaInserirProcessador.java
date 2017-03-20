@@ -11,6 +11,7 @@ import repositories.EventoApostaRepository;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class TaxaInserirProcessador implements Processador<Tenant, EventoAposta>{
 
     public static final String REGRA = "taxa.inserir";

@@ -1,5 +1,7 @@
 package models.Importacao;
 
+import models.eventos.Evento;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,7 +13,7 @@ public class Importacao implements Serializable {
 
     public enum Situacao {
 
-        ATUALIZADO("ATUALIZADO"), CRIADO("CRIADO"), FALHA("FALHA");
+        A("ATUALIZADO"), C("CRIADO"), F("FALHA");
 
         private String situacao;
 
@@ -37,6 +39,10 @@ public class Importacao implements Serializable {
     private Situacao situacao;
 
     private BigDecimal variacao;
+
+    @OneToOne
+    @JoinColumn(name = "evento_id")
+    private Evento evento;
 
     public Long getId() {
         return id;
@@ -84,5 +90,9 @@ public class Importacao implements Serializable {
 
     public void setTenant(Long tenant) {
         this.tenant = tenant;
+    }
+
+    public Evento getEvento() {
+        return evento;
     }
 }
