@@ -1,11 +1,14 @@
 package models.apostas;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
  * A configuracao representa o Paramatro da banca para cada Odd. É necessário que a banca tenha uma configuracao para
  * cada odd
  */
+@Entity
+@Table(name = "configuracao_odd")
 public class OddConfiguracao {
 
     enum Situacao {
@@ -18,22 +21,27 @@ public class OddConfiguracao {
         }
     }
 
-    Long id;
+    @Id
+    @SequenceGenerator(name="configuracao_odd_id_seq", sequenceName = "configuracao_odd_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "configuracao_odd_id_seq")
+    @Column(name = "configuracao_odd_id",updatable = false)
+    private Long id;
 
-    Long tenant;
+    @Column(name = "tenant_id")
+    private Long tenant;
 
-    Odd odd;
+    private Odd odd;
 
-    Boolean favorita;
+    private Boolean favorita;
 
-    Situacao situacao;
+    private Situacao situacao;
 
     /**
      * Odd do tipo linha deve ter específicado qual a linha favorita
      */
-    BigDecimal linhaFavorita;
+    private BigDecimal linhaFavorita;
 
-    Long prioridade;
+    private Long prioridade;
 
     public Long getIdOdd() {
         return this.odd.getId();
@@ -43,4 +51,31 @@ public class OddConfiguracao {
         return this.odd;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTenant() {
+        return tenant;
+    }
+
+    public Odd getOdd() {
+        return odd;
+    }
+
+    public Boolean getFavorita() {
+        return favorita;
+    }
+
+    public Situacao getSituacao() {
+        return situacao;
+    }
+
+    public BigDecimal getLinhaFavorita() {
+        return linhaFavorita;
+    }
+
+    public Long getPrioridade() {
+        return prioridade;
+    }
 }

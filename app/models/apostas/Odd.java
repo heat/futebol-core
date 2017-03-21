@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Entity
 @Table( name = "odds")
-//TODO fazer com herança
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Odd<P> implements Serializable, Posicionavel<P> {
 
     @Id
@@ -17,21 +17,13 @@ public abstract class Odd<P> implements Serializable, Posicionavel<P> {
     @Column(name = "odd_id",updatable = false)
     private Long id;
 
-    @Column(name = "nome")
     private String nome;
 
-    @Column(name = "mercado")
-    //TODO Fazer embedded de mercado
+    @Embedded
     private Mercado mercado;
 
-    //TODO refatorar para embedded no mercado renomear pra tipo somente
-    // @Column(name = "tipo_linha")
-    // private char tipoLinha;
-
-    @Column(name = "abreviacao")
     private String abreviacao;
 
-    @Column(name = "descricao")
     private String descricao;
 
 

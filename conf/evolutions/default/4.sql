@@ -49,11 +49,9 @@ CREATE TABLE public.odds
   descricao VARCHAR(255) NOT NULL,
   mercado VARCHAR(255) NOT NULL,
   nome VARCHAR(255) NOT NULL,
-  posicao INTEGER NOT NULL,
-  prioridade INTEGER NOT NULL,
-  tenant_id INTEGER NOT NULL,
   tipo_linha CHAR(1) NOT NULL,
-  favorita BOOLEAN NOT NULL,
+  dtype VARCHAR(31) NOT NULL,
+  posicao INTEGER,
   CONSTRAINT odds_pkey PRIMARY KEY (odd_id)
 )
 WITH (
@@ -61,6 +59,27 @@ WITH (
 );
 
 COMMENT ON TABLE public.odds IS 'Tabela de odds';
+
+CREATE SEQUENCE public.configuracao_odd_id_seq;
+
+CREATE TABLE public.configuracao_odd
+(
+  configuracao_odd_id INTEGER NOT NULL DEFAULT nextval('public.configuracao_odd_id_seq'),
+  tenant_id INTEGER NOT NULL,
+  odd_id INTEGER NOT NULL,
+  favorita BOOLEAN NOT NULL,
+  situacao CHAR(1) NOT NULL,
+  CONSTRAINT configuracao_odd_pkey PRIMARY KEY (configuracao_odd_id),
+  CONSTRAINT configuracao_odd_odds_fk
+    FOREIGN KEY (odd_id)
+    REFERENCES public.odds (odd_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE
+)
+WITH (
+  OIDS=FALSE
+);
 
 ALTER TABLE public.evento_apostas ADD CONSTRAINT eventos_evento_apostas_fk
 FOREIGN KEY (evento_id)
@@ -90,6 +109,10 @@ DROP TABLE IF EXISTS evento_apostas CASCADE;
 DROP TABLE IF EXISTS taxas CASCADE;
 
 DROP TABLE IF EXISTS odds CASCADE;
+
+DROP TABLE IF EXISTS configuracao_odd CASCADE;
+
+DROP SEQUENCE IF EXISTS public.configuracao_odd_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.eventos_apostas_id_seq CASCADE;
 
