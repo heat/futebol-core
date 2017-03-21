@@ -27,6 +27,9 @@ public class Taxa implements Serializable{
     @JoinColumn(name = "odd_id")
     private Odd odd;
 
+    //TODO fazer o join utilizando multiplas colunas nao updetavel http://docs.oracle.com/javaee/7/api/javax/persistence/JoinColumns.html
+    private OddConfiguracao oddConfiguracao;
+
     @Column(name = "taxa")
     private BigDecimal taxa;
 

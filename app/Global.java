@@ -9,6 +9,8 @@ import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.apostas.mercado.ResultadoExatoMercado;
+import models.apostas.mercado.ResultadoFinalMercado;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.eventos.Campeonato;
@@ -283,18 +285,16 @@ public class Global extends GlobalSettings {
 
         em.persist(evento);
 
-        Odd odd = new Odd();
-        odd.setAbreviacao("casa");
-        odd.setDescricao("casa");
-        odd.setMercado("casa");
-        odd.setNome("casa");
-        odd.setPosicao(1L);
-        odd.setPrioridade(1L);
-        odd.setTipoLinha('N');
-        odd.setTenant(Tenant.SYSBET.get());
-        odd.setFavorita(true);
+        Odd<ResultadoFinalMercado.Posicao> odd = em.find(Odd.class, 1L);
 
-        em.persist(odd);
+        //Verifica se a odd esta inserida
+        assert(odd.getPosicao() == ResultadoFinalMercado.Posicao.CASA);
+
+        //TODO fazer o insert da resultado exato 0x0
+        Odd<ResultadoExatoMercado.Posicao> oddExato = em.find(Odd.class, 1L);
+
+        //Confirma se a posicao veio do salvamento do banco
+        assert(oddExato.getPosicao() == ResultadoExatoMercado.Posicao.c0x0);
 
         EventoAposta eventoAposta = new EventoAposta();
         eventoAposta.setEvento(evento);
