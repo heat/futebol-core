@@ -67,5 +67,25 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
         public String getPosicao() {
             return "REF";
         }
+
+        @Override
+        public String getNome() {
+            return null;
+        }
+
+        @Override
+        public Mercado getMercado() {
+            return null;
+        }
+
+        @Override
+        public String getAbreviacao() {
+            return null;
+        }
+
+        @Override
+        public String getDescricao() {
+            return null;
+        }
     }
 }

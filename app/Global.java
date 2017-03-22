@@ -9,8 +9,10 @@ import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.apostas.mercado.Mercado;
 import models.apostas.mercado.ResultadoExatoMercado;
 import models.apostas.mercado.ResultadoFinalMercado;
+import models.apostas.odd.resultados.termino.CasaResultadoFinalOdd;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.eventos.Campeonato;
@@ -44,6 +46,7 @@ public class Global extends GlobalSettings {
 
             //dummyData(em);
             em.createQuery("DELETE FROM Validador v").executeUpdate();
+            em.createQuery("DELETE FROM Odd v").executeUpdate();
             // é apenas uam capa pois a delegação da validação esta para o StringRegexValidador
             CampeonatoNomeValidator campeonatoNomeValidator = new CampeonatoNomeValidator(Tenant.SYSBET.get(),
                     CampeonatoInserirProcessador.REGRA,
@@ -233,6 +236,11 @@ public class Global extends GlobalSettings {
                             null);
             em.persist(taxaMaximaApostaPolitica);
 
+            CasaResultadoFinalOdd casaResultadoFinalOdd =
+                    new CasaResultadoFinalOdd("resultado-final.casa");
+
+            em.persist(casaResultadoFinalOdd);
+
 
             dummyData(em);
 
@@ -252,7 +260,6 @@ public class Global extends GlobalSettings {
         em.createQuery("DELETE FROM PalpitePin t").executeUpdate();
         em.createQuery("DELETE FROM Pin t").executeUpdate();
         em.createQuery("DELETE FROM Taxa t").executeUpdate();
-        em.createQuery("DELETE FROM Odd t").executeUpdate();
         em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
         em.createQuery("DELETE FROM Evento t").executeUpdate();
         em.createQuery("DELETE FROM Time t").executeUpdate();
@@ -291,10 +298,10 @@ public class Global extends GlobalSettings {
         assert(odd.getPosicao() == ResultadoFinalMercado.Posicao.CASA);
 
         //TODO fazer o insert da resultado exato 0x0
-        Odd<ResultadoExatoMercado.Posicao> oddExato = em.find(Odd.class, 1L);
+        //Odd<ResultadoExatoMercado.Posicao> oddExato = em.find(Odd.class, 1L);
 
         //Confirma se a posicao veio do salvamento do banco
-        assert(oddExato.getPosicao() == ResultadoExatoMercado.Posicao.c0x0);
+        //assert(oddExato.getPosicao() == ResultadoExatoMercado.Posicao.c0x0);
 
         EventoAposta eventoAposta = new EventoAposta();
         eventoAposta.setEvento(evento);
