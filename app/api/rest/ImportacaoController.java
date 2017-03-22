@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
+import dominio.processadores.Importacao.ImportacaoInserirProcessador;
 import dominio.processadores.apostas.EventoApostaInserirProcessador;
 import dominio.processadores.bilhetes.PinInserirProcessador;
 import dominio.processadores.eventos.CampeonatoInserirProcessador;
@@ -64,6 +65,7 @@ public class ImportacaoController extends ApplicationController {
     JPAApi jpaApi;
     OddRepository oddRepository;
     EventoApostaInserirProcessador eventoApostaInserirProcessador;
+    ImportacaoInserirProcessador importacaoInserirProcessador;
 
 
     @Inject
@@ -74,7 +76,7 @@ public class ImportacaoController extends ApplicationController {
                                 CampeonatoInserirProcessador campeonatoInserirProcessador,
                                 JPAApi jpaApi, ImportacaoRepository importacaoRepository,
                                 EventoInserirProcessador eventoInserirProcessador, OddRepository oddRepository,
-                                EventoApostaInserirProcessador eventoApostaInserirProcessador) {
+                                EventoApostaInserirProcessador eventoApostaInserirProcessador, ImportacaoInserirProcessador importacaoInserirProcessador) {
         super(playSessionStore);
         this.validadorRepository = validadorRepository;
         this.tenantRepository = tenantRepository;
@@ -90,6 +92,7 @@ public class ImportacaoController extends ApplicationController {
         this.eventoInserirProcessador = eventoInserirProcessador;
         this.oddRepository = oddRepository;
         this.eventoApostaInserirProcessador = eventoApostaInserirProcessador;
+        this.importacaoInserirProcessador = importacaoInserirProcessador;
     }
 
     @Secure(clients = "headerClient")
@@ -112,6 +115,7 @@ public class ImportacaoController extends ApplicationController {
         List<Validador> campeonatosValidadores = validadorRepository.todos(getTenant(), CampeonatoInserirProcessador.REGRA);
         List<Validador> eventosValidadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
         List<Validador> eventosApostasValidadores = validadorRepository.todos(getTenant(), EventoApostaInserirProcessador.REGRA);
+        List<Validador> importacaoValidadores = validadorRepository.todos(getTenant(), ImportacaoInserirProcessador.REGRA);
 
         promise.thenApply(p -> {
             jpaApi.withTransaction(em -> {
@@ -161,7 +165,7 @@ public class ImportacaoController extends ApplicationController {
                                 eventoApostaInserirProcessador.executar(tenant, eventoAposta, eventosApostasValidadores);
 
                                 Importacao importacao = new Importacao(tenant.get(), chave, variacao, evento.getId());
-                                importacaoRepository.inserir(tenant, importacao);
+                                importacaoInserirProcessador.executar(tenant, importacao, importacaoValidadores);
                             }
 
                         } catch (InterruptedException e) {

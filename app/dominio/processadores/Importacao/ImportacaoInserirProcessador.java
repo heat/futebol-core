@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ImportacaoInserirProcessador implements Processador<Tenant, Importacao>{
 
-    public static final String REGRA = "bilhete.inserir";
+    public static final String REGRA = "importacao.inserir";
 
     ImportacaoRepository importacaoRepository;
 

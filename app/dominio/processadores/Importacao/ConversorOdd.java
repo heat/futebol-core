@@ -23,6 +23,9 @@ public class ConversorOdd {
         map.put("oddCasa", "resultado-final.casa");
         map.put("oddEmpate", "resultado-final.empate");
         map.put("oddFora", "resultado-final.fora");
+        map.put("oddCasaEmpate", "aposta-dupla.casa_empate");
+        map.put("oddForaEmpate", "aposta-dupla.empate_fora");
+        map.put("oddCasaFora", "aposta-dupla.casa_fora");
 
     }
 

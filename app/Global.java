@@ -9,7 +9,12 @@ import models.apostas.*;
 import models.apostas.mercado.Mercado;
 import models.apostas.mercado.ResultadoExatoMercado;
 import models.apostas.mercado.ResultadoFinalMercado;
+import models.apostas.odd.resultados.dupla.CasaEmpateApostaDuplaOdd;
+import models.apostas.odd.resultados.dupla.CasaForaApostaDuplaOdd;
+import models.apostas.odd.resultados.dupla.EmpateForaApostaDuplaOdd;
 import models.apostas.odd.resultados.termino.CasaResultadoFinalOdd;
+import models.apostas.odd.resultados.termino.EmpateResultadoFinalOdd;
+import models.apostas.odd.resultados.termino.ForaResultadoFinalOdd;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.eventos.Campeonato;
@@ -43,6 +48,7 @@ public class Global extends GlobalSettings {
 
             //dummyData(em);
             em.createQuery("DELETE FROM Validador v").executeUpdate();
+            em.createQuery("DELETE FROM Importacao t").executeUpdate();
             em.createQuery("DELETE FROM Lancamento t").executeUpdate();
             em.createQuery("DELETE FROM Comissao t").executeUpdate();
             em.createQuery("DELETE FROM Conta t").executeUpdate();
@@ -251,8 +257,27 @@ public class Global extends GlobalSettings {
 
             CasaResultadoFinalOdd casaResultadoFinalOdd =
                     new CasaResultadoFinalOdd("resultado-final.casa");
-
             em.persist(casaResultadoFinalOdd);
+
+            EmpateResultadoFinalOdd empateResultadoFinalOdd =
+                    new EmpateResultadoFinalOdd("resultado-final.empate");
+            em.persist(empateResultadoFinalOdd);
+
+            ForaResultadoFinalOdd foraResultadoFinalOdd =
+                    new ForaResultadoFinalOdd("resultado-final.fora");
+            em.persist(foraResultadoFinalOdd);
+
+            CasaEmpateApostaDuplaOdd casaEmpateApostaDuplaOdd =
+                    new CasaEmpateApostaDuplaOdd("aposta-dupla.casa_empate");
+            em.persist(casaEmpateApostaDuplaOdd);
+
+            EmpateForaApostaDuplaOdd empateForaApostaDuplaOdd =
+                    new EmpateForaApostaDuplaOdd("aposta-dupla.empate_fora");
+            em.persist(empateForaApostaDuplaOdd);
+
+            CasaForaApostaDuplaOdd casaForaApostaDuplaOdd =
+                    new CasaForaApostaDuplaOdd("aposta-dupla.casa_fora");
+            em.persist(casaForaApostaDuplaOdd);
 
 
             dummyData(em);
