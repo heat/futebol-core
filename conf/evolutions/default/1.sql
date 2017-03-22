@@ -8,6 +8,7 @@ CREATE TABLE public.times (
                 time_id INTEGER NOT NULL DEFAULT nextval('public.times_time_id_seq'),
                 nome VARCHAR(200) NOT NULL,
                 tenant_id INTEGER NOT NULL,
+                situacao CHAR(1) NOT NULL,
                 CONSTRAINT times_pk PRIMARY KEY (time_id)
 );
 COMMENT ON TABLE public.times IS 'tabela de times disponiveis';

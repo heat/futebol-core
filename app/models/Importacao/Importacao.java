@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 
 @Entity
-@Table(name = "importacaos")
+@Table(name = "importacao")
 public class Importacao implements Serializable {
 
     public enum Situacao {
@@ -27,16 +27,30 @@ public class Importacao implements Serializable {
     @Column(name = "importacao_id",updatable = false)
     private Long id;
 
+    @Column(name = "tenant_id")
     private Long tenant;
 
     private String chave;
 
     @Column(name = "criado_em")
-    private Calendar criadoEm;
+    private Calendar criadoEm = Calendar.getInstance();
 
-    private Situacao situacao;
+    private Situacao situacao = Situacao.CRIADO;
 
     private BigDecimal variacao;
+
+    @Column(name = "evento_id")
+    private Long evento;
+
+    public Importacao() {
+    }
+
+    public Importacao(Long tenant, String chave, BigDecimal variacao, Long evento) {
+        this.tenant = tenant;
+        this.chave = chave;
+        this.variacao = variacao;
+        this.evento = evento;
+    }
 
     public Long getId() {
         return id;

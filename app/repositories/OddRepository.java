@@ -3,6 +3,7 @@ package repositories;
 
 import com.google.inject.Inject;
 import models.apostas.Odd;
+import models.apostas.OddConfiguracao;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
@@ -69,5 +70,13 @@ public class OddRepository implements Repository<Long, Odd>{
             throw new NoResultException("Odd não encontrada");
         em.remove(oddOptional.get());
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
+    }
+
+    public List<OddConfiguracao> todosConfiguracao(Tenant tenant) {
+
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("SELECT o FROM OddConfiguracao o WHERE o.tenant = :tenant ");
+        query.setParameter("tenant", tenant.get());
+        return query.getResultList();
     }
 }

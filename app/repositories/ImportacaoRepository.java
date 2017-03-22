@@ -35,6 +35,20 @@ public class ImportacaoRepository implements  Repository<Long, Importacao>{
         return null;
     }
 
+    public Optional<Importacao> buscar(Tenant tenant, String chave) {
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Importacao> query = em.createQuery("SELECT b FROM Importacao b WHERE b.tenant = :tenant and b.chave = :chave", Importacao.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("chave", chave);
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     public CompletableFuture<Importacao> atualizar(Tenant tenant, Long id, Importacao updetable) {
         return null;

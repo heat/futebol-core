@@ -1,26 +1,52 @@
 package api.rest;
 
+import api.json.ImportacaoJson;
 import api.json.PinJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
+import dominio.processadores.apostas.EventoApostaInserirProcessador;
 import dominio.processadores.bilhetes.PinInserirProcessador;
+import dominio.processadores.eventos.CampeonatoInserirProcessador;
+import dominio.processadores.eventos.EventoInserirProcessador;
+import dominio.processadores.eventos.TimeInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.Importacao.ConversorOdd;
+import models.Importacao.Importacao;
+import models.apostas.EventoAposta;
+import models.apostas.Odd;
+import models.apostas.OddConfiguracao;
+import models.apostas.Taxa;
 import models.bilhetes.PalpitePin;
 import models.bilhetes.Pin;
+import models.eventos.Campeonato;
+import models.eventos.Evento;
+import models.eventos.Time;
+import models.vo.Chave;
 import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
+import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
+import play.libs.ws.WSClient;
+import play.libs.ws.WSRequest;
+import play.libs.ws.WSResponse;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.*;
+
+import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class ImportacaoController extends ApplicationController {
 
@@ -30,12 +56,25 @@ public class ImportacaoController extends ApplicationController {
     PinInserirProcessador inserirProcessador;
     UsuarioRepository usuarioRepository;
     PinRepository pinRepository;
+    TimeInserirProcessador timeInserirProcessador;
+    CampeonatoInserirProcessador campeonatoInserirProcessador;
+    ImportacaoRepository importacaoRepository;
+    EventoInserirProcessador eventoInserirProcessador;
+    WSClient ws;
+    JPAApi jpaApi;
+    OddRepository oddRepository;
+    EventoApostaInserirProcessador eventoApostaInserirProcessador;
+
 
     @Inject
     public ImportacaoController(PlaySessionStore playSessionStore, ValidadorRepository validadorRepository,
                                 TenantRepository tenantRepository, EventoApostaRepository eventoApostaRepository,
                                 PinInserirProcessador inserirProcessador, UsuarioRepository usuarioRepository,
-                                PinRepository pinRepository) {
+                                PinRepository pinRepository, WSClient ws, TimeInserirProcessador timeInserirProcessador,
+                                CampeonatoInserirProcessador campeonatoInserirProcessador,
+                                JPAApi jpaApi, ImportacaoRepository importacaoRepository,
+                                EventoInserirProcessador eventoInserirProcessador, OddRepository oddRepository,
+                                EventoApostaInserirProcessador eventoApostaInserirProcessador) {
         super(playSessionStore);
         this.validadorRepository = validadorRepository;
         this.tenantRepository = tenantRepository;
@@ -43,6 +82,14 @@ public class ImportacaoController extends ApplicationController {
         this.inserirProcessador = inserirProcessador;
         this.usuarioRepository = usuarioRepository;
         this.pinRepository = pinRepository;
+        this.ws = ws;
+        this.timeInserirProcessador = timeInserirProcessador;
+        this.campeonatoInserirProcessador = campeonatoInserirProcessador;
+        this.jpaApi = jpaApi;
+        this.importacaoRepository = importacaoRepository;
+        this.eventoInserirProcessador = eventoInserirProcessador;
+        this.oddRepository = oddRepository;
+        this.eventoApostaInserirProcessador = eventoApostaInserirProcessador;
     }
 
     @Secure(clients = "headerClient")
@@ -50,43 +97,87 @@ public class ImportacaoController extends ApplicationController {
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
-        /*F.Promise<JsonNode> jsonPromise = ws.url("http://bets79.com/json/jogos/abertos")
-                .get().map( res -> res.asJson());
+        JsonNode jsonNode = request().body().asJson();
+        String chave = jsonNode.findPath("chave").textValue();
+        BigDecimal variacao = jsonNode.findPath("variacao").decimalValue();
 
-        JsonNode jsonResponse = jsonPromise.get(30000L);
+        WSRequest request = ws.url("http://oddfeed.app.sysbet.in/api/odds")
+                .setHeader("X-SysBetKey", "DEMO")
+                .setContentType("application/json");
 
-        JsonNode json = request().body().asJson();
-        PinJson pinJson = Json.fromJson(json.get("pin"), PinJson.class);
 
-        Tenant tenant = getTenantAppCode();
+        CompletionStage<JsonNode> promise = request.get().thenApply(WSResponse::asJson);
+        Tenant tenant = getTenant();
+        List<Validador> timesValidadores = validadorRepository.todos(getTenant(), TimeInserirProcessador.REGRA);
+        List<Validador> campeonatosValidadores = validadorRepository.todos(getTenant(), CampeonatoInserirProcessador.REGRA);
+        List<Validador> eventosValidadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
+        List<Validador> eventosApostasValidadores = validadorRepository.todos(getTenant(), EventoApostaInserirProcessador.REGRA);
 
-        Pin pin = new Pin();
-        pin.setCliente(pinJson.cliente);
-        pin.setCriadoEm(Calendar.getInstance());
-        pin.setExpiraEm(Calendar.getInstance());
-        pin.getExpiraEm().add(Calendar.MINUTE, 60);
-        pin.setValorAposta(pinJson.valorAposta);
+        promise.thenApply(p -> {
+            jpaApi.withTransaction(em -> {
+                p.path("data").forEach(d -> {
+                    ImportacaoJson json = Json.fromJson(d, ImportacaoJson.class);
 
-        pinJson.palpites.forEach(p -> pin.addPalpitesPin(new PalpitePin(p)));
+                    if (json.codigo.equals(chave)){
+                        try {
 
-//        List<EventoAposta> eventosAposta = eventoApostaRepository.buscar(getTenant().get(), pinJson.palpites);
-        //TODO: Calcular a menor data dos jogos e setar em ExpiraEm
+                            Optional<Importacao> importacaoOptional = importacaoRepository.buscar(tenant, chave);
 
-        try {
-            List<Validador> validadores = validadorRepository.todos(tenant, PinInserirProcessador.REGRA);
+                            if (!importacaoOptional.isPresent()){
+                                Time casa = timeInserirProcessador.executar(tenant, new Time(tenant.get(), json.time1), timesValidadores).get();
+                                Time fora = timeInserirProcessador.executar(tenant, new Time(tenant.get(), json.time2), timesValidadores).get();
+                                Campeonato campeonato = campeonatoInserirProcessador.executar(tenant, new Campeonato(tenant.get(), json.campeonato), campeonatosValidadores).get();
 
-            inserirProcessador.executar(tenant, pin, validadores);
+                                Evento evento = new Evento();
+                                evento.setTenant(tenant.get());
+                                evento.setCasa(casa);
+                                evento.setFora(fora);
+                                evento.setCampeonato(campeonato);
+                                evento.setDataEvento(json.dataJogo);
 
-        } catch (ValidadorExcpetion validadorExcpetion) {
-            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
-        } catch (Exception ex){
-            return status(Http.Status.UNPROCESSABLE_ENTITY, ex.getMessage());
-        }
+                                evento = eventoInserirProcessador.executar(tenant, evento, eventosValidadores).get();
 
-        ((ObjectNode) json.path("pin")).removeAll()
-                .put("id", pin.getId());
+                                EventoAposta eventoAposta = new EventoAposta();
+                                eventoAposta.setEvento(evento);
+                                eventoAposta.setTenant(tenant.get());
 
-        return ok(json);*/
+
+                                List<OddConfiguracao> oddsConfiguracaos = oddRepository.todosConfiguracao(tenant);
+                                List<Odd> odds = oddsConfiguracaos.stream().map(o -> o.getOdd()).collect(Collectors.toList());
+
+                                ConversorOdd conversorOdd = new ConversorOdd(odds);
+                                //for each para as taxas
+                                d.fields().forEachRemaining( (n) -> {
+                                    String oddName = n.getKey();
+                                    Optional<Odd> odd = conversorOdd.from(oddName);
+                                    if(odd.isPresent()) {
+                                        Odd oddPresente = odd.get();
+                                        BigDecimal valorTaxa = BigDecimal.valueOf(n.getValue().asDouble());
+                                        Taxa t = new Taxa(tenant.get(), oddPresente, valorTaxa, conversorOdd.linha(oddName) );
+                                        eventoAposta.addTaxa(t);
+                                    }
+                                });
+
+                                eventoApostaInserirProcessador.executar(tenant, eventoAposta, eventosApostasValidadores);
+
+                                Importacao importacao = new Importacao(tenant.get(), chave, variacao, evento.getId());
+                                importacaoRepository.inserir(tenant, importacao);
+                            }
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                });
+                return null;
+            });
+
+            return p;
+        });
+
         return null;
 
     }

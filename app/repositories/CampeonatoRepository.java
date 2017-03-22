@@ -89,10 +89,19 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     @Override
     public CompletableFuture<Campeonato> inserir(Tenant tenant, Campeonato campeonato) {
 
-        EntityManager em = jpaApi.em();
-        campeonato.setTenant(tenant.get());
-        em.persist(campeonato);
-        return CompletableFuture.completedFuture(campeonato);
+        Optional<Campeonato> t = this.buscar(tenant, campeonato.getNome());
+
+        if (!t.isPresent()){
+            EntityManager em = jpaApi.em();
+            campeonato.setTenant(tenant.get());
+            em.persist(campeonato);
+            return CompletableFuture.completedFuture(campeonato);
+        }
+
+        Campeonato campeonatoPresent = t.get();
+        campeonatoPresent.setSituacao(Campeonato.Situacao.A);
+
+        return CompletableFuture.completedFuture(campeonatoPresent);
     }
 
     @Override

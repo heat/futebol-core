@@ -32,6 +32,10 @@ public abstract class Odd<P> implements Serializable, Posicionavel<P> {
         this.codigo = codigo;
     }
 
+    public String getCodigo() {
+        return codigo;
+    }
+
     public Long getId() {
         return id;
     }

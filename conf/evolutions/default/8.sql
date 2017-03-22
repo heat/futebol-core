@@ -53,6 +53,23 @@ CREATE TABLE public.palpites_pin
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+CREATE SEQUENCE public.importacao_id_seq;
+
+CREATE TABLE public.importacao
+(
+  importacao_id INTEGER NOT NULL DEFAULT nextval('public.importacao_id_seq'),
+  chave VARCHAR(255) NOT NULL,
+  criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  tenant_id INTEGER NOT NULL,
+  situacao CHAR(1) NOT NULL,
+  variacao DECIMAL(10,2) NOT NULL,
+  evento_id INTEGER NOT NULL,
+  CONSTRAINT importacao_pk PRIMARY KEY (importacao_id),
+  CONSTRAINT importacao_eventos_fk FOREIGN KEY (evento_id)
+  REFERENCES public.eventos (evento_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
 # --- !Downs
 
 DROP TABLE IF EXISTS registro_aplicativo CASCADE;
@@ -60,6 +77,10 @@ DROP TABLE IF EXISTS registro_aplicativo CASCADE;
 DROP TABLE IF EXISTS pins CASCADE;
 
 DROP TABLE IF EXISTS palpites_pin CASCADE;
+
+DROP TABLE IF EXISTS importacao CASCADE;
+
+DROP SEQUENCE IF EXISTS public.importacao_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.registro_aplicativo_id_seq CASCADE;
 

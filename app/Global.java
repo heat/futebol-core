@@ -58,6 +58,7 @@ public class Global extends GlobalSettings {
             em.createQuery("UPDATE Usuario t SET t.planoComissao.id = NULL ").executeUpdate();
             em.createQuery("DELETE FROM ParametroComissao t").executeUpdate();
             em.createQuery("DELETE FROM PlanoComissao t").executeUpdate();
+            em.createQuery("DELETE FROM OddConfiguracao v").executeUpdate();
             em.createQuery("DELETE FROM Odd v").executeUpdate();
             // é apenas uam capa pois a delegação da validação esta para o StringRegexValidador
             CampeonatoNomeValidator campeonatoNomeValidator = new CampeonatoNomeValidator(Tenant.SYSBET.get(),
