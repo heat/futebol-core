@@ -11,21 +11,20 @@ import java.io.Serializable;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Odd<P> implements Serializable, Posicionavel<P> {
 
+    private static final long serialVersionUID = -5179541857358724150L;
+
     @Id
     @SequenceGenerator(name="odds_odd_id_seq", sequenceName = "odds_odd_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "odds_odd_id_seq")
     @Column(name = "odd_id",updatable = false)
     protected Long id;
 
-    private String nome;
-
-    @Embedded
-    private Mercado mercado;
-
-    private String abreviacao;
-
-    private String descricao;
-
+    /**
+     * Codigo referencia da odd. Normalmente nome sem espaços e caracters acentuados
+     * Resultado Final Casa = resultado-final.casa
+     */
+    @Column(name="codigo")
+    private String codigo;
 
     protected Odd() {
     }
@@ -34,44 +33,30 @@ public abstract class Odd<P> implements Serializable, Posicionavel<P> {
         return id;
     }
 
-    public String getNome() {
-        return nome;
-    }
+    public abstract String getNome();
 
-    public Mercado getMercado() {
-        return mercado;
-    }
+    public abstract Mercado getMercado();
 
-    public String getAbreviacao() {
-        return abreviacao;
-    }
+    public abstract String getAbreviacao();
 
-    public String getDescricao() {
-        return descricao;
-    }
+    public abstract String getDescricao();
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Odd odd = (Odd) o;
+        Odd<?> odd = (Odd<?>) o;
 
         if (id != null ? !id.equals(odd.id) : odd.id != null) return false;
-        if (nome != null ? !nome.equals(odd.nome) : odd.nome != null) return false;
-        if (mercado != null ? !mercado.equals(odd.mercado) : odd.mercado != null) return false;
-        if (abreviacao != null ? !abreviacao.equals(odd.abreviacao) : odd.abreviacao != null) return false;
-        return descricao != null ? descricao.equals(odd.descricao) : odd.descricao == null;
+        return codigo != null ? codigo.equals(odd.codigo) : odd.codigo == null;
 
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (nome != null ? nome.hashCode() : 0);
-        result = 31 * result + (mercado != null ? mercado.hashCode() : 0);
-        result = 31 * result + (abreviacao != null ? abreviacao.hashCode() : 0);
-        result = 31 * result + (descricao != null ? descricao.hashCode() : 0);
+        result = 31 * result + (codigo != null ? codigo.hashCode() : 0);
         return result;
     }
 }

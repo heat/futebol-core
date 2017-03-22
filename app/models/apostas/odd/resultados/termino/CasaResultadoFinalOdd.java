@@ -10,6 +10,32 @@ import javax.persistence.Entity;
 @Entity
 public class CasaResultadoFinalOdd extends Odd<ResultadoFinalMercado.Posicao> {
 
+    private static final String DESCRICAO = "Ganha quando casa ganha a partida";
+
+    private static final String NOME = "Casa";
+
+    private static final String ABREVIACAO = "C";
+
+    @Override
+    public String getNome() {
+        return NOME;
+    }
+
+    @Override
+    public Mercado getMercado() {
+        return Mercado.ResultadoFinal;
+    }
+
+    @Override
+    public String getAbreviacao() {
+        return ABREVIACAO;
+    }
+
+    @Override
+    public String getDescricao() {
+        return DESCRICAO;
+    }
+
     @Override
     public ResultadoFinalMercado.Posicao getPosicao() {
         return ResultadoFinalMercado.Posicao.CASA;

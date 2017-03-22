@@ -1,6 +1,8 @@
 package models.apostas.mercado;
 
-public class ResultadoExatoMercado {
+public class ResultadoExatoMercado extends Mercado {
+
+    private static final String NOME = "Resultado Exato";
 
     public enum Posicao {
         c0x0(0, 0),
@@ -18,5 +20,17 @@ public class ResultadoExatoMercado {
             String nome = String.format("c%dx%d", casa, fora);
             return valueOf(nome);
         }
+
+        public int getFora() {
+            return fora;
+        }
+
+        public int getCasa() {
+            return casa;
+        }
+    }
+
+    public ResultadoExatoMercado() {
+        super(NOME, TipoMercado.S);
     }
 }

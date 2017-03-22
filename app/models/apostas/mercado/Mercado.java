@@ -8,11 +8,11 @@ import javax.persistence.Enumerated;
 @Embeddable
 public abstract class Mercado {
 
-    @Column(name = "mercado")
+    public static Mercado ResultadoExato = new ResultadoExatoMercado();
+    public static Mercado ResultadoFinal = new ResultadoFinalMercado();
+
     final String nome;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_linha")
     final TipoMercado tipo;
 
     public Mercado(String nome, TipoMercado tipo) {
