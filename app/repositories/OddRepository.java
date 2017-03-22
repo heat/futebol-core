@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.RejectedExecutionException;
 
 public class OddRepository implements Repository<Long, Odd>{
 
@@ -28,7 +29,7 @@ public class OddRepository implements Repository<Long, Odd>{
     public List<Odd> todos(Tenant tenant) {
 
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("FROM Odd as o ");
+        Query query = em.createQuery("SELECT o FROM Odd as o ");
         return query.getResultList();
     }
 
@@ -46,21 +47,9 @@ public class OddRepository implements Repository<Long, Odd>{
 
     @Override
     public CompletableFuture<Odd> atualizar(Tenant tenant, Long id, Odd o) {
-
-        EntityManager em = jpaApi.em();
-        Optional<Odd> oddOptional = buscar(tenant, id);
-        if(!oddOptional.isPresent())
-            throw new NoResultException("Odd não encontrada");
-        Odd odd = oddOptional.get();
-        odd.setAbreviacao(o.getAbreviacao());
-        odd.setDescricao(o.getAbreviacao());
-        odd.setMercado(o.getMercado());
-        odd.setNome(o.getNome());
-        odd.setPosicao(o.getPosicao());
-        odd.setPrioridade(o.getPrioridade());
-        odd.setTipoLinha(o.getTipoLinha());
-        em.merge(odd);
-        return CompletableFuture.completedFuture(odd);
+        return CompletableFuture.supplyAsync(() -> {
+           throw  new RejectedExecutionException("não implementado");
+        });
     }
 
     @Override

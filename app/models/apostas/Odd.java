@@ -15,7 +15,7 @@ public abstract class Odd<P> implements Serializable, Posicionavel<P> {
     @SequenceGenerator(name="odds_odd_id_seq", sequenceName = "odds_odd_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "odds_odd_id_seq")
     @Column(name = "odd_id",updatable = false)
-    private Long id;
+    protected Long id;
 
     private String nome;
 

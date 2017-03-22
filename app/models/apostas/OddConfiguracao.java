@@ -30,6 +30,8 @@ public class OddConfiguracao {
     @Column(name = "tenant_id")
     private Long tenant;
 
+    @ManyToOne
+    @JoinColumn(name = "odd_id")
     private Odd odd;
 
     private Boolean favorita;

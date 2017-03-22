@@ -133,7 +133,7 @@ public class EventoApostaController extends ApplicationController {
         todos.forEach(eventoAposta -> {
             builder.comEntidade(ApostaJson.of(eventoAposta));
             eventoAposta.getTaxas().stream()
-                    .filter(p -> p.getOdd().isFavorita()).collect(Collectors.toList())
+                    .filter(p -> p.isFavorita()).collect(Collectors.toList())
                     .forEach(taxaAposta -> builder.comRelacionamento(TaxaJson.TIPO, TaxaJson.of(taxaAposta, eventoAposta.getId())));
         });
 

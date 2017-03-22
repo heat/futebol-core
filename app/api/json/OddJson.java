@@ -25,14 +25,26 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
         return new OddJson(odd.getId(), odd.getNome(), odd.getDescricao(), odd.getDescricao());
     }
 
-
     @Override
     public Odd to() {
-        return new Odd(nome, null, '0', null, descricao, 0L, 0L);
+        return new OddRef(this.id);
     }
+
 
     @Override
     public String type() {
         return null;
+    }
+
+    public class OddRef extends Odd<String> {
+
+        public OddRef(Long id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getPosicao() {
+            return "REF";
+        }
     }
 }
