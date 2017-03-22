@@ -23,10 +23,13 @@ public abstract class Odd<P> implements Serializable, Posicionavel<P> {
      * Codigo referencia da odd. Normalmente nome sem espaços e caracters acentuados
      * Resultado Final Casa = resultado-final.casa
      */
-    @Column(name="codigo")
     private String codigo;
 
     protected Odd() {
+    }
+
+    public Odd(String codigo) {
+        this.codigo = codigo;
     }
 
     public Long getId() {

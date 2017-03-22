@@ -45,13 +45,8 @@ CREATE SEQUENCE public.odds_odd_id_seq;
 CREATE TABLE public.odds
 (
   odd_id INTEGER NOT NULL DEFAULT nextval('public.odds_odd_id_seq'),
-  abreviacao VARCHAR(255) NOT NULL,
-  descricao VARCHAR(255) NOT NULL,
-  mercado VARCHAR(255) NOT NULL,
-  nome VARCHAR(255) NOT NULL,
-  tipo_linha CHAR(1) NOT NULL,
+  codigo VARCHAR(255) NOT NULL,
   dtype VARCHAR(31) NOT NULL,
-  posicao INTEGER,
   CONSTRAINT odds_pkey PRIMARY KEY (odd_id)
 )
 WITH (

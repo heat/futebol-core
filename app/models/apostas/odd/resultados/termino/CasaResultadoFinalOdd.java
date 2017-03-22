@@ -16,6 +16,13 @@ public class CasaResultadoFinalOdd extends Odd<ResultadoFinalMercado.Posicao> {
 
     private static final String ABREVIACAO = "C";
 
+    public CasaResultadoFinalOdd() {
+    }
+
+    public CasaResultadoFinalOdd(String codigo) {
+        super(codigo);
+    }
+
     @Override
     public String getNome() {
         return NOME;
