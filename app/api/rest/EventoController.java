@@ -129,8 +129,10 @@ public class EventoController extends ApplicationController{
 
         ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         // adiciona os eventos
-        eventos.forEach(evento -> builder.comEntidade(EventoJson.of(evento)) );
+
+        eventos.stream().map(EventoJson::of).forEach(builder::comEntidade);
         // adiciona os relacionamentos
+        campeonatos.stream().map(CampeonatoJson::of).forEach(builder.<CampeonatoJson>comRelacionamento(CampeonatoJson.TIPO)::comEntidade);
         campeonatos.forEach(campeonato -> builder.comRelacionamento(CampeonatoJson.TIPO, CampeonatoJson.of(campeonato)));
 
         return ok(builder.build());
@@ -184,7 +186,7 @@ public class EventoController extends ApplicationController{
         if(!campeonatoOptional.isPresent())
             throw new NoResultException("Campeonato não encontrado");
 
-        return Optional.ofNullable(new Evento(
+        return Optional.of(new Evento(
                 getTenant().get(),
                 timeCasaOptional.get(),
                 timeForaOptional.get(),
