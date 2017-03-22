@@ -36,14 +36,26 @@ public class OddConfiguracao {
 
     private Boolean favorita;
 
-    private Situacao situacao;
+    private Situacao situacao = Situacao.A;
 
     /**
      * Odd do tipo linha deve ter específicado qual a linha favorita
      */
+    @Column(name = "linha")
     private BigDecimal linhaFavorita;
 
     private Long prioridade;
+
+    public OddConfiguracao() {
+    }
+
+    public OddConfiguracao(Long tenant, Odd odd, Boolean favorita, BigDecimal linhaFavorita, Long prioridade) {
+        this.tenant = tenant;
+        this.odd = odd;
+        this.favorita = favorita;
+        this.linhaFavorita = linhaFavorita;
+        this.prioridade = prioridade;
+    }
 
     public Long getIdOdd() {
         return this.odd.getId();

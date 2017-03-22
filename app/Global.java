@@ -5,10 +5,7 @@ import dominio.processadores.usuarios.PerfilAtualizarProcessador;
 import dominio.validadores.bilhete.*;
 import dominio.validadores.eventos.*;
 import dominio.validadores.usuarios.PerfilLocalidadeValidador;
-import models.apostas.Apostavel;
-import models.apostas.EventoAposta;
-import models.apostas.Odd;
-import models.apostas.Taxa;
+import models.apostas.*;
 import models.apostas.mercado.Mercado;
 import models.apostas.mercado.ResultadoExatoMercado;
 import models.apostas.mercado.ResultadoFinalMercado;
@@ -347,6 +344,14 @@ public class Global extends GlobalSettings {
         em.persist(planoComissaoBilhete);
 
         usuario.setPlanoComissao(planoComissaoBilhete);
+
+
+        odds.forEach(o -> {
+            OddConfiguracao oddConfiguracao = new OddConfiguracao(Tenant.SYSBET.get(), o, true, BigDecimal.ZERO, 1L);
+            em.persist(oddConfiguracao);
+        });
+
+
 
     }
 }

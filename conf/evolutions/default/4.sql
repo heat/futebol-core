@@ -65,6 +65,8 @@ CREATE TABLE public.configuracao_odd
   odd_id INTEGER NOT NULL,
   favorita BOOLEAN NOT NULL,
   situacao CHAR(1) NOT NULL,
+  linha DECIMAL(10,2),
+  prioridade INTEGER,
   CONSTRAINT configuracao_odd_pkey PRIMARY KEY (configuracao_odd_id),
   CONSTRAINT configuracao_odd_odds_fk
     FOREIGN KEY (odd_id)
