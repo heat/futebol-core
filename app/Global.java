@@ -46,6 +46,21 @@ public class Global extends GlobalSettings {
 
             //dummyData(em);
             em.createQuery("DELETE FROM Validador v").executeUpdate();
+            em.createQuery("DELETE FROM Lancamento t").executeUpdate();
+            em.createQuery("DELETE FROM Comissao t").executeUpdate();
+            em.createQuery("DELETE FROM Conta t").executeUpdate();
+            em.createQuery("DELETE FROM Palpite t").executeUpdate();
+            em.createQuery("DELETE FROM Bilhete t").executeUpdate();
+            em.createQuery("DELETE FROM PalpitePin t").executeUpdate();
+            em.createQuery("DELETE FROM Pin t").executeUpdate();
+            em.createQuery("DELETE FROM Taxa t").executeUpdate();
+            em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
+            em.createQuery("DELETE FROM Evento t").executeUpdate();
+            em.createQuery("DELETE FROM Time t").executeUpdate();
+            em.createQuery("DELETE FROM Campeonato t").executeUpdate();
+            em.createQuery("UPDATE Usuario t SET t.planoComissao.id = NULL ").executeUpdate();
+            em.createQuery("DELETE FROM ParametroComissao t").executeUpdate();
+            em.createQuery("DELETE FROM PlanoComissao t").executeUpdate();
             em.createQuery("DELETE FROM Odd v").executeUpdate();
             // é apenas uam capa pois a delegação da validação esta para o StringRegexValidador
             CampeonatoNomeValidator campeonatoNomeValidator = new CampeonatoNomeValidator(Tenant.SYSBET.get(),
@@ -252,22 +267,6 @@ public class Global extends GlobalSettings {
 
     private void dummyData(EntityManager em) {
 
-        em.createQuery("DELETE FROM Lancamento t").executeUpdate();
-        em.createQuery("DELETE FROM Comissao t").executeUpdate();
-        em.createQuery("DELETE FROM Conta t").executeUpdate();
-        em.createQuery("DELETE FROM Palpite t").executeUpdate();
-        em.createQuery("DELETE FROM Bilhete t").executeUpdate();
-        em.createQuery("DELETE FROM PalpitePin t").executeUpdate();
-        em.createQuery("DELETE FROM Pin t").executeUpdate();
-        em.createQuery("DELETE FROM Taxa t").executeUpdate();
-        em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
-        em.createQuery("DELETE FROM Evento t").executeUpdate();
-        em.createQuery("DELETE FROM Time t").executeUpdate();
-        em.createQuery("DELETE FROM Campeonato t").executeUpdate();
-        em.createQuery("UPDATE Usuario t SET t.planoComissao.id = NULL ").executeUpdate();
-        em.createQuery("DELETE FROM ParametroComissao t").executeUpdate();
-        em.createQuery("DELETE FROM PlanoComissao t").executeUpdate();
-
         Time palmeiras = new Time(Tenant.SYSBET.get(), "Palmeiras");
         Time coritiba = new Time(Tenant.SYSBET.get(), "Coritiba");
         em.persist(palmeiras);
@@ -292,16 +291,7 @@ public class Global extends GlobalSettings {
 
         em.persist(evento);
 
-        Odd<ResultadoFinalMercado.Posicao> odd = em.find(Odd.class, 1L);
-
-        //Verifica se a odd esta inserida
-        assert(odd.getPosicao() == ResultadoFinalMercado.Posicao.CASA);
-
-        //TODO fazer o insert da resultado exato 0x0
-        //Odd<ResultadoExatoMercado.Posicao> oddExato = em.find(Odd.class, 1L);
-
-        //Confirma se a posicao veio do salvamento do banco
-        //assert(oddExato.getPosicao() == ResultadoExatoMercado.Posicao.c0x0);
+        List<Odd> odds = em.createQuery("SELECT o FROM Odd o ").getResultList();
 
         EventoAposta eventoAposta = new EventoAposta();
         eventoAposta.setEvento(evento);
@@ -311,7 +301,7 @@ public class Global extends GlobalSettings {
 
         em.persist(eventoAposta);
 
-        eventoAposta.addTaxa(new Taxa(Tenant.SYSBET.get(), odd, BigDecimal.ONE, BigDecimal.ZERO));
+        eventoAposta.addTaxa(new Taxa(Tenant.SYSBET.get(), odds.get(0), BigDecimal.ONE, BigDecimal.ZERO));
 
         em.merge(eventoAposta);
 
@@ -357,11 +347,6 @@ public class Global extends GlobalSettings {
         em.persist(planoComissaoBilhete);
 
         usuario.setPlanoComissao(planoComissaoBilhete);
-
-
-
-        //em.merge(planoComissaoBilhete);
-
 
     }
 }

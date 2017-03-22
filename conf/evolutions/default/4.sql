@@ -47,6 +47,7 @@ CREATE TABLE public.odds
   odd_id INTEGER NOT NULL DEFAULT nextval('public.odds_odd_id_seq'),
   codigo VARCHAR(255) NOT NULL,
   dtype VARCHAR(31) NOT NULL,
+  posicao INTEGER,
   CONSTRAINT odds_pkey PRIMARY KEY (odd_id)
 )
 WITH (
