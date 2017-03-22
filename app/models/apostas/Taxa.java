@@ -17,15 +17,22 @@ public class Taxa implements Serializable{
     @Id
     @SequenceGenerator(name="taxas_taxa_id_seq", sequenceName = "taxas_taxa_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "taxas_taxa_id_seq")
-    @Column(name = "taxa_id",updatable = false)
+    @Column(name = "taxa_id")
     private Long id;
 
     @Column(name = "tenant_id")
     private Long tenant;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "odd_id")
     private Odd odd;
+
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name="tenant_id", referencedColumnName = "tenant_id", updatable = false, insertable = false),
+            @JoinColumn(name = "odd_id", referencedColumnName = "tenant_id", updatable = false, insertable = false)
+    })
+    private OddConfiguracao oddConfiguracao;
 
     @Column(name = "taxa")
     private BigDecimal taxa;
@@ -138,5 +145,9 @@ public class Taxa implements Serializable{
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
+    }
+
+    public boolean isFavorita() {
+        return oddConfiguracao.getFavorita();
     }
 }

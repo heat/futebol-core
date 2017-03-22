@@ -1,6 +1,7 @@
 package api.json;
 
 import models.apostas.Odd;
+import models.apostas.mercado.Mercado;
 
 import java.io.Serializable;
 
@@ -25,14 +26,66 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
         return new OddJson(odd.getId(), odd.getNome(), odd.getDescricao(), odd.getDescricao());
     }
 
-
     @Override
     public Odd to() {
-        return new Odd(nome, null, '0', null, descricao, 0L, 0L);
+        return new OddRef(this.id);
     }
+
 
     @Override
     public String type() {
         return null;
+    }
+
+    public class OddRef extends Odd<String> {
+
+        @Override
+        public String getNome() {
+            return "";
+        }
+
+        @Override
+        public Mercado getMercado() {
+            return null;
+        }
+
+        @Override
+        public String getAbreviacao() {
+            return "";
+        }
+
+        @Override
+        public String getDescricao() {
+            return "";
+        }
+
+        public OddRef(Long id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getPosicao() {
+            return "REF";
+        }
+
+        @Override
+        public String getNome() {
+            return null;
+        }
+
+        @Override
+        public Mercado getMercado() {
+            return null;
+        }
+
+        @Override
+        public String getAbreviacao() {
+            return null;
+        }
+
+        @Override
+        public String getDescricao() {
+            return null;
+        }
     }
 }

@@ -45,8 +45,7 @@ public class TaxaJson implements Jsonable, Convertable<Taxa>{
 
     @Override
     public Taxa to() {
-        Odd _odd = Odd.ref(odd);
-        return new Taxa(null, _odd, taxa, linha);
+        return new Taxa(null, null, taxa, linha);
     }
 
     @Override
@@ -67,8 +66,8 @@ public class TaxaJson implements Jsonable, Convertable<Taxa>{
     public static TaxaJson of(Taxa taxa, Long aposta) {
 
         return new TaxaJson(taxa.getId(), taxa.getOdd().getId(), taxa.getTaxa(), taxa.getLinha(), aposta, calendarToString(taxa.getAlteradoEm()),
-                calendarToString(taxa.getCriadoEm()), taxa.getOdd().isLinha(), taxa.getOdd().isFavorita(), taxa.getOdd().getAbreviacao(),
-                taxa.getOdd().getNome(), taxa.getOdd().getMercado());
+                calendarToString(taxa.getCriadoEm()), false, taxa.isFavorita(), taxa.getOdd().getAbreviacao(),
+                taxa.getOdd().getNome(), taxa.getOdd().getMercado().getNome());
     }
 
     public static List<Jsonable> of(List<Taxa> taxas, Long aposta) {

@@ -47,7 +47,7 @@ public class ApostaJson extends EventoJson {
         this.links = Json.newObject();
         this.links.put("taxas", getContext() + "/taxas?aposta=" + id );
         this.quantidadeTaxas = taxas.size();
-        this.favoritas = taxas.stream().filter(p -> p.getOdd().isFavorita()).map(m -> m.getOdd().getId()).collect(Collectors.toList());
+        this.favoritas = taxas.stream().filter(p -> p.isFavorita()).map(m -> m.getOdd().getId()).collect(Collectors.toList());
 
     }
 

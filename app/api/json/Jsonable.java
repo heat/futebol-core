@@ -1,6 +1,7 @@
 package api.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import play.Configuration;
 import play.api.Play;
 

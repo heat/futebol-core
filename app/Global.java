@@ -9,6 +9,10 @@ import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.apostas.mercado.Mercado;
+import models.apostas.mercado.ResultadoExatoMercado;
+import models.apostas.mercado.ResultadoFinalMercado;
+import models.apostas.odd.resultados.termino.CasaResultadoFinalOdd;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.eventos.Campeonato;
@@ -42,6 +46,22 @@ public class Global extends GlobalSettings {
 
             //dummyData(em);
             em.createQuery("DELETE FROM Validador v").executeUpdate();
+            em.createQuery("DELETE FROM Lancamento t").executeUpdate();
+            em.createQuery("DELETE FROM Comissao t").executeUpdate();
+            em.createQuery("DELETE FROM Conta t").executeUpdate();
+            em.createQuery("DELETE FROM Palpite t").executeUpdate();
+            em.createQuery("DELETE FROM Bilhete t").executeUpdate();
+            em.createQuery("DELETE FROM PalpitePin t").executeUpdate();
+            em.createQuery("DELETE FROM Pin t").executeUpdate();
+            em.createQuery("DELETE FROM Taxa t").executeUpdate();
+            em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
+            em.createQuery("DELETE FROM Evento t").executeUpdate();
+            em.createQuery("DELETE FROM Time t").executeUpdate();
+            em.createQuery("DELETE FROM Campeonato t").executeUpdate();
+            em.createQuery("UPDATE Usuario t SET t.planoComissao.id = NULL ").executeUpdate();
+            em.createQuery("DELETE FROM ParametroComissao t").executeUpdate();
+            em.createQuery("DELETE FROM PlanoComissao t").executeUpdate();
+            em.createQuery("DELETE FROM Odd v").executeUpdate();
             // é apenas uam capa pois a delegação da validação esta para o StringRegexValidador
             CampeonatoNomeValidator campeonatoNomeValidator = new CampeonatoNomeValidator(Tenant.SYSBET.get(),
                     CampeonatoInserirProcessador.REGRA,
@@ -231,6 +251,11 @@ public class Global extends GlobalSettings {
                             null);
             em.persist(taxaMaximaApostaPolitica);
 
+            CasaResultadoFinalOdd casaResultadoFinalOdd =
+                    new CasaResultadoFinalOdd("resultado-final.casa");
+
+            em.persist(casaResultadoFinalOdd);
+
 
             dummyData(em);
 
@@ -241,23 +266,6 @@ public class Global extends GlobalSettings {
     }
 
     private void dummyData(EntityManager em) {
-
-        em.createQuery("DELETE FROM Lancamento t").executeUpdate();
-        em.createQuery("DELETE FROM Comissao t").executeUpdate();
-        em.createQuery("DELETE FROM Conta t").executeUpdate();
-        em.createQuery("DELETE FROM Palpite t").executeUpdate();
-        em.createQuery("DELETE FROM Bilhete t").executeUpdate();
-        em.createQuery("DELETE FROM PalpitePin t").executeUpdate();
-        em.createQuery("DELETE FROM Pin t").executeUpdate();
-        em.createQuery("DELETE FROM Taxa t").executeUpdate();
-        em.createQuery("DELETE FROM Odd t").executeUpdate();
-        em.createQuery("DELETE FROM EventoAposta t").executeUpdate();
-        em.createQuery("DELETE FROM Evento t").executeUpdate();
-        em.createQuery("DELETE FROM Time t").executeUpdate();
-        em.createQuery("DELETE FROM Campeonato t").executeUpdate();
-        em.createQuery("UPDATE Usuario t SET t.planoComissao.id = NULL ").executeUpdate();
-        em.createQuery("DELETE FROM ParametroComissao t").executeUpdate();
-        em.createQuery("DELETE FROM PlanoComissao t").executeUpdate();
 
         Time palmeiras = new Time(Tenant.SYSBET.get(), "Palmeiras");
         Time coritiba = new Time(Tenant.SYSBET.get(), "Coritiba");
@@ -283,18 +291,7 @@ public class Global extends GlobalSettings {
 
         em.persist(evento);
 
-        Odd odd = new Odd();
-        odd.setAbreviacao("casa");
-        odd.setDescricao("casa");
-        odd.setMercado("casa");
-        odd.setNome("casa");
-        odd.setPosicao(1L);
-        odd.setPrioridade(1L);
-        odd.setTipoLinha('N');
-        odd.setTenant(Tenant.SYSBET.get());
-        odd.setFavorita(true);
-
-        em.persist(odd);
+        List<Odd> odds = em.createQuery("SELECT o FROM Odd o ").getResultList();
 
         EventoAposta eventoAposta = new EventoAposta();
         eventoAposta.setEvento(evento);
@@ -304,7 +301,7 @@ public class Global extends GlobalSettings {
 
         em.persist(eventoAposta);
 
-        eventoAposta.addTaxa(new Taxa(Tenant.SYSBET.get(), odd, BigDecimal.ONE, BigDecimal.ZERO));
+        eventoAposta.addTaxa(new Taxa(Tenant.SYSBET.get(), odds.get(0), BigDecimal.ONE, BigDecimal.ZERO));
 
         em.merge(eventoAposta);
 
@@ -350,11 +347,6 @@ public class Global extends GlobalSettings {
         em.persist(planoComissaoBilhete);
 
         usuario.setPlanoComissao(planoComissaoBilhete);
-
-
-
-        //em.merge(planoComissaoBilhete);
-
 
     }
 }

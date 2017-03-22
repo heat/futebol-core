@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class AtualizarBilhetesFinalizacaoPartidaProcessador implements Processador<Chave, Evento>{
 
     public static final String REGRA = "palpite.atualizar";

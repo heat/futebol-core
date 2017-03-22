@@ -3,6 +3,7 @@ package api.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.eventos.Evento;
 import play.Configuration;
 import play.api.Play;
 import play.libs.Json;
@@ -17,7 +18,7 @@ public class ObjectJson {
         OBJECT, COLLECTION
     }
 
-    public static <T> JsonBuilder<T> build(String tipo, JsonBuilderPolicy policy) {
+    public static <T extends Jsonable> JsonBuilder<T> build(String tipo, JsonBuilderPolicy policy) {
         switch (policy) {
             case OBJECT:
                 return new ObjectJsonBuilder(tipo);
@@ -27,7 +28,7 @@ public class ObjectJson {
         return new EmptyJsonBuilder<T>(tipo);
     }
 
-    public static class EmptyJsonBuilder<T> extends JsonBuilder<T> {
+    public static class EmptyJsonBuilder<T  extends Jsonable> extends JsonBuilder<T> {
         public EmptyJsonBuilder(String tipo) {
             super(tipo);
         }
@@ -43,7 +44,7 @@ public class ObjectJson {
         }
     }
 
-    public static class ObjectJsonBuilder<T> extends JsonBuilder<T> {
+    public static class ObjectJsonBuilder<T  extends Jsonable> extends JsonBuilder<T> {
 
         T entidade;
 
@@ -70,7 +71,7 @@ public class ObjectJson {
         }
     }
 
-    public static class CollectionJsonBuilder<T> extends JsonBuilder<T> {
+    public static class CollectionJsonBuilder<T  extends Jsonable> extends JsonBuilder<T> {
 
         private List<T> entidades = new ArrayList<T>();
 
@@ -100,13 +101,15 @@ public class ObjectJson {
         }
     }
 
-    public static abstract class JsonBuilder<T> {
+    public static abstract class JsonBuilder<T  extends Jsonable> {
 
         protected final String tipo;
 
         protected Map<String, Object> metas = new HashMap<>();
 
         protected Map<String, List<Jsonable>> relacionamentos = new HashMap<>();
+
+        protected List<RelationalJsonBuilder> relacionamentoBuilders = new ArrayList<>();
 
         protected Map<String, String> links = new HashMap<>();
 
@@ -167,12 +170,27 @@ public class ObjectJson {
                         root.set(tipo, Json.toJson(rels));
                     }
                 });
+
+                relacionamentoBuilders.
+                        stream().map(this::_build)
+                        .forEach(root::setAll);
+
                 return root;
+        }
+
+        private ObjectNode _build(RelationalJsonBuilder builder) {
+            return builder.build();
         }
 
         public JsonBuilder<T> comLink(String tipo, String link) {
             links.put(tipo, link);
             return this;
+        }
+
+        public <V extends Jsonable> RelationalJsonBuilder<V> comRelacionamento(String tipo) {
+            RelationalJsonBuilder<V> rel = new RelationalJsonBuilder<V>(tipo);
+            relacionamentoBuilders.add(rel);
+            return rel;
         }
 
         public JsonBuilder<T> comRelacionamento(String tipo, Jsonable rel) {
@@ -182,6 +200,30 @@ public class ObjectJson {
             }
             relacionamentos.get(tipo).add(rel);
             return this;
+        }
+    }
+
+    public static class RelationalJsonBuilder<T extends Jsonable> extends JsonBuilder<T> {
+
+        List<T> jsons = new ArrayList<T>();
+
+        public RelationalJsonBuilder(String tipo) {
+            super(tipo);
+        }
+
+        @Override
+        public RelationalJsonBuilder<T> comEntidade(T entidade) {
+            jsons.add(entidade);
+            return this;
+        }
+
+        @Override
+        public ObjectNode build() {
+            ObjectNode root = Json.newObject();
+            ArrayNode nodes = Json.newArray();
+            jsons.stream().map(Json::toJson).forEach(nodes::add);
+            root.set(tipo, nodes);
+            return root;
         }
     }
 }

@@ -4,11 +4,7 @@ import com.google.inject.Inject;
 import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
-import models.apostas.EventoAposta;
 import models.apostas.Odd;
-import models.apostas.Odds;
-import models.apostas.Taxa;
-import models.bilhetes.Palpite;
 import models.eventos.Evento;
 import models.eventos.Resultado;
 import models.vo.Chave;
@@ -18,6 +14,7 @@ import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
 
     public static final String REGRA = "palpite.atualizar";
@@ -51,12 +48,12 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
         String oddSelecionada = odd.getNome();
         oddSelecionada = oddSelecionada.toUpperCase();
         switch (oddSelecionada) {
-            case Odds.CASA_RESULTADO_FINAL:
-                return isResultadoCasaCorreto(evento, resultados);
-            case Odds.FORA_RESULTADO_FINAL:
-                return isResultadoForaCorreto(evento, resultados);
-            case Odds.EMPATE:
-                return isResultadoEmpateCorreto(evento, resultados);
+            // case Odds.CASA_RESULTADO_FINAL:
+            //    return isResultadoCasaCorreto(evento, resultados);
+            // case Odds.FORA_RESULTADO_FINAL:
+            //    return isResultadoForaCorreto(evento, resultados);
+            //case Odds.EMPATE:
+            //    return isResultadoEmpateCorreto(evento, resultados);
             default:
                 System.out.println("Lembre de completar os demais cases, MIKE!!!!");
         }
