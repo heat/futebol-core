@@ -7,6 +7,11 @@ import java.io.Serializable;
 @Table(name = "times")
 public class Time implements Serializable {
 
+
+    public static Time of(String nome) {
+        return new Time(nome);
+    }
+
     public enum Situacao {
 
         A("ATIVO"), I("INATIVO");
@@ -36,6 +41,10 @@ public class Time implements Serializable {
 
     protected Time() {
 
+    }
+
+    private Time(String nome) {
+        this(null, nome);
     }
 
     public Time(Long idTime) {

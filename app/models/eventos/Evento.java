@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
+import models.vo.Tenant;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -71,7 +74,7 @@ public class Evento implements Serializable {
 
     @Enumerated(EnumType.STRING )
     @Column(name = "situacao")
-    private Situacao situacao;
+    private Situacao situacao = Situacao.A;
 
     public Evento() {
 
@@ -179,5 +182,47 @@ public class Evento implements Serializable {
 
     public String getNomeFora() {
         return this.getFora().getNome();
+    }
+
+    public static EventoBuilder builder(Tenant tenant) {
+        return new EventoBuilder(tenant);
+    }
+    public static class EventoBuilder {
+        Tenant tenant;
+        Time casa;
+        Time fora;
+        Campeonato campeonato;
+        Date dataEvento;
+
+        private EventoBuilder(Tenant tenant) {
+            this.tenant = tenant;
+        }
+
+        public EventoBuilder comTimeCasa(Time casa) {
+            this.casa = casa;
+            return this;
+        }
+
+        public EventoBuilder comTimeFora(Time fora) {
+            this.fora = fora;
+            return this;
+        }
+
+        public EventoBuilder comCampeonato(Campeonato campeonato) {
+            this.campeonato = campeonato;
+            return this;
+        }
+
+
+        public EventoBuilder em(Date dataEvento) {
+            this.dataEvento = dataEvento;
+            return this;
+        }
+
+        public Evento build() {
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataEvento);
+            return new Evento(tenant.get(), casa, fora, c, campeonato, Situacao.A, Collections.emptyList());
+        }
     }
 }
