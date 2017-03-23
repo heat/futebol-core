@@ -4,7 +4,9 @@ import models.eventos.Evento;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -33,15 +35,18 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "evento_aposta_id", nullable = false, updatable = true, insertable = true)
-    private List<Taxa> taxas;
+    private List<Taxa> taxas = new ArrayList<>();
 
     public EventoAposta() {
         this.taxas = new ArrayList<Taxa>();
     }
 
-    public EventoAposta(Long tenant, boolean permitir, List<Taxa> taxas) {
+    private EventoAposta(Evento evento) {
+        this(evento, true, Collections.emptyList());
+    }
 
-        this.tenant = tenant;
+    public EventoAposta(Evento evento, boolean permitir, List<Taxa> taxas) {
+        this.evento = evento;
         this.permitir = permitir;
         this.taxas = taxas;
     }
@@ -109,5 +114,9 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
+    }
+
+    public static EventoAposta of(Evento e) {
+        return new EventoAposta(e);
     }
 }

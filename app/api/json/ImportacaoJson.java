@@ -1,9 +1,13 @@
 package api.json;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import models.apostas.Taxa;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ImportacaoJson {
 
@@ -92,4 +96,15 @@ public class ImportacaoJson {
     public BigDecimal oddResultadoForaCasa;
     public BigDecimal oddResultadoForaEmpate;
     public BigDecimal oddResultadoForaFora;
+
+    @JsonIgnore
+    private List<Taxa> taxas = new ArrayList<>();
+
+    public void addTaxa(Taxa t) {
+        this.taxas.add(t);
+    }
+
+    public List<Taxa> getTaxas() {
+        return taxas;
+    }
 }

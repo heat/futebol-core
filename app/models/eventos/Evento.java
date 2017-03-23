@@ -192,7 +192,7 @@ public class Evento implements Serializable {
         Time casa;
         Time fora;
         Campeonato campeonato;
-        Date dataEvento;
+        Calendar dataEvento;
 
         private EventoBuilder(Tenant tenant) {
             this.tenant = tenant;
@@ -214,15 +214,13 @@ public class Evento implements Serializable {
         }
 
 
-        public EventoBuilder em(Date dataEvento) {
+        public EventoBuilder em(Calendar dataEvento) {
             this.dataEvento = dataEvento;
             return this;
         }
 
         public Evento build() {
-            Calendar c = Calendar.getInstance();
-            c.setTime(dataEvento);
-            return new Evento(tenant.get(), casa, fora, c, campeonato, Situacao.A, Collections.emptyList());
+            return new Evento(tenant.get(), casa, fora, dataEvento, campeonato, Situacao.A, Collections.emptyList());
         }
     }
 }

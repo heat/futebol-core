@@ -92,4 +92,7 @@ public class OddConfiguracao {
     public Long getPrioridade() {
         return prioridade;
     }
+    public boolean isVisivel() {
+        return situacao == Situacao.A ;
+    }
 }

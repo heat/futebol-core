@@ -7,6 +7,10 @@ import java.io.Serializable;
 @Table(name = "campeonatos")
 public class Campeonato implements Serializable{
 
+    public static Campeonato of(String nome) {
+        return new Campeonato(nome);
+    }
+
     public enum Situacao {
         A("ATIVO"), I("INATIVO");
 
@@ -36,9 +40,8 @@ public class Campeonato implements Serializable{
     protected Campeonato() {
     }
 
-    public Campeonato(Long tenant, String nome) {
+    private Campeonato(String nome) {
         this.nome = nome;
-        this.tenant = tenant;
     }
 
     public Campeonato(Long tenant, String nome, Situacao situacao) {
