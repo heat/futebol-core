@@ -12,6 +12,10 @@ import models.apostas.mercado.ResultadoFinalMercado;
 import models.apostas.odd.resultados.dupla.CasaEmpateApostaDuplaOdd;
 import models.apostas.odd.resultados.dupla.CasaForaApostaDuplaOdd;
 import models.apostas.odd.resultados.dupla.EmpateForaApostaDuplaOdd;
+import models.apostas.odd.resultados.gols.AbaixoNumeroGolsOdd;
+import models.apostas.odd.resultados.gols.AcimaNumeroGolsOdd;
+import models.apostas.odd.resultados.handicap.CasaHandicapAsiaticoOdd;
+import models.apostas.odd.resultados.handicap.ForaHandicapAsiaticoOdd;
 import models.apostas.odd.resultados.termino.CasaResultadoFinalOdd;
 import models.apostas.odd.resultados.termino.EmpateResultadoFinalOdd;
 import models.apostas.odd.resultados.termino.ForaResultadoFinalOdd;
@@ -278,6 +282,22 @@ public class Global extends GlobalSettings {
             CasaForaApostaDuplaOdd casaForaApostaDuplaOdd =
                     new CasaForaApostaDuplaOdd("aposta-dupla.casa_fora");
             em.persist(casaForaApostaDuplaOdd);
+
+            CasaHandicapAsiaticoOdd casaHandicapAsiaticoOdd =
+                    new CasaHandicapAsiaticoOdd("handicap-asiatico.casa");
+            em.persist(casaHandicapAsiaticoOdd);
+
+            ForaHandicapAsiaticoOdd foraHandicapAsiaticoOdd =
+                    new ForaHandicapAsiaticoOdd("handicap-asiatico.fora");
+            em.persist(foraHandicapAsiaticoOdd);
+
+            AcimaNumeroGolsOdd acimaNumeroGolsOdd =
+                    new AcimaNumeroGolsOdd("numero-gols.acima");
+            em.persist(acimaNumeroGolsOdd);
+
+            AbaixoNumeroGolsOdd abaixoNumeroGolsOdd =
+                    new AbaixoNumeroGolsOdd("numero-gols.abaixo");
+            em.persist(abaixoNumeroGolsOdd);
 
 
             dummyData(em);

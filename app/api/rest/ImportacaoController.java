@@ -186,9 +186,8 @@ public class ImportacaoController extends ApplicationController {
                                     });
 
                                 }
-
-                                importacao.setSituacao(Importacao.Situacao.ATUALIZADO);
-
+                                importacao.setAlteradoEm(Calendar.getInstance());
+                                importacao.setSituacao(Importacao.Situacao.A);
                             }
 
                         } catch (InterruptedException e) {
