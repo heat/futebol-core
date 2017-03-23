@@ -85,11 +85,11 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
 
     }
 
-    public List<EventoAposta> buscarPorTaxas(Long tenant, List<Long> idsTaxas) {
+    public List<EventoAposta> buscarPorTaxas(Tenant tenant, List<Long> idsTaxas) {
 
         EntityManager em = jpaApi.em();
         Query query = em.createQuery("SELECT ea FROM EventoAposta ea WHERE ea.tenant = :tenant and EXISTS (SELECT t FROM Taxa t WHERE t.id IN :ids) ");
-        query.setParameter("tenant", tenant);
+        query.setParameter("tenant", tenant.get());
         query.setParameter("ids", idsTaxas);
         return query.getResultList();
 
