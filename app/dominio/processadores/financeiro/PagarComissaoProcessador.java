@@ -38,8 +38,8 @@ public class PagarComissaoProcessador implements Processador<Conta, Comissao> {
         lancamento.setDataLancamento(Calendar.getInstance());
         lancamento.setValor(comissao.getValor());
         lancamento.setOrigemComissao(comissao);
-        Saldo saldo = new Saldo(BigDecimal.TEN);
-        lancamento.setSaldo(saldo);
+        BigDecimal saldoAtual = conta.getSaldo().getSaldo().add(comissao.getValor());
+        lancamento.setSaldo(new Saldo(saldoAtual));
         conta.addLancamento(lancamento);
 
         contaRepository.atualizar(conta);

@@ -30,20 +30,17 @@ public class LancarVendaBilheteProcessador implements Processador<Conta, Bilhete
     }
 
     @Override
-    public CompletableFuture<Bilhete> executar(Conta chave, Bilhete bilhete, List<Validador> validadores) throws ValidadorExcpetion {
+    public CompletableFuture<Bilhete> executar(Conta conta, Bilhete bilhete, List<Validador> validadores) throws ValidadorExcpetion {
 
         CompraBilheteCredito lancamento = new CompraBilheteCredito();
         lancamento.setDataLancamento(Calendar.getInstance());
         lancamento.setValor(bilhete.getValorAposta());
         lancamento.setOrigemBilhete(bilhete);
-        //lancamento.setConta(chave.getId());
-        Saldo saldo = new Saldo(BigDecimal.TEN);
-        lancamento.setSaldo(saldo);
+        BigDecimal saldoAtual = conta.getSaldo().getSaldo().subtract(bilhete.getValorAposta());
+        lancamento.setSaldo(new Saldo(saldoAtual));
+        conta.addLancamento(lancamento);
 
-        chave.addLancamento(lancamento);
-
-        contaRepository.atualizar(chave);
-        //lancamentoRepository.inserir(lancamento);
+        contaRepository.atualizar(conta);
 
         return CompletableFuture.completedFuture(bilhete);
     }

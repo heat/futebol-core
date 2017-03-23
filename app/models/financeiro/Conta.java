@@ -4,6 +4,7 @@ import models.seguranca.Usuario;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Conta {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "conta_id", nullable = false, updatable = true, insertable = true)
-    private List<Lancamento> lancamentos;
+    private List<Lancamento> lancamentos = new ArrayList<>();
 
     public Conta() {
     }
@@ -65,10 +66,12 @@ public class Conta {
 
     public Saldo getSaldo(){
         BigDecimal saldo = BigDecimal.ZERO;
-        saldo.add(this.lancamentos.stream()
-                .sorted()
-                .map(l -> l.getSaldo().getSaldo())
-                .reduce((first, second) -> second).get());
+        if (!this.lancamentos.isEmpty()){
+            saldo.add(this.lancamentos.stream()
+                    .sorted()
+                    .map(l -> l.getSaldo().getSaldo())
+                    .reduce((first, second) -> second).get());
+        }
 
         return new Saldo(saldo);
     }
