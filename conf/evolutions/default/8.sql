@@ -60,6 +60,7 @@ CREATE TABLE public.importacao
   importacao_id INTEGER NOT NULL DEFAULT nextval('public.importacao_id_seq'),
   chave VARCHAR(255) NOT NULL,
   criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  alterado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   tenant_id INTEGER NOT NULL,
   situacao CHAR(1) NOT NULL,
   variacao DECIMAL(10,2) NOT NULL,

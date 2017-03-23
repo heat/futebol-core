@@ -23,11 +23,11 @@ public class Pin {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "criado_em")
-    private Calendar criadoEm;
+    private Calendar criadoEm = Calendar.getInstance();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "expira_em")
-    private Calendar expiraEm;
+    private Calendar expiraEm = Calendar.getInstance();
 
     @Column(name = "tenant_id")
     private Long tenant;

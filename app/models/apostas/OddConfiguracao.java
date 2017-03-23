@@ -1,6 +1,7 @@
 package models.apostas;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "configuracao_odd")
-public class OddConfiguracao {
+public class OddConfiguracao implements Serializable {
 
     enum Situacao {
         A("ATIVA");

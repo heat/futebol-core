@@ -11,7 +11,7 @@ public class Importacao implements Serializable {
 
     public enum Situacao {
 
-        ATUALIZADO("ATUALIZADO"), CRIADO("CRIADO"), FALHA("FALHA");
+        A("ATUALIZADO"), C("CRIADO"), F("FALHA");
 
         private String situacao;
 
@@ -35,7 +35,11 @@ public class Importacao implements Serializable {
     @Column(name = "criado_em")
     private Calendar criadoEm = Calendar.getInstance();
 
-    private Situacao situacao = Situacao.CRIADO;
+    @Column(name = "alterado_em")
+    private Calendar alteradoEm = Calendar.getInstance();
+
+    @Enumerated(EnumType.STRING)
+    private Situacao situacao = Situacao.C;
 
     private BigDecimal variacao;
 
@@ -98,5 +102,17 @@ public class Importacao implements Serializable {
 
     public void setTenant(Long tenant) {
         this.tenant = tenant;
+    }
+
+    public Long getEvento() {
+        return evento;
+    }
+
+    public Calendar getAlteradoEm() {
+        return alteradoEm;
+    }
+
+    public void setAlteradoEm(Calendar alteradoEm) {
+        this.alteradoEm = alteradoEm;
     }
 }

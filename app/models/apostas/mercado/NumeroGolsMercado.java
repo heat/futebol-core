@@ -2,8 +2,12 @@ package models.apostas.mercado;
 
 public class NumeroGolsMercado extends Mercado {
 
-    public NumeroGolsMercado(String nome, TipoMercado tipo) {
-        super(nome, tipo);
+    private static final String NOME = "Número de Gols";
+
+    private static final TipoMercado TIPO = TipoMercado.L;
+
+    public NumeroGolsMercado() {
+        super(NOME, TIPO);
     }
 
     public enum Posicao {

@@ -68,9 +68,6 @@ public class PinController extends ApplicationController {
 
         Pin pin = new Pin();
         pin.setCliente(pinJson.cliente);
-        pin.setCriadoEm(Calendar.getInstance());
-        pin.setExpiraEm(Calendar.getInstance());
-        pin.getExpiraEm().add(Calendar.MINUTE, 60);
         pin.setValorAposta(pinJson.valorAposta);
 
         pinJson.palpites.forEach(p -> pin.addPalpitesPin(new PalpitePin(p)));
