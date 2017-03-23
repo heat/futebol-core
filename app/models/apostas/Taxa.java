@@ -30,7 +30,7 @@ public class Taxa implements Serializable{
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name="tenant_id", referencedColumnName = "tenant_id", updatable = false, insertable = false),
-            @JoinColumn(name = "odd_id", referencedColumnName = "tenant_id", updatable = false, insertable = false)
+            @JoinColumn(name = "odd_id", referencedColumnName = "odd_id", updatable = false, insertable = false)
     })
     private OddConfiguracao oddConfiguracao;
 
