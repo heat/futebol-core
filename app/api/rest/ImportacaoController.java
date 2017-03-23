@@ -3,6 +3,7 @@ package api.rest;
 import api.json.ImportacaoJson;
 import api.json.PinJson;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
@@ -32,6 +33,7 @@ import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
+import play.libs.concurrent.HttpExecutionContext;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import play.libs.ws.WSResponse;
@@ -40,14 +42,21 @@ import play.mvc.Http;
 import play.mvc.Result;
 import repositories.*;
 
+import javax.annotation.processing.Completion;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class ImportacaoController extends ApplicationController {
 
@@ -67,6 +76,9 @@ public class ImportacaoController extends ApplicationController {
     EventoApostaInserirProcessador eventoApostaInserirProcessador;
     ImportacaoInserirProcessador importacaoInserirProcessador;
 
+
+    @Inject
+    HttpExecutionContext ec;
 
     @Inject
     public ImportacaoController(PlaySessionStore playSessionStore, ValidadorRepository validadorRepository,
@@ -95,95 +107,141 @@ public class ImportacaoController extends ApplicationController {
         this.importacaoInserirProcessador = importacaoInserirProcessador;
     }
 
+    public CompletionStage<Result> testar() {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return "hello world";
+        }, ec.current())
+        .thenCompose( b -> {
+            return jpaApi.withTransaction( em -> {
+               return CompletableFuture.completedFuture(em);
+            });
+        }).thenApply( em -> {
+            //TODO fazer alguma coisa o o em
+            return ok("teste");
+        });
+    }
+
+
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir() {
+    public CompletionStage<Result> inserir() {
 
         JsonNode jsonNode = request().body().asJson();
         String chave = jsonNode.findPath("chave").textValue();
         BigDecimal variacao = jsonNode.findPath("variacao").decimalValue();
 
+        //TODO transformar isso em um repositorio para poder usar o cache
         WSRequest request = ws.url("http://oddfeed.app.sysbet.in/api/odds")
                 .setHeader("X-SysBetKey", "DEMO")
                 .setContentType("application/json");
 
 
+        final Tenant tenant = getTenant();
+
+        final List<Odd> oddsConfiguracaos = oddRepository.todosConfiguracao(tenant).stream()
+                .filter( c -> c.isVisivel())
+                .map( c -> c.getOdd())
+                .collect(Collectors.toList());
+
         CompletionStage<JsonNode> promise = request.get().thenApply(WSResponse::asJson);
-        Tenant tenant = getTenant();
-        List<Validador> timesValidadores = validadorRepository.todos(getTenant(), TimeInserirProcessador.REGRA);
-        List<Validador> campeonatosValidadores = validadorRepository.todos(getTenant(), CampeonatoInserirProcessador.REGRA);
-        List<Validador> eventosValidadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
-        List<Validador> eventosApostasValidadores = validadorRepository.todos(getTenant(), EventoApostaInserirProcessador.REGRA);
-        List<Validador> importacaoValidadores = validadorRepository.todos(getTenant(), ImportacaoInserirProcessador.REGRA);
 
-        promise.thenApply(p -> {
-            jpaApi.withTransaction(em -> {
-                p.path("data").forEach(d -> {
-                    ImportacaoJson json = Json.fromJson(d, ImportacaoJson.class);
-
-                    if (json.codigo.equals(chave)){
-                        try {
-
-                            Optional<Importacao> importacaoOptional = importacaoRepository.buscar(tenant, chave);
-
-                            if (!importacaoOptional.isPresent()){
-                                Time casa = timeInserirProcessador.executar(tenant, new Time(tenant.get(), json.time1), timesValidadores).get();
-                                Time fora = timeInserirProcessador.executar(tenant, new Time(tenant.get(), json.time2), timesValidadores).get();
-                                Campeonato campeonato = campeonatoInserirProcessador.executar(tenant, new Campeonato(tenant.get(), json.campeonato), campeonatosValidadores).get();
-
-                                Evento evento = new Evento();
-                                evento.setTenant(tenant.get());
-                                evento.setCasa(casa);
-                                evento.setFora(fora);
-                                evento.setCampeonato(campeonato);
-                                evento.setDataEvento(json.dataJogo);
-
-                                evento = eventoInserirProcessador.executar(tenant, evento, eventosValidadores).get();
-
-                                EventoAposta eventoAposta = new EventoAposta();
-                                eventoAposta.setEvento(evento);
-                                eventoAposta.setTenant(tenant.get());
-
-
-                                List<OddConfiguracao> oddsConfiguracaos = oddRepository.todosConfiguracao(tenant);
-                                List<Odd> odds = oddsConfiguracaos.stream().map(o -> o.getOdd()).collect(Collectors.toList());
-
-                                ConversorOdd conversorOdd = new ConversorOdd(odds);
-                                //for each para as taxas
-                                d.fields().forEachRemaining( (n) -> {
-                                    String oddName = n.getKey();
-                                    Optional<Odd> odd = conversorOdd.from(oddName);
-                                    if(odd.isPresent()) {
-                                        Odd oddPresente = odd.get();
-                                        BigDecimal valorTaxa = BigDecimal.valueOf(n.getValue().asDouble());
-                                        Taxa t = new Taxa(tenant.get(), oddPresente, valorTaxa, conversorOdd.linha(oddName) );
-                                        eventoAposta.addTaxa(t);
-                                    }
-                                });
-
-                                eventoApostaInserirProcessador.executar(tenant, eventoAposta, eventosApostasValidadores);
-
-                                Importacao importacao = new Importacao(tenant.get(), chave, variacao, evento.getId());
-                                importacaoInserirProcessador.executar(tenant, importacao, importacaoValidadores);
-                            }
-
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                });
-                return null;
-            });
-
-            return p;
+        CompletionStage<Result> result = promise
+                //pega a lista de importacoes
+                .thenApply( j -> j.get("data"))
+                .thenApply(this::asStream)
+                .thenApply( v -> fromJson(v, oddsConfiguracaos, i -> v.equals(chave)))
+                .thenApply(importacoes -> importacoes.findAny())
+                .thenApply( j -> {
+                    if(!j.isPresent())
+                        throw new RejectedExecutionException("Sem jogo para importar");
+                    return j.get();
+                })
+                .thenCompose(this::iserirEvento)
+                //insere evento
+                .thenCompose( ev -> jpaApi.withTransaction( em -> eventoApostaInserirProcessador.
+                        executar(tenant, ev, validadorRepository.todos(tenant, eventoApostaInserirProcessador.REGRA))))
+                .thenApply( ev -> {
+                    Importacao importacao = new Importacao(tenant.get(), chave, variacao, ev.getId());
+                    return importacaoInserirProcessador
+                            //inserir ou atualizar
+                            .executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA));
+                })
+                // response
+                .handle( (r, e) -> {
+                    Optional _r = Optional.ofNullable(r);
+                    Optional _e = Optional.ofNullable(r);
+                    if(_e.isPresent())
+                        return internalServerError(e.getMessage());
+                    return ok(Json.toJson(r));
         });
-
-        return null;
+        return result;
 
     }
 
+    private Stream<ImportacaoJson> fromJson(Stream<JsonNode> stream, List<Odd> odds, Predicate<ImportacaoJson> f) {
+        Tenant tenant = getTenant();
+        ConversorOdd conversorOdd = new ConversorOdd(odds);
+        return  stream.map( i ->  {
+            ImportacaoJson j = Json.fromJson(i, ImportacaoJson.class);
+            if(f.test(j))
+
+            i.fields().forEachRemaining( (n) -> {
+                String oddName = n.getKey();
+                Optional<Odd> odd = conversorOdd.from(oddName);
+                if(odd.isPresent()) {
+                    Odd oddPresente = odd.get();
+                    BigDecimal valorTaxa = BigDecimal.valueOf(n.getValue().asDouble());
+                    Taxa t = new Taxa(tenant.get(), oddPresente, valorTaxa, conversorOdd.linha(oddName) );
+                    j.addTaxa(t);
+                }
+            });
+            return j;
+        }).filter(f);
+    }
+
+    private CompletionStage<EventoAposta> iserirEvento(ImportacaoJson j) {
+            Tenant tenant = getTenant();
+            EventoAposta aposta = jpaApi.withTransaction( em -> {
+                Evento.EventoBuilder builder = Evento.builder(tenant)
+                        .em(j.dataJogo);
+                try {
+                    EventoAposta _a = CompletableFuture.allOf(
+                            //insere casa
+                            timeInserirProcessador.
+                                    executar(tenant, Time.of(j.time1), validadorRepository.todos(tenant, timeInserirProcessador.REGRA))
+                                    .thenApply( t -> builder.comTimeCasa(t)),
+                            //insere fora
+                            timeInserirProcessador
+                                    .executar(tenant, Time.of(j.time2), validadorRepository.todos(tenant, timeInserirProcessador.REGRA))
+                                    .thenApply( f -> builder.comTimeFora(f)),
+                            campeonatoInserirProcessador
+                                    .executar(tenant, Campeonato.of(j.campeonato), validadorRepository.todos(tenant, campeonatoInserirProcessador.REGRA))
+                                    .thenAccept(c -> builder.comCampeonato(c)))
+                            .thenApply( v -> builder.build())
+                            //insere um evento
+                            .thenCompose( e -> eventoInserirProcessador.executar(tenant, e, validadorRepository.todos(tenant, eventoInserirProcessador.REGRA)))
+                            //evento salvo
+                            .thenApply( e -> EventoAposta.of(e))
+                            .get();
+                    return _a;
+                } catch (InterruptedException e) {
+                    throw new RejectedExecutionException(e);
+                } catch (ExecutionException e) {
+                    throw new RejectedExecutionException(e);
+                }
+            });
+            aposta.setTaxas(j.getTaxas());
+        return CompletableFuture.completedFuture(aposta);
+    }
+
+    private Stream<JsonNode> asStream(JsonNode jsonNode) {
+        return StreamSupport.stream(jsonNode.spliterator(), false);
+    }
 }
