@@ -44,10 +44,9 @@ public class Campeonato implements Serializable{
         this.nome = nome;
     }
 
-    public Campeonato(Long tenant, String nome, Situacao situacao) {
+    public Campeonato(Long tenant, String nome) {
         this.nome = nome;
         this.tenant = tenant;
-        this.situacao = situacao;
     }
 
     public Long getId() {
