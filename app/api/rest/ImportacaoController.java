@@ -166,6 +166,29 @@ public class ImportacaoController extends ApplicationController {
 
                                 Importacao importacao = new Importacao(tenant.get(), chave, variacao, evento.getId());
                                 importacaoInserirProcessador.executar(tenant, importacao, importacaoValidadores);
+                            } else {
+
+                                Importacao importacao = importacaoOptional.get();
+                                ConversorOdd conversorOdd = new ConversorOdd();
+                                Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscarPorEvento(tenant, importacao.getEvento());
+
+                                if (eventoApostaOptional.isPresent()){
+
+                                    EventoAposta eventoAposta = eventoApostaOptional.get();
+
+                                    eventoAposta.getTaxas().forEach(t -> {
+                                        d.fields().forEachRemaining( (n) -> {
+                                            if (t.getOdd().getCodigo().equals(conversorOdd.getKeyFromValue(n.getKey()))){
+                                                BigDecimal valorTaxa = BigDecimal.valueOf(n.getValue().asDouble());
+                                                t.setTaxa(valorTaxa);
+                                            }
+                                        });
+                                    });
+
+                                }
+
+                                importacao.setSituacao(Importacao.Situacao.ATUALIZADO);
+
                             }
 
                         } catch (InterruptedException e) {

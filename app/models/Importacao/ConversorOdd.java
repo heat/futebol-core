@@ -20,13 +20,12 @@ public class ConversorOdd {
 
     public ConversorOdd(List<Odd> odds) {
         this.odds = odds;
-        map.put("oddCasa", "resultado-final.casa");
-        map.put("oddEmpate", "resultado-final.empate");
-        map.put("oddFora", "resultado-final.fora");
-        map.put("oddCasaEmpate", "aposta-dupla.casa_empate");
-        map.put("oddForaEmpate", "aposta-dupla.empate_fora");
-        map.put("oddCasaFora", "aposta-dupla.casa_fora");
+        this.carregaMap();
 
+    }
+
+    public ConversorOdd() {
+        this.carregaMap();
     }
 
     public Optional<Odd> from(String nome) {
@@ -39,5 +38,23 @@ public class ConversorOdd {
         if(!mapLinha.containsKey(oddName))
             return BigDecimal.ZERO;
         return null;
+    }
+
+    public Optional<String> getKeyFromValue(String value) {
+        for (String o : map.keySet()) {
+            if (map.get(o).equals(value)) {
+                return Optional.of(o);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private void carregaMap(){
+        map.put("oddCasa", "resultado-final.casa");
+        map.put("oddEmpate", "resultado-final.empate");
+        map.put("oddFora", "resultado-final.fora");
+        map.put("oddCasaEmpate", "aposta-dupla.casa_empate");
+        map.put("oddForaEmpate", "aposta-dupla.empate_fora");
+        map.put("oddCasaFora", "aposta-dupla.casa_fora");
     }
 }

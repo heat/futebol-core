@@ -60,6 +60,21 @@ public class EventoApostaRepository implements Repository<Long, EventoAposta>{
         }
     }
 
+    public Optional<EventoAposta> buscarPorEvento(Tenant tenant, Long idEvento) {
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<EventoAposta> query = em.createQuery("SELECT ea FROM EventoAposta ea WHERE ea.tenant = :tenant and ea.evento.id = :idEvento",
+                    EventoAposta.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("idEvento", idEvento);
+            return Optional.ofNullable(query.getSingleResult());
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     public List<EventoAposta> buscar(Long tenant, List<Long> ids) {
 
         EntityManager em = jpaApi.em();

@@ -99,4 +99,8 @@ public class Importacao implements Serializable {
     public void setTenant(Long tenant) {
         this.tenant = tenant;
     }
+
+    public Long getEvento() {
+        return evento;
+    }
 }
