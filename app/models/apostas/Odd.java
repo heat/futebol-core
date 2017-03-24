@@ -67,5 +67,9 @@ public abstract class Odd<P> implements Serializable, Posicionavel<P> {
         return result;
     }
 
-    public abstract Calculadora getCalculadora(Taxa taxa);
+    public Calculadora getCalculadora(Taxa taxa) {
+        //valor default para não de erro de compilação
+        return  resultado -> false;
+    };
+
 }
