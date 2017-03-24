@@ -1,9 +1,12 @@
 package models.apostas.odd.resultados.termino;
 
+import models.apostas.Calculadora;
 import models.apostas.Odd;
+import models.apostas.Taxa;
 import models.apostas.mercado.Mercado;
 import models.apostas.mercado.ResultadoFinalMercado;
 import models.apostas.odd.Posicionavel;
+import models.eventos.Resultado;
 
 import javax.persistence.Entity;
 
@@ -46,5 +49,18 @@ public class CasaResultadoFinalOdd extends Odd<ResultadoFinalMercado.Posicao> {
     @Override
     public ResultadoFinalMercado.Posicao getPosicao() {
         return ResultadoFinalMercado.Posicao.CASA;
+    }
+
+    @Override
+    public Calculadora getCalculadora(Taxa taxa) {
+
+        return new CalculadoraM();
+    }
+
+    public class CalculadoraM implements Calculadora<Resultado> {
+        @Override
+        public boolean calcular(Resultado resultado) {
+            return false;
+        }
     }
 }

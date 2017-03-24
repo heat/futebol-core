@@ -2,6 +2,7 @@ package models.apostas;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.eventos.Resultado;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 
@@ -149,5 +150,12 @@ public class Taxa implements Serializable{
 
     public boolean isFavorita() {
         return oddConfiguracao.getFavorita();
+    }
+
+    public <V extends Resultado> boolean calcular(V resultado) {
+        Calculadora calc = getOdd().getCalculadora(this);
+
+        boolean b = calc.calcular(resultado);
+        return b;
     }
 }

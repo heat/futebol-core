@@ -66,4 +66,6 @@ public abstract class Odd<P> implements Serializable, Posicionavel<P> {
         result = 31 * result + (codigo != null ? codigo.hashCode() : 0);
         return result;
     }
+
+    public abstract Calculadora getCalculadora(Taxa taxa);
 }
