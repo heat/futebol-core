@@ -48,10 +48,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -145,44 +142,45 @@ public class ImportacaoController extends ApplicationController {
 
         final Tenant tenant = getTenant();
 
+        final Executor ex = ec.current();
+
         final List<Odd> oddsConfiguracaos = oddRepository.todosConfiguracao(tenant).stream()
                 .filter( c -> c.isVisivel())
                 .map( c -> c.getOdd())
                 .collect(Collectors.toList());
 
-        CompletionStage<JsonNode> promise = request.get().thenApply(WSResponse::asJson);
+        CompletionStage<JsonNode> promise = request.get().thenApplyAsync(WSResponse::asJson, ex);
 
         CompletionStage<Result> result = promise
                 //pega a lista de importacoes
                 .thenApply( j -> j.get("data"))
                 .thenApply(this::asStream)
-                .thenApply( v -> fromJson(v, oddsConfiguracaos, i -> v.equals(chave)))
+                .thenApplyAsync( v -> fromJson(v, oddsConfiguracaos, i -> v.equals(chave)), ex)
                 .thenApply(importacoes -> importacoes.findAny())
                 .thenApply( j -> {
                     if(!j.isPresent())
                         throw new RejectedExecutionException("Sem jogo para importar");
                     return j.get();
                 })
-                .thenCompose(this::iserirEvento)
+                .thenComposeAsync(this::iserirEvento, ex)
                 //insere evento
-                .thenCompose( ev -> jpaApi.withTransaction( em -> eventoApostaInserirProcessador.
-                        executar(tenant, ev, validadorRepository.todos(tenant, eventoApostaInserirProcessador.REGRA))))
-                .thenApply( ev -> {
+                .thenComposeAsync( ev -> jpaApi.withTransaction( em -> eventoApostaInserirProcessador.
+                        executar(tenant, ev, validadorRepository.todos(tenant, eventoApostaInserirProcessador.REGRA))), ex)
+                .thenApplyAsync( ev -> {
                     Importacao importacao = new Importacao(tenant.get(), chave, variacao, ev.getId());
                     return importacaoInserirProcessador
                             //inserir ou atualizar
                             .executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA));
-                })
+                }, ex)
                 // response
-                .handle( (r, e) -> {
+                .handleAsync( (r, e) -> {
                     Optional _r = Optional.ofNullable(r);
                     Optional _e = Optional.ofNullable(r);
                     if(_e.isPresent())
                         return internalServerError(e.getMessage());
                     return ok(Json.toJson(r));
-        });
+        }, ex);
         return result;
-
     }
 
     private Stream<ImportacaoJson> fromJson(Stream<JsonNode> stream, List<Odd> odds, Predicate<ImportacaoJson> f) {
