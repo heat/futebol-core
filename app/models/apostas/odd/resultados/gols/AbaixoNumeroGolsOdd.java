@@ -1,10 +1,14 @@
 package models.apostas.odd.resultados.gols;
 
+import models.apostas.Calculadora;
 import models.apostas.Odd;
+import models.apostas.Taxa;
 import models.apostas.mercado.Mercado;
 import models.apostas.mercado.NumeroGolsMercado;
+import models.eventos.futebol.ResultadoFutebol;
 
 import javax.persistence.Entity;
+import java.math.BigDecimal;
 
 @Entity
 public class AbaixoNumeroGolsOdd extends Odd<NumeroGolsMercado.Posicao> {
@@ -45,5 +49,20 @@ public class AbaixoNumeroGolsOdd extends Odd<NumeroGolsMercado.Posicao> {
     @Override
     public NumeroGolsMercado.Posicao getPosicao() {
         return NumeroGolsMercado.Posicao.ABAIXO;
+    }
+
+    public class CalculadoraL implements Calculadora<ResultadoFutebol> {
+        final BigDecimal linha;
+        public CalculadoraL(BigDecimal linha) {
+            this.linha = linha;
+        }
+
+        @Override
+        public boolean calcular(ResultadoFutebol resultado) {
+            BigDecimal pontosCasa = BigDecimal.valueOf(resultado.casaSegundoTempo.getPontos());
+            BigDecimal pontosFora = BigDecimal.valueOf(resultado.foraSegundoTempo.getPontos());
+
+            return (pontosCasa.add(pontosFora)).compareTo(linha) < 1;
+        }
     }
 }

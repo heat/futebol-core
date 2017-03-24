@@ -8,6 +8,7 @@ import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -62,5 +63,16 @@ public class PalpiteRepository implements Repository<Long, Palpite> {
         }
 
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
+    }
+
+    public List<Palpite> buscarPorTaxas(Tenant tenant, List<Long> taxas) {
+
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("SELECT p FROM Palpite WHERE p.tenant = :tenant AND p.taxa IN :taxas");
+        query.setParameter("tenant", tenant);
+        query.setParameter("taxas", taxas);
+
+        return query.getResultList();
+
     }
 }

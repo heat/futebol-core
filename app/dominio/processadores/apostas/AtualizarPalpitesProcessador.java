@@ -4,15 +4,22 @@ import com.google.inject.Inject;
 import dominio.processadores.Processador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.apostas.EventoAposta;
 import models.apostas.Odd;
+import models.apostas.Taxa;
+import models.bilhetes.Palpite;
 import models.eventos.Evento;
 import models.eventos.Resultado;
+import models.eventos.ResultadoEvento;
 import models.vo.Chave;
 import repositories.EventoApostaRepository;
+import repositories.PalpiteRepository;
 
 import javax.persistence.NoResultException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Deprecated
 public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
@@ -20,10 +27,12 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
     public static final String REGRA = "palpite.atualizar";
 
     EventoApostaRepository eventoApostaRepository;
+    PalpiteRepository palpiteRepository;
 
     @Inject
-    public AtualizarPalpitesProcessador(EventoApostaRepository eventoApostaRepository) {
+    public AtualizarPalpitesProcessador(EventoApostaRepository eventoApostaRepository, PalpiteRepository palpiteRepository) {
         this.eventoApostaRepository = eventoApostaRepository;
+        this.palpiteRepository = palpiteRepository;
     }
 
     @Override
@@ -34,8 +43,19 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
         }
 
         List<Resultado> resultados = evento.getResultados();
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscarPorEvento(chave.getTenant(), evento.getId());
+        if (!eventoApostaOptional.isPresent()){
+            throw new ValidadorExcpetion("Evento Aposta não encontrado.");
+        }
+
+        EventoAposta eventoAposta = eventoApostaOptional.get();
+        List<Long> taxas = eventoAposta.getTaxas().stream().map(e -> e.getId()).collect(Collectors.toList());
+        ResultadoEvento resultadoEvento = evento.getResultadoFutebol();
 
         try{
+
+            List<Palpite> palpites = palpiteRepository.buscarPorTaxas(chave.getTenant(), taxas);
+            palpites.forEach(p -> p.calcular(resultadoEvento));
         }
         catch(NoResultException e){
             throw new ValidadorExcpetion(e.getMessage());

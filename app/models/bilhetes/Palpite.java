@@ -1,6 +1,7 @@
 package models.bilhetes;
 
 import models.apostas.Taxa;
+import models.eventos.ResultadoEvento;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -120,5 +121,11 @@ public class Palpite implements Serializable{
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
+    }
+
+    public void calcular(ResultadoEvento resultadoEvento) {
+        Status status = getTaxa().calcular(resultadoEvento)? Status.C : Status.E;
+        setStatus(status);
+
     }
 }

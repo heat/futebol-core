@@ -70,7 +70,6 @@ public class ResultadoController extends ApplicationController {
         body.get("resultados").forEach( resultadoJson -> {
             ResultadoJson t = Json.fromJson(resultadoJson, ResultadoJson.class);
             resultados.add(t.to());
-            System.out.println(t);
         });
 
         if(!Optional.ofNullable(resultados).isPresent())

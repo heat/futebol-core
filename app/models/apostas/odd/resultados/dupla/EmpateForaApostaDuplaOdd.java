@@ -1,8 +1,11 @@
 package models.apostas.odd.resultados.dupla;
 
+import models.apostas.Calculadora;
 import models.apostas.Odd;
+import models.apostas.Taxa;
 import models.apostas.mercado.ApostaDuplaMercado;
 import models.apostas.mercado.Mercado;
+import models.eventos.futebol.ResultadoFutebol;
 
 import javax.persistence.Entity;
 
@@ -45,5 +48,20 @@ public class EmpateForaApostaDuplaOdd extends Odd<ApostaDuplaMercado.Posicao> {
     @Override
     public ApostaDuplaMercado.Posicao getPosicao() {
         return ApostaDuplaMercado.Posicao.EMPATE_FORA;
+    }
+
+    @Override
+    public Calculadora getCalculadora(Taxa taxa) {
+
+        return new CalculadoraM();
+    }
+
+    public class CalculadoraM implements Calculadora<ResultadoFutebol> {
+        @Override
+        public boolean calcular(ResultadoFutebol resultado) {
+            Long pontosCasa = resultado.casaSegundoTempo.getPontos();
+            Long pontosFora = resultado.foraSegundoTempo.getPontos();
+            return (pontosCasa < pontosFora) || (pontosCasa == pontosFora);
+        }
     }
 }
