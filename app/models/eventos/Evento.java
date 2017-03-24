@@ -2,6 +2,7 @@ package models.eventos;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.eventos.futebol.ResultadoFutebol;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
 import models.vo.Tenant;
@@ -12,6 +13,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "eventos")
@@ -182,6 +184,22 @@ public class Evento implements Serializable {
 
     public String getNomeFora() {
         return this.getFora().getNome();
+    }
+
+
+    public ResultadoFutebol getResultadoFutebol() {
+        Long casa = getCasa().getId();
+        Long fora = getFora().getId();
+        Stream<Resultado> stream = getResultados().stream();
+        Resultado casaIntervalo = stream.filter( r -> r.getTime().getId().equals(casa) && r.getMomento() == Resultado.Momento.I )
+                .findFirst().orElse(null);
+        Resultado casaTermino = stream.filter( r -> r.getTime().getId().equals(casa) && r.getMomento() == Resultado.Momento.F )
+                .findFirst().orElse(null);
+        Resultado foraIntervalo = stream.filter( r -> r.getTime().getId().equals(fora) && r.getMomento() == Resultado.Momento.I )
+                .findFirst().orElse(null);
+        Resultado foraTermino = stream.filter( r -> r.getTime().getId().equals(fora) && r.getMomento() == Resultado.Momento.F )
+                .findFirst().orElse(null);
+        return new ResultadoFutebol(casaIntervalo, foraIntervalo, casaTermino, foraTermino);
     }
 
     public static EventoBuilder builder(Tenant tenant) {
