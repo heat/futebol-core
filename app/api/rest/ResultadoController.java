@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.ApplicationController;
 import dominio.processadores.apostas.AtualizarBilhetesFinalizacaoPartidaProcessador;
 import dominio.processadores.apostas.AtualizarPalpitesProcessador;
+import dominio.processadores.apostas.FinalizarPartidasProcessador;
 import dominio.processadores.eventos.FinalizarEventoProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
@@ -37,22 +38,19 @@ public class ResultadoController extends ApplicationController {
     FinalizarEventoProcessador finalizarEventoProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
-    AtualizarPalpitesProcessador atualizarPalpitesProcessador;
-    AtualizarBilhetesFinalizacaoPartidaProcessador atualizaBilhetesFinalizacaoPartidaProcessador;
+    FinalizarPartidasProcessador finalizarPartidasProcessador;
 
     @Inject
     public ResultadoController(ResultadoRepository resultadoRepository, PlaySessionStore playSessionStore,
                                FinalizarEventoProcessador finalizarEventoProcessador,
                                ValidadorRepository validadorRepository, EventoRepository eventoRepository,
-                               AtualizarPalpitesProcessador atualizarPalpitesProcessador,
-                               AtualizarBilhetesFinalizacaoPartidaProcessador atualizaBilhetesFinalizacaoPartidaProcessador) {
+                               FinalizarPartidasProcessador finalizarPartidasProcessador) {
         super(playSessionStore);
         this.resultadoRepository = resultadoRepository;
         this.finalizarEventoProcessador = finalizarEventoProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
-        this.atualizarPalpitesProcessador = atualizarPalpitesProcessador;
-        this.atualizaBilhetesFinalizacaoPartidaProcessador = atualizaBilhetesFinalizacaoPartidaProcessador;
+        this.finalizarPartidasProcessador = finalizarPartidasProcessador;
 
     }
 
@@ -93,10 +91,8 @@ public class ResultadoController extends ApplicationController {
 
             finalizarEventoProcessador.executar(chave, evento, validadoresEventos)
                     .thenCompose( eventoFinalizado ->
-                            atualizarPalpitesProcessador.executar(chave, eventoFinalizado, validadoresPalpites)
-                    ).thenCompose( eventoFinalizado ->
-                        atualizaBilhetesFinalizacaoPartidaProcessador.executar(chave, eventoFinalizado, validadoresBilhetes) )
-                    .thenApply( eventoFinalizado -> {
+                            finalizarPartidasProcessador.executar(chave, eventoFinalizado, validadoresPalpites)
+                    ).thenApply( eventoFinalizado -> {
                         return eventoFinalizado;
                     });
 

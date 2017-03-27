@@ -26,7 +26,7 @@ public class Bilhete implements Serializable {
         /**
          * Todos os palpites do bilhete estão corretos - [G]anhou
          */
-        G("PREMIADO"),
+        C("CORRETO"),
         /**
          * Pelo menos um palpite do bilhete está errado
          */
@@ -38,7 +38,7 @@ public class Bilhete implements Serializable {
         /**
          * Desistiram do bilhete antes do início (?) da partida
          */
-        C("CANCELADO");
+        D("CANCELADO");
 
         private String situacao;
 
@@ -226,5 +226,19 @@ public class Bilhete implements Serializable {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
+    }
+
+    public void calcular() {
+
+        getPalpites().stream().forEach(p -> {
+            switch (p.getStatus()){
+                case A: setSituacao(Situacao.A);
+                    break;
+                case E: setSituacao(Situacao.E);
+                    break;
+                default:
+                    setSituacao(Situacao.C);
+            }
+        });
     }
 }

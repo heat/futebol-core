@@ -10,6 +10,7 @@ import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.eventos.Evento;
 import models.vo.Chave;
+import repositories.BilheteRepository;
 import repositories.EventoApostaRepository;
 
 import javax.persistence.NoResultException;
@@ -24,10 +25,12 @@ public class AtualizarBilhetesFinalizacaoPartidaProcessador implements Processad
     public static final String REGRA = "palpite.atualizar";
 
     EventoApostaRepository eventoApostaRepository;
+    BilheteRepository bilheteRepository;
 
     @Inject
-    public AtualizarBilhetesFinalizacaoPartidaProcessador(EventoApostaRepository eventoApostaRepository) {
+    public AtualizarBilhetesFinalizacaoPartidaProcessador(EventoApostaRepository eventoApostaRepository, BilheteRepository bilheteRepository) {
         this.eventoApostaRepository = eventoApostaRepository;
+        this.bilheteRepository = bilheteRepository;
     }
 
     @Override
