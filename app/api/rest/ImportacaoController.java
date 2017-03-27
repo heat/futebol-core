@@ -155,7 +155,7 @@ public class ImportacaoController extends ApplicationController {
                 //pega a lista de importacoes
                 .thenApply( j -> j.get("data"))
                 .thenApply(this::asStream)
-                .thenApplyAsync( v -> fromJson(v, oddsConfiguracaos, i -> v.equals(chave)), ex)
+                .thenApplyAsync( v -> fromJson(v, oddsConfiguracaos, tenant, i -> i.codigo.equals(chave)), ex)
                 .thenApply(importacoes -> importacoes.findAny())
                 .thenApply( j -> {
                     if(!j.isPresent())
@@ -164,18 +164,26 @@ public class ImportacaoController extends ApplicationController {
                 })
                 .thenComposeAsync(this::iserirEvento, ex)
                 //insere evento
-                .thenComposeAsync( ev -> jpaApi.withTransaction( em -> eventoApostaInserirProcessador.
-                        executar(tenant, ev, validadorRepository.todos(tenant, eventoApostaInserirProcessador.REGRA))), ex)
-                .thenApplyAsync( ev -> {
-                    Importacao importacao = new Importacao(tenant.get(), chave, variacao, ev.getId());
-                    return importacaoInserirProcessador
-                            //inserir ou atualizar
-                            .executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA));
-                }, ex)
+                .thenApplyAsync( ev -> jpaApi.withTransaction( em ->  {
+                    try {
+                        Importacao i = eventoApostaInserirProcessador.
+                                executar(tenant, ev, validadorRepository.todos(tenant, eventoApostaInserirProcessador.REGRA))
+                                .thenCompose( ap -> {
+                                    Importacao importacao = new Importacao(tenant.get(), chave, variacao, ap.getId());
+                                    return importacaoInserirProcessador
+                                            //inserir ou atualizar
+                                            .executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA));
+                                }).get();
+                        return i;
+                    } catch (InterruptedException|ExecutionException e) {
+                        throw new RejectedExecutionException("Não conseguimos salvar a aposta");
+                    }
+                }), ex)
                 // response
                 .handleAsync( (r, e) -> {
-                    Optional _r = Optional.ofNullable(r);
-                    Optional _e = Optional.ofNullable(r);
+
+                     Optional _r = Optional.ofNullable(r);
+                    Optional _e = Optional.ofNullable(e);
                     if(_e.isPresent())
                         return internalServerError(e.getMessage());
                     return ok(Json.toJson(r));
@@ -183,8 +191,8 @@ public class ImportacaoController extends ApplicationController {
         return result;
     }
 
-    private Stream<ImportacaoJson> fromJson(Stream<JsonNode> stream, List<Odd> odds, Predicate<ImportacaoJson> f) {
-        Tenant tenant = getTenant();
+    private Stream<ImportacaoJson> fromJson(Stream<JsonNode> stream, List<Odd> odds, Tenant tenant, Predicate<ImportacaoJson> f) {
+
         ConversorOdd conversorOdd = new ConversorOdd(odds);
         return  stream.map( i ->  {
             ImportacaoJson j = Json.fromJson(i, ImportacaoJson.class);
