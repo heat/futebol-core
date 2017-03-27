@@ -38,7 +38,7 @@ public class FinalizarEventoProcessador implements Processador<Chave, Evento>{
         }
 
         try{
-         eventoRepository.atualizar(chave.getTenant(), evento.getId(), evento);
+         eventoRepository.finalizar(chave.getTenant(), evento.getId(), evento);
         }
         catch(NoResultException e){
             throw new ValidadorExcpetion(e.getMessage());

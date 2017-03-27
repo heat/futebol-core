@@ -20,7 +20,7 @@ public class Palpite implements Serializable{
         /**
          *O palpite está correto
          */
-        V("CERTO"),
+        C("CERTO"),
         /**
          *O palpite está errado
          */
@@ -28,7 +28,7 @@ public class Palpite implements Serializable{
         /**
          *Desistiram do palpite antes do início (?) da partida
          */
-        C("CANCELADO");
+        D("CANCELADO");
 
         private String status;
 
@@ -46,6 +46,9 @@ public class Palpite implements Serializable{
 
     @Column(name = "tenant_id")
     private Long tenant;
+
+    @Column(name = "bilhete_id", insertable = false, updatable = false)
+    private Long bilhete;
 
     @OneToOne
     @JoinColumn(name = "taxa_id")
@@ -103,6 +106,10 @@ public class Palpite implements Serializable{
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Long getBilhete() {
+        return bilhete;
     }
 
     @Override

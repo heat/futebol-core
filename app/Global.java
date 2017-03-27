@@ -52,6 +52,7 @@ public class Global extends GlobalSettings {
 
             //dummyData(em);
             em.createQuery("DELETE FROM Validador v").executeUpdate();
+            em.createQuery("DELETE FROM Resultado v").executeUpdate();
             em.createQuery("DELETE FROM Importacao t").executeUpdate();
             em.createQuery("DELETE FROM Lancamento t").executeUpdate();
             em.createQuery("DELETE FROM Comissao t").executeUpdate();

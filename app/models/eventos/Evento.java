@@ -190,15 +190,27 @@ public class Evento implements Serializable {
     public ResultadoFutebol getResultadoFutebol() {
         Long casa = getCasa().getId();
         Long fora = getFora().getId();
-        Stream<Resultado> stream = getResultados().stream();
-        Resultado casaIntervalo = stream.filter( r -> r.getTime().getId().equals(casa) && r.getMomento() == Resultado.Momento.I )
-                .findFirst().orElse(null);
-        Resultado casaTermino = stream.filter( r -> r.getTime().getId().equals(casa) && r.getMomento() == Resultado.Momento.F )
-                .findFirst().orElse(null);
-        Resultado foraIntervalo = stream.filter( r -> r.getTime().getId().equals(fora) && r.getMomento() == Resultado.Momento.I )
-                .findFirst().orElse(null);
-        Resultado foraTermino = stream.filter( r -> r.getTime().getId().equals(fora) && r.getMomento() == Resultado.Momento.F )
-                .findFirst().orElse(null);
+
+        Resultado casaIntervalo = new Resultado();
+        Resultado casaTermino = new Resultado();
+        Resultado foraIntervalo = new Resultado();
+        Resultado foraTermino = new Resultado();
+
+        for (Resultado resultado : getResultados()){
+            if (resultado.getTime().getId().equals(casa) && resultado.getMomento() == Resultado.Momento.I){
+                casaIntervalo = resultado;
+            } else
+            if (resultado.getTime().getId().equals(casa) && resultado.getMomento() == Resultado.Momento.F){
+                casaTermino = resultado;
+            } else
+            if (resultado.getTime().getId().equals(fora) && resultado.getMomento() == Resultado.Momento.I){
+                foraIntervalo = resultado;
+            } else
+            if (resultado.getTime().getId().equals(fora) && resultado.getMomento() == Resultado.Momento.F){
+                foraTermino = resultado;
+            }
+        }
+
         return new ResultadoFutebol(casaIntervalo, foraIntervalo, casaTermino, foraTermino);
     }
 

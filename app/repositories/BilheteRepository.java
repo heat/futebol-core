@@ -127,4 +127,15 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         em.merge(bilhete);
         return CompletableFuture.completedFuture(Confirmacao.CONCLUIDO);
     }
+
+    public List<Bilhete> todosPorPalpites(Tenant tenant, Long evento) {
+
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("FROM Bilhete as b WHERE b.tenant = :tenant " +
+                " AND EXISTS (SELECT p FROM Palpite p WHERE p.bilhete = b.id AND p.taxa.eventoAposta = :evento) ");
+        query.setParameter("tenant", tenant.get());
+        query.setParameter("evento", evento);
+
+        return query.getResultList();
+    }
 }

@@ -7,11 +7,13 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.eventos.Evento;
 import models.eventos.Resultado;
 import models.eventos.ResultadoEvento;
 import models.vo.Chave;
+import repositories.BilheteRepository;
 import repositories.EventoApostaRepository;
 import repositories.PalpiteRepository;
 
@@ -28,11 +30,13 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
 
     EventoApostaRepository eventoApostaRepository;
     PalpiteRepository palpiteRepository;
+    BilheteRepository bilheteRepository;
 
     @Inject
-    public AtualizarPalpitesProcessador(EventoApostaRepository eventoApostaRepository, PalpiteRepository palpiteRepository) {
+    public AtualizarPalpitesProcessador(EventoApostaRepository eventoApostaRepository, PalpiteRepository palpiteRepository, BilheteRepository bilheteRepository) {
         this.eventoApostaRepository = eventoApostaRepository;
         this.palpiteRepository = palpiteRepository;
+        this.bilheteRepository = bilheteRepository;
     }
 
     @Override
@@ -56,6 +60,10 @@ public class AtualizarPalpitesProcessador implements Processador<Chave, Evento>{
 
             List<Palpite> palpites = palpiteRepository.buscarPorTaxas(chave.getTenant(), taxas);
             palpites.forEach(p -> p.calcular(resultadoEvento));
+
+            List<Bilhete> bilhetes = bilheteRepository.todosPorPalpites(chave.getTenant(), evento.getId());
+            bilhetes.forEach(b -> b.calcular());
+
         }
         catch(NoResultException e){
             throw new ValidadorExcpetion(e.getMessage());

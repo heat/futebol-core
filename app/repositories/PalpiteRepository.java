@@ -68,8 +68,8 @@ public class PalpiteRepository implements Repository<Long, Palpite> {
     public List<Palpite> buscarPorTaxas(Tenant tenant, List<Long> taxas) {
 
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("SELECT p FROM Palpite WHERE p.tenant = :tenant AND p.taxa IN :taxas");
-        query.setParameter("tenant", tenant);
+        Query query = em.createQuery("SELECT p FROM Palpite p WHERE p.tenant = :tenant AND p.taxa.id IN :taxas");
+        query.setParameter("tenant", tenant.get());
         query.setParameter("taxas", taxas);
 
         return query.getResultList();
