@@ -103,7 +103,9 @@ public class CampeonatoController extends ApplicationController {
 
     @Transactional
     @With(TenantAction.class)
-    public Result todos(String nome) {
+    public Result todos(String nome, String q) {
+
+        nome = (nome == null) ? q : nome;
 
         Tenant tenant = getTenantAppCode();
 
