@@ -33,6 +33,15 @@ public class TimeRepository implements  Repository<Long, Time>{
         return query.getResultList();
     }
 
+    public List<Time> todos(Tenant tenant, String nome) {
+
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("FROM Time as t WHERE t.tenant = :tenant AND (UPPER(t.nome) LIKE UPPER(:nome) or :nome IS NULL) AND t.situacao = 'A' ORDER BY t.nome");
+        query.setParameter("tenant", tenant.get());
+        query.setParameter("nome", "%" + nome + "%");
+        return query.getResultList();
+    }
+
     @Override
     public Optional<Time> buscar(Tenant tenant, Long id) {
 

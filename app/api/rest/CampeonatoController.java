@@ -6,6 +6,7 @@ import api.json.Jsonable;
 import api.json.ObjectJson;
 import api.json.TimeJson;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Strings;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
 import dominio.processadores.eventos.CampeonatoInserirProcessador;
@@ -105,7 +106,7 @@ public class CampeonatoController extends ApplicationController {
     @With(TenantAction.class)
     public Result todos(String nome, String q) {
 
-        nome = (nome == null) ? q : nome;
+        nome = Strings.isNullOrEmpty(nome) ? q : nome;
 
         Tenant tenant = getTenantAppCode();
 

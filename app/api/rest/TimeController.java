@@ -4,6 +4,7 @@ import api.json.Jsonable;
 import api.json.ObjectJson;
 import api.json.TimeJson;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Strings;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.TimeAtualizarProcessador;
 import dominio.processadores.eventos.TimeInserirProcessador;
@@ -99,9 +100,11 @@ public class TimeController extends ApplicationController{
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result todos() {
+    public Result todos(String nome, String q) {
 
-        List<Time> times = timeRepository.todos(getTenant());
+        nome = Strings.isNullOrEmpty(nome) ? q : nome;
+
+        List<Time> times = timeRepository.todos(getTenant(), nome);
 
         List<Jsonable> jsons =  TimeJson.of(times);
         // usa o builder
