@@ -35,7 +35,7 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
     public List<Campeonato> todos(Tenant tenant, String nome) {
 
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("FROM Campeonato as c WHERE c.tenant = :tenant AND (c.nome = :nome or :nome IS NULL) AND c.situacao = 'A' ORDER BY c.nome ");
+        Query query = em.createQuery("FROM Campeonato as c WHERE c.tenant = :tenant AND (c.nome LIKE :nome or :nome IS NULL) AND c.situacao = 'A' ORDER BY c.nome ");
         query.setParameter("tenant", tenant.get());
         query.setParameter("nome", nome);
         return query.getResultList();
