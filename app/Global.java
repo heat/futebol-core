@@ -332,6 +332,7 @@ public class Global extends GlobalSettings {
         Calendar dataJogo = Calendar.getInstance();
         dataJogo.add(Calendar.HOUR, random.nextInt(10));
         evento.setDataEvento(dataJogo);
+        evento.setModalidade(Evento.Modalidade.FUTEBOL);
 
         em.persist(evento);
 

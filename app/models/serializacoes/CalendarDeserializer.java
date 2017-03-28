@@ -20,9 +20,12 @@ public class CalendarDeserializer extends JsonDeserializer<Calendar> {
             throws IOException {
 
         String dateAsString = jsonParser.getText();
+        return deserialize(dateAsString);
+    }
 
+    public Calendar deserialize(String dataEvento) throws IOException {
         try {
-            Date date = formatter.parse(dateAsString);
+            Date date = formatter.parse(dataEvento);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             return calendar;
@@ -30,5 +33,4 @@ public class CalendarDeserializer extends JsonDeserializer<Calendar> {
             throw new IOException(e);
         }
     }
-
 }

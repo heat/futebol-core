@@ -1,6 +1,8 @@
 package repositories;
 
+import models.eventos.Campeonato;
 import models.eventos.Evento;
+import models.eventos.Time;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
@@ -81,7 +83,11 @@ public class EventoRepository implements Repository<Long, Evento>{
         EntityManager em = jpaApi.em();
         evento.setTenant(tenant.get());
         evento.setResultados(null);
+        evento.setCasa(em.find(Time.class, evento.getCasa().getId()));
+        evento.setFora(em.find(Time.class, evento.getFora().getId()));
+        evento.setCampeonato(em.find(Campeonato.class, evento.getCampeonato().getId()));
         em.persist(evento);
+        em.flush();
         return CompletableFuture.completedFuture(evento);
     }
 
