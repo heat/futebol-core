@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.ObjectJson;
 import api.json.TaxaJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,12 +22,14 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.*;
 
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
+@With(TenantAction.class)
 public class TaxaController extends ApplicationController {
 
     TaxaRepository taxaRepository;

@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.TokenJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -24,10 +25,7 @@ import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
 import play.libs.Json;
-import play.mvc.BodyParser;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
+import play.mvc.*;
 import repositories.TenantRepository;
 import repositories.UsuarioRepository;
 import repositories.ValidadorRepository;
@@ -38,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@With(TenantAction.class)
 public class UsuarioController extends ApplicationController{
 
     UsuarioInserirProcessador usuarioInserirProcessador;

@@ -1,5 +1,6 @@
 package api.json;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import models.apostas.Apostavel;
 import models.eventos.Evento;
 
@@ -9,6 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventoJson implements Convertable<Evento>, Jsonable {
 
     public static final String TIPO = "eventos";

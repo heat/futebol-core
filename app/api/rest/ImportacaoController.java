@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.ImportacaoJson;
 import api.json.PinJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,6 +41,7 @@ import play.libs.ws.WSResponse;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.*;
 
 import javax.annotation.processing.Completion;
@@ -55,6 +57,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@With(TenantAction.class)
 public class ImportacaoController extends ApplicationController {
 
     ValidadorRepository validadorRepository;

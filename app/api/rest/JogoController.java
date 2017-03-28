@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.ApostaJson;
 import api.json.CampeonatoJson;
 import api.json.ObjectJson;
@@ -24,6 +25,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.*;
 
 import javax.persistence.NoResultException;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@With(TenantAction.class)
 public class JogoController extends ApplicationController {
 
     TaxaRepository taxaRepository;

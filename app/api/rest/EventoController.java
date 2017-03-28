@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.CampeonatoJson;
 import api.json.EventoJson;
 import api.json.ObjectJson;
@@ -22,6 +23,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.CampeonatoRepository;
 import repositories.EventoRepository;
 import repositories.TimeRepository;
@@ -38,6 +40,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+@With(TenantAction.class)
 public class EventoController extends ApplicationController{
 
     EventoRepository eventoRepository;
@@ -172,8 +175,8 @@ public class EventoController extends ApplicationController{
 
 
         JsonNode json = request().body().asJson();
-        String casa = json.findPath("casa").textValue();
-        String fora = json.findPath("fora").textValue();
+        Long casa = json.findPath("casa").asLong();
+        Long fora = json.findPath("fora").asLong();
         Long idCampeonato = json.findPath("campeonato").asLong();
         Calendar dataEvento = deserializeCalendar( json.findPath("dataEvento").asText());
         Optional<Time> timeCasaOptional = timeRepository.buscar(getTenant(), casa);

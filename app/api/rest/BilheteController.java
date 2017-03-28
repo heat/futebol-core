@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.BilheteJson;
 import api.json.ObjectJson;
 import api.json.OddJson;
@@ -36,6 +37,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.*;
 
 import java.math.BigDecimal;
@@ -45,6 +47,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@With(TenantAction.class)
 public class BilheteController extends ApplicationController {
 
     BilheteRepository bilheteRepository;

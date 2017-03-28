@@ -32,6 +32,7 @@ import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
+@With(TenantAction.class)
 public class CampeonatoController extends ApplicationController {
 
 

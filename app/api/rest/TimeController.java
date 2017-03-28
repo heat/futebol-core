@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.Jsonable;
 import api.json.ObjectJson;
 import api.json.TimeJson;
@@ -17,6 +18,7 @@ import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.EventoRepository;
 import repositories.TimeRepository;
 import repositories.ValidadorRepository;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+@With(TenantAction.class)
 public class TimeController extends ApplicationController{
 
     TimeRepository timeRepository;
