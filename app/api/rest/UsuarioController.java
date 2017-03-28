@@ -62,6 +62,7 @@ public class UsuarioController extends ApplicationController{
         this.validadorRepository = validadorRepository;
     }
 
+    @With(TenantAction.class)
     @Secure(clients = "directFormClient")
     public Result authenticar() {
         final Optional<CommonProfile> profile = getProfile();
