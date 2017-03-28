@@ -1,5 +1,7 @@
 package api.rest;
 
+import api.json.ApostaJson;
+import api.json.CampeonatoJson;
 import api.json.ObjectJson;
 import api.json.TaxaJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,6 +14,7 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.eventos.Campeonato;
 import models.seguranca.RegistroAplicativo;
 import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
@@ -26,8 +29,9 @@ import repositories.*;
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class TaxaController extends ApplicationController {
+public class JogoController extends ApplicationController {
 
     TaxaRepository taxaRepository;
     TaxaInserirProcessador inserirProcessador;
@@ -39,7 +43,7 @@ public class TaxaController extends ApplicationController {
 
     @Inject
 
-    public TaxaController(PlaySessionStore playSessionStore, TaxaRepository taxaRepository,
+    public JogoController(PlaySessionStore playSessionStore, TaxaRepository taxaRepository,
                           TaxaInserirProcessador inserirProcessador, TaxaAtualizarProcessador atualizarProcessador,
                           ValidadorRepository validadorRepository, EventoApostaRepository eventoApostaRepository,
                           OddRepository oddRepository, TenantRepository tenantRepository) {
@@ -54,54 +58,8 @@ public class TaxaController extends ApplicationController {
 
     }
 
-
-    @Secure(clients = "headerClient")
     @Transactional
-    @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir(Long aposta) {
-
-        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), aposta);
-
-        if(!eventoApostaOptional.isPresent())
-            return badRequest("Aposta não encontrada!");
-
-        EventoAposta eventoAposta = eventoApostaOptional.get();
-
-        JsonNode body = Controller.request()
-                .body()
-                .asJson();
-
-        body.get("taxas").forEach( taxaJson -> {
-            TaxaJson t = Json.fromJson(taxaJson, TaxaJson.class);
-            t.evento = aposta;
-            Taxa taxa = t.to();
-            Optional<Odd> oddOptional = oddRepository.buscar(getTenant(),t.odd);
-            if(oddOptional.isPresent()) {
-                taxa.setOdd(oddOptional.get());
-            }
-            eventoAposta.addTaxa(taxa);
-            System.out.println(t);
-        });
-
-        List<Validador> validadores = validadorRepository.todos(getTenant(), TaxaInserirProcessador.REGRA);
-
-        try {
-             inserirProcessador.executar(getTenant(), eventoAposta, validadores);
-        } catch (ValidadorExcpetion ex) {
-            return internalServerError("definir melhor o erro");
-        }
-
-        // usa o builder
-        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
-        //adiciona as entidades
-        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa,aposta)));
-        JsonNode retorno = builder.build();
-        return created(retorno);
-    }
-
-    @Secure(clients = "headerClient")
-    @Transactional
-    public Result buscar(Long aposta) {
+    public Result todos() {
 
         Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
 
@@ -117,8 +75,45 @@ public class TaxaController extends ApplicationController {
 
         Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
 
+        List<EventoAposta> todos = eventoApostaRepository.todos(tenant);
+        ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
 
-        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(tenant, aposta);
+        todos.forEach(eventoAposta -> {
+            builder.comEntidade(ApostaJson.of(eventoAposta));
+            eventoAposta.getTaxas().stream()
+                    .filter(p -> p.isFavorita()).collect(Collectors.toList())
+                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJson.TIPO, TaxaJson.of(taxaAposta, eventoAposta.getId())));
+        });
+
+        List<Campeonato> campeonatos = todos.stream()
+                .map(eventoAposta -> eventoAposta.getEvento().getCampeonato())
+                .distinct()
+                .collect(Collectors.toList());
+
+        // adiciona os relacionamentos
+        campeonatos.forEach(campeonato -> builder.comRelacionamento(CampeonatoJson.TIPO, CampeonatoJson.of(campeonato)));
+
+        return ok(builder.build());
+    }
+
+    @Transactional
+    public Result buscar(Long evento) {
+
+        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
+
+        if (!appKeyOptional.isPresent()){
+            return badRequest("Key not found.");
+        }
+
+        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
+
+        if (!registroAplicativoOptional.isPresent()){
+            return notFound("Aplicativo não registrado.");
+        }
+
+        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(tenant, evento);
 
         if(!eventoApostaOptional.isPresent())
             return badRequest("Aposta não encontrada!");
@@ -127,21 +122,9 @@ public class TaxaController extends ApplicationController {
         // usa o builder
         ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
-        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa, aposta)));
+        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa, evento)));
         JsonNode retorno = builder.build();
         return created(retorno);
 
     }
-
-    @Secure(clients = "headerClient")
-    @Transactional
-    public Result excluir(Long id) {
-        try {
-            taxaRepository.excluir(getTenant(), id);
-            return noContent(); // padrao para quando exclui uma entidade
-        } catch (NoResultException e) {
-            return notFound(e.getMessage());
-        }
-    }
-
 }

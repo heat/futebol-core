@@ -110,6 +110,7 @@ public class EventoApostaController extends ApplicationController {
         return ok(jsonNode);
     }
 
+    @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
 
@@ -148,6 +149,7 @@ public class EventoApostaController extends ApplicationController {
         return ok(builder.build());
     }
 
+    @Secure(clients = "headerClient")
     @Transactional
     public Result buscar(Long id) {
 

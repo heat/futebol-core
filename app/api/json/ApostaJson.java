@@ -45,7 +45,7 @@ public class ApostaJson extends EventoJson {
         this.situacaoEvento = situacaoEvento;
         this.permitir = permitir;
         this.links = Json.newObject();
-        this.links.put("taxas", getContext() + "/taxas?aposta=" + id );
+        this.links.put("taxas", getContext() + "/jogos/" + evento + "/taxas/");
         this.quantidadeTaxas = taxas.size();
         this.favoritas = taxas.stream().filter(p -> p.isFavorita()).map(m -> m.getOdd().getId()).collect(Collectors.toList());
 
@@ -65,7 +65,6 @@ public class ApostaJson extends EventoJson {
                 evento.getSituacao(),
                 evento.getCampeonato().getId(),
                 aposta.getTaxas());
-
     }
 
     private static String calendarToString(Calendar calendar){

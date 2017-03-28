@@ -37,8 +37,8 @@ public class EventoJson implements Convertable<Evento>, Jsonable {
     public static EventoJson of(Evento evento) {
 
         return new EventoJson(String.valueOf(evento.getId()),
-                evento.getNomeCasa(),
-                evento.getNomeFora(),
+                String.valueOf(evento.getCasa().getId()),
+                String.valueOf(evento.getFora().getId()),
                 calendarToString(evento.getDataEvento()),
                 evento.getSituacao(),
                 evento.getCampeonato().getId());
