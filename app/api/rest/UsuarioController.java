@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@With(TenantAction.class)
 public class UsuarioController extends ApplicationController{
 
     UsuarioInserirProcessador usuarioInserirProcessador;
@@ -62,7 +61,6 @@ public class UsuarioController extends ApplicationController{
         this.validadorRepository = validadorRepository;
     }
 
-    @With(TenantAction.class)
     @Secure(clients = "directFormClient")
     public Result authenticar() {
         final Optional<CommonProfile> profile = getProfile();
@@ -80,6 +78,7 @@ public class UsuarioController extends ApplicationController{
         return ok(Json.toJson(tokenJson));
     }
 
+    @With(TenantAction.class)
     @Secure(clients = "headerClient")
     public Result usuario() {
         Optional<CommonProfile> profile = getProfile();
@@ -88,6 +87,7 @@ public class UsuarioController extends ApplicationController{
         return ok(Json.toJson(commonProfile));
     }
 
+    @With(TenantAction.class)
     @Transactional
     @Secure(clients = "headerClient")
     @BodyParser.Of(BodyParser.Json.class)
@@ -107,6 +107,7 @@ public class UsuarioController extends ApplicationController{
         return created(Json.toJson(usuario));
     }
 
+    @With(TenantAction.class)
     @Transactional
     @Secure(clients = "headerClient")
     @BodyParser.Of(BodyParser.Json.class)
@@ -128,6 +129,7 @@ public class UsuarioController extends ApplicationController{
         return ok(Json.toJson(usuario));
     }
 
+    @With(TenantAction.class)
     @Transactional
     @Secure(clients = "headerClient")
     public Result cancelar(Long id) {
@@ -139,6 +141,7 @@ public class UsuarioController extends ApplicationController{
         }
     }
 
+    @With(TenantAction.class)
     @Transactional
     @Secure(clients = "headerClient")
     @BodyParser.Of(BodyParser.Json.class)
