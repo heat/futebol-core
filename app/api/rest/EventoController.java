@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.CampeonatoJson;
 import api.json.EventoJson;
 import api.json.ObjectJson;
@@ -15,6 +16,7 @@ import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
 import models.vo.Chave;
+import org.hibernate.exception.ConstraintViolationException;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -22,6 +24,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.CampeonatoRepository;
 import repositories.EventoRepository;
 import repositories.TimeRepository;
@@ -29,6 +32,7 @@ import repositories.ValidadorRepository;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,6 +42,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+@With(TenantAction.class)
 public class EventoController extends ApplicationController{
 
     EventoRepository eventoRepository;
@@ -66,9 +71,18 @@ public class EventoController extends ApplicationController{
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() throws IOException {
 
-        Optional<Evento> eventoOptional = requestJson();
-        if(!eventoOptional.isPresent())
-            badRequest("Parâmetro ausente");
+        Optional<Evento> eventoOptional;
+
+        try {
+            EventoJson json = Json.fromJson(request().body().asJson().get("evento"), EventoJson.class);
+            eventoOptional =  Optional.ofNullable(json.to());
+
+            if(!eventoOptional.isPresent())
+                return badRequest("Parâmetro ausente");
+        } catch (RuntimeException e){
+            return badRequest("Não foi possível converter.");
+        }
+
         Evento evento = eventoOptional.get();
         evento.setSituacao(Evento.Situacao.A);
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
@@ -79,10 +93,13 @@ public class EventoController extends ApplicationController{
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         } catch (InterruptedException e) {
-            badRequest(e.getMessage());
+           return badRequest(e.getMessage());
         } catch (ExecutionException e) {
-            badRequest(e.getMessage());
+            return badRequest(e.getMessage());
+        } catch (PersistenceException e) {
+            return status(Http.Status.UNPROCESSABLE_ENTITY, e.getMessage());
         }
+
         EventoJson eventoJson = EventoJson.of(evento);
 
         CampeonatoJson campeonatoJson = CampeonatoJson.of(evento.getCampeonato());
@@ -91,6 +108,7 @@ public class EventoController extends ApplicationController{
         JsonNode retorno = builder.comEntidade(eventoJson)
                 .comRelacionamento(CampeonatoJson.TIPO, campeonatoJson)
                 .build();
+
         return created(retorno);
     }
 
@@ -99,9 +117,12 @@ public class EventoController extends ApplicationController{
     @BodyParser.Of(BodyParser.Json.class)
     public Result atualizar(Long id) throws IOException {
 
-        Optional<Evento> eventoOptional = requestJson();
+        EventoJson json = Json.fromJson(request().body().asJson(), EventoJson.class);
+        Optional<Evento> eventoOptional =  Optional.ofNullable(json.to());
+
         if(!eventoOptional.isPresent())
-            badRequest("Parâmetro ausente");
+            return badRequest("Parâmetro ausente");
+
         Evento evento = eventoOptional.get();
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
@@ -166,36 +187,6 @@ public class EventoController extends ApplicationController{
         } catch (NoResultException e) {
             return notFound(e.getMessage());
         }
-    }
-
-    private Optional<Evento> requestJson() throws IOException {
-
-
-        JsonNode json = request().body().asJson();
-        String casa = json.findPath("casa").textValue();
-        String fora = json.findPath("fora").textValue();
-        Long idCampeonato = json.findPath("campeonato").asLong();
-        Calendar dataEvento = deserializeCalendar( json.findPath("dataEvento").asText());
-        Optional<Time> timeCasaOptional = timeRepository.buscar(getTenant(), casa);
-        if(!timeCasaOptional.isPresent())
-            throw new NoResultException("Time da casa não encontrado");
-        Optional<Time> timeForaOptional = timeRepository.buscar(getTenant(), fora);
-        if(!timeForaOptional.isPresent())
-            throw new NoResultException("Time de fora não encontrado");
-        Optional<Campeonato> campeonatoOptional =  campeonatoRepository.buscar(getTenant(), idCampeonato);
-        if(!campeonatoOptional.isPresent())
-            throw new NoResultException("Campeonato não encontrado");
-
-        return Optional.of(new Evento(
-                getTenant().get(),
-                timeCasaOptional.get(),
-                timeForaOptional.get(),
-                dataEvento,
-                campeonatoOptional.get(),
-                null,
-                null
-                )
-        );
     }
 
     private Calendar deserializeCalendar(String dateAsString)

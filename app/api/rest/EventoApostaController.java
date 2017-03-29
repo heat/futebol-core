@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
@@ -23,6 +24,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.EventoApostaRepository;
 import repositories.EventoRepository;
 import repositories.TenantRepository;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@With(TenantAction.class)
 public class EventoApostaController extends ApplicationController {
 
     EventoApostaRepository eventoApostaRepository;
@@ -110,6 +113,7 @@ public class EventoApostaController extends ApplicationController {
         return ok(jsonNode);
     }
 
+    @Secure(clients = "headerClient")
     @Transactional
     public Result todos() {
 
@@ -148,6 +152,7 @@ public class EventoApostaController extends ApplicationController {
         return ok(builder.build());
     }
 
+    @Secure(clients = "headerClient")
     @Transactional
     public Result buscar(Long id) {
 

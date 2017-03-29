@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@With(TenantAction.class)
 public class PinController extends ApplicationController {
 
     ValidadorRepository validadorRepository;

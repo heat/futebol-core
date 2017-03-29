@@ -11,6 +11,10 @@ public class Campeonato implements Serializable{
         return new Campeonato(nome);
     }
 
+    public static Campeonato ref(Long id) {
+        return new Campeonato(id);
+    }
+
     public enum Situacao {
         A("ATIVO"), I("INATIVO");
 
@@ -38,6 +42,10 @@ public class Campeonato implements Serializable{
     private Situacao situacao = Situacao.A;
 
     protected Campeonato() {
+    }
+
+    private Campeonato(Long id) {
+        this.id = id;
     }
 
     private Campeonato(String nome) {

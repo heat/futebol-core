@@ -1,5 +1,6 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.ObjectJson;
 import api.json.ResultadoJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,10 +18,7 @@ import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
 import play.libs.Json;
-import play.mvc.BodyParser;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
+import play.mvc.*;
 import repositories.EventoRepository;
 import repositories.ResultadoRepository;
 import repositories.ValidadorRepository;
@@ -32,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@With(TenantAction.class)
 public class ResultadoController extends ApplicationController {
 
     ResultadoRepository resultadoRepository;

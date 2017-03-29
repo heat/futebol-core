@@ -45,6 +45,18 @@ public class Evento implements Serializable {
         }
     }
 
+    public enum Modalidade {
+
+        BASQUETE("Basquete"), FUTEBOL("Futebol"), MMA("MMA");
+
+        private String nome;
+
+        Modalidade(String nome) {
+
+            this.nome = nome;
+        }
+    }
+
     @Id
     @SequenceGenerator(name = "eventos_evento_id_seq", sequenceName = "eventos_evento_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventos_evento_id_seq")
@@ -55,15 +67,16 @@ public class Evento implements Serializable {
     private Long tenant;
 
     @ManyToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "campeonato_id")
+    @JoinColumn(name = "campeonato_id", nullable = false)
     private Campeonato campeonato;
 
     @OneToOne
-    @JoinColumn(name = "time_id_casa")
+
+    @JoinColumn(name = "time_id_casa", nullable = false)
     private Time casa;
 
     @OneToOne
-    @JoinColumn(name = "time_id_fora")
+    @JoinColumn(name = "time_id_fora", nullable = false)
     private Time fora;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -78,20 +91,21 @@ public class Evento implements Serializable {
     @Column(name = "situacao")
     private Situacao situacao = Situacao.A;
 
+    @Enumerated(EnumType.STRING )
+    @Column(name = "modalidade")
+    private Modalidade modalidade;
+
     public Evento() {
 
     }
 
-    public Evento(Long tenant, Time casa, Time fora, Calendar dataEvento,
-                  Campeonato campeonato, Situacao situacao, List<Resultado> resultados) {
-
+    public Evento(Long tenant, Campeonato campeonato, Time casa, Time fora, Calendar dataEvento, Modalidade modalidade) {
         this.tenant = tenant;
+        this.campeonato = campeonato;
         this.casa = casa;
         this.fora = fora;
         this.dataEvento = dataEvento;
-        this.campeonato = campeonato;
-        this.situacao = situacao;
-        this.resultados = resultados;
+        this.modalidade = modalidade;
     }
 
     public Long getId() {
@@ -160,6 +174,14 @@ public class Evento implements Serializable {
         this.situacao = situacao;
     }
 
+    public void setModalidade(Modalidade modalidade) {
+        this.modalidade = modalidade;
+    }
+
+    public Modalidade getModalidade() {
+        return modalidade;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -223,6 +245,7 @@ public class Evento implements Serializable {
         Time fora;
         Campeonato campeonato;
         Calendar dataEvento;
+        private Modalidade modalidade;
 
         private EventoBuilder(Tenant tenant) {
             this.tenant = tenant;
@@ -249,8 +272,13 @@ public class Evento implements Serializable {
             return this;
         }
 
+        public EventoBuilder comModalidade(Modalidade modalidade) {
+            this.modalidade = modalidade;
+            return this;
+        }
+
         public Evento build() {
-            return new Evento(tenant.get(), casa, fora, dataEvento, campeonato, Situacao.A, Collections.emptyList());
+            return new Evento(tenant.get(), campeonato, casa, fora, dataEvento, modalidade);
         }
     }
 }

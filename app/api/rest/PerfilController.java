@@ -1,6 +1,7 @@
 package api.rest;
 
 
+import actions.TenantAction;
 import api.json.ObjectJson;
 import api.json.PerfilJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,12 +23,14 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.UsuarioRepository;
 import repositories.ValidadorRepository;
 
 import java.util.List;
 import java.util.Optional;
 
+@With(TenantAction.class)
 public class PerfilController extends ApplicationController {
 
     UsuarioRepository usuarioRepository;

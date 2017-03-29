@@ -26,15 +26,16 @@ public class ApostaJson extends EventoJson {
     public final String dataJogo;
     public final Apostavel.Situacao situacaoAposta;
     public final Evento.Situacao situacaoEvento;
+    public final Evento.Modalidade modalidade;
     public final Boolean permitir;
     public final Integer quantidadeTaxas;
     public final List<Long> favoritas;
     public final ObjectNode links;
 
     public ApostaJson(String id, Apostavel.Situacao situacaoAposta, Boolean permitir,
-                      String idEvento, String timeCasa, String timeFora, String dataEvento, Evento.Situacao situacaoEvento, Long campeonato, List<Taxa> taxas) {
+                      String idEvento, String timeCasa, String timeFora, String dataEvento, Evento.Situacao situacaoEvento, Long campeonato, Evento.Modalidade modalidade, List<Taxa> taxas) {
 
-        super(idEvento, timeCasa, timeFora, dataEvento, situacaoEvento, campeonato);
+        super(idEvento, timeCasa, timeFora, dataEvento, situacaoEvento, campeonato, modalidade);
         this.id = id;
         this.evento = idEvento;
         this.timeCasa = timeCasa;
@@ -43,9 +44,10 @@ public class ApostaJson extends EventoJson {
         this.dataJogo = dataEvento;
         this.situacaoAposta = situacaoAposta;
         this.situacaoEvento = situacaoEvento;
+        this.modalidade = modalidade;
         this.permitir = permitir;
         this.links = Json.newObject();
-        this.links.put("taxas", getContext() + "/taxas?aposta=" + id );
+        this.links.put("taxas", getContext() + "/jogos/" + evento + "/taxas/");
         this.quantidadeTaxas = taxas.size();
         this.favoritas = taxas.stream().filter(p -> p.isFavorita()).map(m -> m.getOdd().getId()).collect(Collectors.toList());
 
@@ -64,8 +66,8 @@ public class ApostaJson extends EventoJson {
                 calendarToString(evento.getDataEvento()),
                 evento.getSituacao(),
                 evento.getCampeonato().getId(),
+                evento.getModalidade(),
                 aposta.getTaxas());
-
     }
 
     private static String calendarToString(Calendar calendar){

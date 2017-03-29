@@ -1,9 +1,11 @@
 package api.rest;
 
+import actions.TenantAction;
 import api.json.Jsonable;
 import api.json.ObjectJson;
 import api.json.TimeJson;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Strings;
 import controllers.ApplicationController;
 import dominio.processadores.eventos.TimeAtualizarProcessador;
 import dominio.processadores.eventos.TimeInserirProcessador;
@@ -16,6 +18,7 @@ import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
 import play.mvc.Result;
+import play.mvc.With;
 import repositories.EventoRepository;
 import repositories.TimeRepository;
 import repositories.ValidadorRepository;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+@With(TenantAction.class)
 public class TimeController extends ApplicationController{
 
     TimeRepository timeRepository;
@@ -99,9 +103,11 @@ public class TimeController extends ApplicationController{
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result todos() {
+    public Result todos(String nome, String q) {
 
-        List<Time> times = timeRepository.todos(getTenant());
+        nome = Strings.isNullOrEmpty(nome) ? q : nome;
+
+        List<Time> times = timeRepository.todos(getTenant(), nome);
 
         List<Jsonable> jsons =  TimeJson.of(times);
         // usa o builder
