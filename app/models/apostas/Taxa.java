@@ -131,6 +131,10 @@ public class Taxa implements Serializable{
         this.eventoAposta = eventoAposta;
     }
 
+    public OddConfiguracao getOddConfiguracao() {
+        return oddConfiguracao;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -108,6 +108,10 @@ GET      /pins/:id                     api.rest.PinController.buscar(id: Long)
 
 POST    /importacao                    api.rest.ImportacaoController.inserir
 
+# ------ ODD
+
+GET     /odds                          api.rest.OddController.todos
+
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index

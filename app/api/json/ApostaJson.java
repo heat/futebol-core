@@ -14,43 +14,23 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ApostaJson extends EventoJson {
+public class ApostaJson implements Convertable<EventoAposta>, Jsonable {
 
-    public static final String TIPO = "jogos";
+    public static final String TIPO = "apostas";
 
     public final String id;
     public final String evento;
-    public final String timeCasa;
-    public final String timeFora;
-    public final String dataEvento;
-    public final String dataJogo;
-    public final Apostavel.Situacao situacaoAposta;
-    public final Evento.Situacao situacaoEvento;
-    public final Evento.Modalidade modalidade;
-    public final Boolean permitir;
-    public final Integer quantidadeTaxas;
-    public final List<Long> favoritas;
+    public final Apostavel.Situacao situacao;
+    public final Boolean visivel;
     public final ObjectNode links;
 
-    public ApostaJson(String id, Apostavel.Situacao situacaoAposta, Boolean permitir,
-                      String idEvento, String timeCasa, String timeFora, String dataEvento, Evento.Situacao situacaoEvento, Long campeonato, Evento.Modalidade modalidade, List<Taxa> taxas) {
-
-        super(idEvento, timeCasa, timeFora, dataEvento, situacaoEvento, campeonato, modalidade);
+    public ApostaJson(String id, String evento, Apostavel.Situacao situacao, Boolean visivel) {
         this.id = id;
-        this.evento = idEvento;
-        this.timeCasa = timeCasa;
-        this.timeFora = timeFora;
-        this.dataEvento = dataEvento;
-        this.dataJogo = dataEvento;
-        this.situacaoAposta = situacaoAposta;
-        this.situacaoEvento = situacaoEvento;
-        this.modalidade = modalidade;
-        this.permitir = permitir;
+        this.evento = evento;
+        this.situacao = situacao;
+        this.visivel = visivel;
         this.links = Json.newObject();
         this.links.put("taxas", getContext() + "/jogos/" + evento + "/taxas/");
-        this.quantidadeTaxas = taxas.size();
-        this.favoritas = taxas.stream().filter(p -> p.isFavorita()).map(m -> m.getOdd().getId()).collect(Collectors.toList());
-
     }
 
     public static ApostaJson of(EventoAposta aposta) {
@@ -58,16 +38,9 @@ public class ApostaJson extends EventoJson {
 
         return new ApostaJson(
                 String.valueOf(aposta.getId()),
+                String.valueOf(aposta.getEvento().getId()),
                 aposta.getSituacao(),
-                aposta.isPermitir(),
-                String.valueOf(evento.getId()),
-                evento.getNomeCasa(),
-                evento.getNomeFora(),
-                calendarToString(evento.getDataEvento()),
-                evento.getSituacao(),
-                evento.getCampeonato().getId(),
-                evento.getModalidade(),
-                aposta.getTaxas());
+                aposta.isPermitir());
     }
 
     private static String calendarToString(Calendar calendar){
@@ -75,4 +48,15 @@ public class ApostaJson extends EventoJson {
         String dataAsString = s.format(calendar.getTime());
         return dataAsString;
     }
+
+    @Override
+    public EventoAposta to() {
+        return null;
+    }
+
+    @Override
+    public String type() {
+        return null;
+    }
+
 }

@@ -20,6 +20,8 @@ public abstract class Mercado {
         this.tipo = tipo;
     }
 
+    public abstract String getId();
+
     public String getNome() {
         return nome;
     }

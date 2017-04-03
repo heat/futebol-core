@@ -4,6 +4,13 @@ public class ResultadoExatoMercado extends Mercado {
 
     private static final String NOME = "Resultado Exato";
 
+    private static final TipoMercado TIPO = TipoMercado.S;
+
+    @Override
+    public String getId() {
+        return "resultado-exato";
+    }
+
     public enum Posicao {
         c0x0(0, 0),
         c0x1(0, 1);
@@ -31,6 +38,6 @@ public class ResultadoExatoMercado extends Mercado {
     }
 
     public ResultadoExatoMercado() {
-        super(NOME, TipoMercado.S);
+        super(NOME, TIPO);
     }
 }

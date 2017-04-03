@@ -1,6 +1,19 @@
 package models.apostas.mercado;
 
-public class ResultadoIntervaloFinalMercado {
+public class ResultadoIntervaloFinalMercado extends Mercado{
+
+    private static final String NOME = "Resultado Intervalo/Final";
+
+    private static final TipoMercado TIPO = TipoMercado.S;
+
+    public ResultadoIntervaloFinalMercado() {
+        super(NOME, TIPO);
+    }
+
+    @Override
+    public String getId() {
+        return "resultado-intervalo-final";
+    }
 
     public enum Posicao {
         CASA_CASA,

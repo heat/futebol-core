@@ -10,6 +10,11 @@ public class NumeroGolsMercado extends Mercado {
         super(NOME, TIPO);
     }
 
+    @Override
+    public String getId() {
+        return "numero-gols";
+    }
+
     public enum Posicao {
         ABAIXO, ACIMA
     }

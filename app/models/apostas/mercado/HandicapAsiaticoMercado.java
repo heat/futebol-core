@@ -10,6 +10,11 @@ public class HandicapAsiaticoMercado extends Mercado {
         super(NOME, TIPO);
     }
 
+    @Override
+    public String getId() {
+        return "handicap-asiatico";
+    }
+
     public enum Posicao {
         CASA, FORA
     }

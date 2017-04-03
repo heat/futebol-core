@@ -1,10 +1,7 @@
 package api.rest;
 
 import actions.TenantAction;
-import api.json.ApostaJson;
-import api.json.CampeonatoJson;
-import api.json.ObjectJson;
-import api.json.TaxaJson;
+import api.json.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
@@ -79,10 +76,10 @@ public class JogoController extends ApplicationController {
         Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
 
         List<EventoAposta> todos = eventoApostaRepository.todos(tenant);
-        ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        ObjectJson.JsonBuilder<JogoJson> builder = ObjectJson.build(JogoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
 
         todos.forEach(eventoAposta -> {
-            builder.comEntidade(ApostaJson.of(eventoAposta));
+            builder.comEntidade(JogoJson.of(eventoAposta));
             eventoAposta.getTaxas().stream()
                     .filter(p -> p.isFavorita()).collect(Collectors.toList())
                     .forEach(taxaAposta -> builder.comRelacionamento(TaxaJson.TIPO, TaxaJson.of(taxaAposta, eventoAposta.getId())));

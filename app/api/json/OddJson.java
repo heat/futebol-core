@@ -1,9 +1,13 @@
 package api.json;
 
 import models.apostas.Odd;
+import models.apostas.OddConfiguracao;
 import models.apostas.mercado.Mercado;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
 
@@ -13,17 +17,32 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
     public final String nome;
     public final String descricao;
     public final String abreviacao;
+    public final Boolean favorita;
+    public final Boolean visivel;
+    public final BigDecimal linha;
+    public final Long prioridade;
+    public final String mercado;
 
-    public OddJson(Long id, String nome, String descricao, String abreviacao) {
+    public OddJson(Long id, String nome, String descricao, String abreviacao, Boolean favorita, Boolean visivel, BigDecimal linha, Long prioridade, String mercado) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.abreviacao = abreviacao;
+        this.favorita = favorita;
+        this.visivel = visivel;
+        this.linha = linha;
+        this.prioridade = prioridade;
+        this.mercado = mercado;
     }
 
-    public static OddJson of(Odd odd) {
+    public static OddJson of(OddConfiguracao odd) {
 
-        return new OddJson(odd.getId(), odd.getNome(), odd.getDescricao(), odd.getDescricao());
+        return new OddJson(odd.getId(), odd.getOdd().getNome(), odd.getOdd().getDescricao(), odd.getOdd().getAbreviacao(), odd.getFavorita(),
+                odd.isVisivel(), odd.getLinhaFavorita(), odd.getPrioridade(), odd.getOdd().getMercado().getId());
+    }
+
+    public static List<Jsonable> of(List<OddConfiguracao> odds) {
+        return odds.stream().map( o -> OddJson.of(o) ).collect(Collectors.toList());
     }
 
     @Override

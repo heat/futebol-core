@@ -17,6 +17,7 @@ import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import filters.FiltroBilhete;
+import models.apostas.OddConfiguracao;
 import models.financeiro.comissao.Comissao;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
@@ -297,13 +298,10 @@ public class BilheteController extends ApplicationController {
         }
 
         List<Palpite> palpites = bilheteOptional.get().getPalpites();
-        List<Odd> odds = new ArrayList<>();
+        List<OddConfiguracao> odds = new ArrayList<>();
 
         ObjectJson.JsonBuilder<PalpiteJson> builder = ObjectJson.build(PalpiteJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
-        palpites.forEach(palpite ->{
-            builder.comEntidade(PalpiteJson.of(palpite));
-            odds.add(palpite.getTaxa().getOdd());
-        });
+        odds = palpites.stream().map( p -> p.getTaxa().getOddConfiguracao()).collect(Collectors.toList());
 
         odds.forEach(odd -> builder.comRelacionamento(OddJson.TIPO, OddJson.of(odd)));
 

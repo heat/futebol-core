@@ -136,18 +136,8 @@ public class EventoApostaController extends ApplicationController {
 
         todos.forEach(eventoAposta -> {
             builder.comEntidade(ApostaJson.of(eventoAposta));
-            eventoAposta.getTaxas().stream()
-                    .filter(p -> p.isFavorita()).collect(Collectors.toList())
-                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJson.TIPO, TaxaJson.of(taxaAposta, eventoAposta.getId())));
+            builder.comRelacionamento(EventoJson.TIPO, EventoJson.of(eventoAposta.getEvento()));
         });
-
-        List<Campeonato> campeonatos = todos.stream()
-                .map(eventoAposta -> eventoAposta.getEvento().getCampeonato())
-                .distinct()
-                .collect(Collectors.toList());
-
-        // adiciona os relacionamentos
-        campeonatos.forEach(campeonato -> builder.comRelacionamento(CampeonatoJson.TIPO, CampeonatoJson.of(campeonato)));
 
         return ok(builder.build());
     }
@@ -176,12 +166,14 @@ public class EventoApostaController extends ApplicationController {
             return notFound("Aposta não encontrada!");
         }
 
+        EventoAposta aposta = eventoAposta.get();
+
         ObjectJson.JsonBuilder<ApostaJson> builder = ObjectJson.build(ApostaJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
 
-        ApostaJson apostaJson = ApostaJson.of(eventoAposta.get());
+        ApostaJson apostaJson = ApostaJson.of(aposta);
         builder.comEntidade(apostaJson)
                 .comLink(TaxaJson.TIPO, TaxaJson.TIPO + "?aposta=" + apostaJson.id)
-        ;
+                .comRelacionamento(EventoJson.TIPO, EventoJson.of(aposta.getEvento()));
 
         return ok(builder.build());
     }
