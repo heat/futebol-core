@@ -7,11 +7,13 @@ import api.json.ObjectJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.ApplicationController;
+import dominio.processadores.apostas.EventoApostaInserirProcessador;
 import dominio.processadores.eventos.EventoAtualizarProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.Apostavel;
+import models.apostas.EventoAposta;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
@@ -25,10 +27,7 @@ import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
-import repositories.CampeonatoRepository;
-import repositories.EventoRepository;
-import repositories.TimeRepository;
-import repositories.ValidadorRepository;
+import repositories.*;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -47,6 +46,8 @@ public class EventoController extends ApplicationController{
 
     EventoRepository eventoRepository;
     EventoInserirProcessador inserirProcessador;
+    EventoApostaInserirProcessador eventoApostaInserirProcessador;
+    EventoApostaRepository eventoApostaRepository;
     EventoAtualizarProcessador atualizarProcessador;
     ValidadorRepository validadorRepository;
     CampeonatoRepository campeonatoRepository;
@@ -55,7 +56,8 @@ public class EventoController extends ApplicationController{
     public EventoController(EventoRepository eventoRepository, PlaySessionStore playSessionStore,
                             EventoInserirProcessador inserirProcessador, EventoAtualizarProcessador atualizarProcessador,
                             ValidadorRepository validadorRepository, CampeonatoRepository campeonatoRepository,
-                            TimeRepository timeRepository) {
+                            TimeRepository timeRepository, EventoApostaRepository eventoApostaRepository,
+                            EventoApostaInserirProcessador eventoApostaInserirProcessador) {
         super(playSessionStore);
 
         this.eventoRepository = eventoRepository;
@@ -64,6 +66,8 @@ public class EventoController extends ApplicationController{
         this.validadorRepository = validadorRepository;
         this.campeonatoRepository = campeonatoRepository;
         this.timeRepository = timeRepository;
+        this.eventoApostaRepository = eventoApostaRepository;
+        this.eventoApostaInserirProcessador = eventoApostaInserirProcessador;
     }
 
     @Secure(clients = "headerClient")
@@ -86,10 +90,16 @@ public class EventoController extends ApplicationController{
         Evento evento = eventoOptional.get();
         evento.setSituacao(Evento.Situacao.A);
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
+        List<Validador> validadoresEventoAposta = validadorRepository.todos(getTenant(), EventoApostaInserirProcessador.REGRA);
+
+
 
         try {
             evento = inserirProcessador.executar(getTenant(), evento, validadores)
                 .get();
+            EventoAposta eventoAposta = new EventoAposta();
+            eventoAposta.setEvento(evento);
+            eventoApostaInserirProcessador.executar(getTenant(), eventoAposta, validadoresEventoAposta);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         } catch (InterruptedException e) {
