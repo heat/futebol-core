@@ -1,7 +1,10 @@
 package api.rest;
 
 import actions.TenantAction;
+import api.json.Jsonable;
+import api.json.ObjectJson;
 import api.json.TokenJson;
+import api.json.UsuarioJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.ApplicationController;
@@ -14,6 +17,7 @@ import models.seguranca.RegistroAplicativo;
 import models.seguranca.Token;
 import models.seguranca.Usuario;
 import models.vo.Chave;
+import models.vo.Tenant;
 import modules.SecurityModule;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
@@ -85,6 +89,25 @@ public class UsuarioController extends ApplicationController{
         CommonProfile commonProfile = profile.get();
 
         return ok(Json.toJson(commonProfile));
+    }
+
+    @Secure(clients = "headerClient")
+    @Transactional
+    @With(TenantAction.class)
+    public Result todos() {
+
+        Tenant tenant = getTenantAppCode();
+
+        List<Usuario> usuarios = usuarioRepository.todos(tenant);
+
+        List<Jsonable> jsons =  UsuarioJson.of(usuarios);
+
+        ObjectJson.JsonBuilder<UsuarioJson> builder = ObjectJson.build(UsuarioJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        //adiciona as entidades
+        usuarios.forEach( campeonato -> builder.comEntidade(UsuarioJson.of(campeonato)));
+
+        JsonNode retorno = builder.build();
+        return ok(retorno);
     }
 
     @With(TenantAction.class)

@@ -104,7 +104,7 @@ public class PinController extends ApplicationController {
             return notFound("Usuário não encontrado!");
         final Usuario usuario = usuarioOptional.get();
 
-        Tenant tenant = Tenant.of(usuario.getIdTenant());
+        Tenant tenant = Tenant.of(usuario.getTenant());
 
         Optional<Pin> pinOptional = pinRepository.buscar(tenant, id);
         if (!pinOptional.isPresent())

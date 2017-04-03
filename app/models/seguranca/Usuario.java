@@ -38,7 +38,7 @@ public class Usuario implements Serializable{
     private Long id;
 
     @Column(name="tenant_id")
-    private Long idTenant;
+    private Long tenant;
 
     @Column(name="login")
     private String login;
@@ -66,10 +66,10 @@ public class Usuario implements Serializable{
 
     }
 
-    public Usuario(String login, String senha, Long idTenant, Status status) {
+    public Usuario(String login, String senha, Long tenant, Status status) {
         this.login = login;
         this.senha = senha;
-        this.idTenant = idTenant;
+        this.tenant = tenant;
         this.status = status;
     }
 
@@ -77,12 +77,12 @@ public class Usuario implements Serializable{
         return id;
     }
 
-    public Long getIdTenant() {
-        return idTenant;
+    public Long getTenant() {
+        return tenant;
     }
 
-    public void setIdTenant(Long idTenant) {
-        this.idTenant = idTenant;
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
     }
 
     public String getLogin() {
@@ -148,13 +148,13 @@ public class Usuario implements Serializable{
         Usuario usuario = (Usuario) o;
 
         if (id != null ? !id.equals(usuario.id) : usuario.id != null) return false;
-        return idTenant != null ? idTenant.equals(usuario.idTenant) : usuario.idTenant == null;
+        return tenant != null ? tenant.equals(usuario.tenant) : usuario.tenant == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (idTenant != null ? idTenant.hashCode() : 0);
+        result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
         return result;
     }
 }

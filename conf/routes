@@ -88,6 +88,8 @@ DELETE   /usuarios/:id                  api.rest.UsuarioController.cancelar(id: 
 
 GET     /usuarios/0                     api.rest.UsuarioController.usuario
 
+GET     /usuarios                       api.rest.UsuarioController.todos
+
 POST    /senhas                         api.rest.UsuarioController.alterarSenha
 
 

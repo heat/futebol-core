@@ -103,7 +103,7 @@ public class SysbetDatabaseAuthenticator extends InitializableWebObject implemen
 
         if(appRegistrado.isSessao()) {
             //TODO retirar o tenant de uma consulta
-            String appSession = String.format("%s:%d", usuario.getLogin(), usuario.getIdTenant());
+            String appSession = String.format("%s:%d", usuario.getLogin(), usuario.getTenant());
             appSession = new String(Base64.getEncoder().encode(appSession.getBytes()));//CredentialUtil.encryptMD5(appSession);
             profile.addAttribute("app_session", appSession);
         }
@@ -114,7 +114,7 @@ public class SysbetDatabaseAuthenticator extends InitializableWebObject implemen
             //TODO implementar lista de permissao baseado no escopo
             profile.addPermission(permissao.getNome());
         }
-        profile.addAttribute(Tenant.NAME, usuario.getIdTenant());
+        profile.addAttribute(Tenant.NAME, usuario.getTenant());
             return profile;
         });
         credentials.setUserProfile(p);

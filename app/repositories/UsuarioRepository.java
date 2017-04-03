@@ -8,6 +8,7 @@ import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +27,18 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
 
     @Override
     public List<Usuario> todos(Tenant tenant) {
-        return null;
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("FROM Usuario as u WHERE u.tenant = :tenant ORDER BY u.login ");
+        query.setParameter("tenant", tenant.get());
+        return query.getResultList();
     }
 
     @Override
     public Optional<Usuario> buscar(Tenant tenant, Long id) {
         try {
             EntityManager em = jpaApi.em();
-            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.idTenant = :idTenant and u.id = :id", Usuario.class);
-            query.setParameter("idTenant", tenant.get());
+            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.tenant = :tenant and u.id = :id", Usuario.class);
+            query.setParameter("tenant", tenant.get());
             query.setParameter("id", id);
             return Optional.ofNullable(query.getSingleResult());
         } catch (NoResultException e) {
@@ -76,7 +80,7 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
     @Override
     public CompletableFuture<Usuario> inserir(Tenant tenant, Usuario novo) {
         EntityManager em = jpaApi.em();
-        novo.setIdTenant(tenant.get());
+        novo.setTenant(tenant.get());
         em.persist(novo);
         return CompletableFuture.completedFuture(novo);
     }
@@ -100,7 +104,7 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
         try {
             return jpaApi.withTransaction((em) -> {
 
-                TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.idTenant = :tenant and u.login = :login AND u.senha = :senha", Usuario.class);
+                TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.tenant = :tenant and u.login = :login AND u.senha = :senha", Usuario.class);
                 query.setParameter("tenant", tenant.get());
                 query.setParameter("login", login);
                 query.setParameter("senha", senha);
