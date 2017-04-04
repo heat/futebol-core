@@ -33,7 +33,7 @@ public class AbaixoNumeroGolsOdd extends Odd<NumeroGolsMercado.Posicao> {
 
     @Override
     public Mercado getMercado() {
-        return Mercado.ResultadoFinal;
+        return Mercado.NumeroGols;
     }
 
     @Override

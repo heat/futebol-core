@@ -33,7 +33,7 @@ public class CasaIntervaloOdd extends Odd<ResultadoIntervaloMercado.Posicao> {
 
     @Override
     public Mercado getMercado() {
-        return Mercado.ResultadoFinal;
+        return Mercado.ResultadoIntervalo;
     }
 
     @Override

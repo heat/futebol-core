@@ -338,8 +338,7 @@ public class Global extends GlobalSettings {
 
         List<Odd> odds = em.createQuery("SELECT o FROM Odd o ").getResultList();
 
-        EventoAposta eventoAposta = new EventoAposta();
-        eventoAposta.setEvento(evento);
+        EventoAposta eventoAposta = new EventoAposta(evento);
         eventoAposta.setPermitir(true);
         eventoAposta.setSituacao(Apostavel.Situacao.A);
         eventoAposta.setTenant(Tenant.SYSBET.get());

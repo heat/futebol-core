@@ -30,7 +30,7 @@ public class ApostaJson implements Convertable<EventoAposta>, Jsonable {
         this.situacao = situacao;
         this.visivel = visivel;
         this.links = Json.newObject();
-        this.links.put("taxas", getContext() + "/jogos/" + evento + "/taxas/");
+        this.links.put("taxas", getContext() + "/taxas?aposta=" + id);
     }
 
     public static ApostaJson of(EventoAposta aposta) {

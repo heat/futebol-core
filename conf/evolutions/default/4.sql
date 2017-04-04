@@ -2,11 +2,9 @@
 
 # --- !Ups
 
-CREATE SEQUENCE public.eventos_apostas_id_seq;
-
 CREATE TABLE public.evento_apostas
 (
-  evento_aposta_id INTEGER NOT NULL DEFAULT nextval('public.eventos_apostas_id_seq'),
+  evento_aposta_id INTEGER NOT NULL,
   permitir boolean,
   situacao VARCHAR(1),
   tenant_id INTEGER NOT NULL,
@@ -27,10 +25,11 @@ CREATE TABLE public.taxas
   odd_id INTEGER NOT NULL,
   evento_aposta_id INTEGER NOT NULL,
   tenant_id INTEGER NOT NULL,
-  alterado_em TIMESTAMP NOT NULL,
-  criado_em TIMESTAMP NOT NULL,
+  alterado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   linha DECIMAL(5,2) NOT NULL,
   taxa DECIMAL(5,2) NOT NULL,
+  visivel BOOLEAN NOT NULL DEFAULT TRUE,
   CONSTRAINT taxas_pkey PRIMARY KEY (taxa_id)
 )
   WITH (
@@ -111,8 +110,6 @@ DROP TABLE IF EXISTS odds CASCADE;
 DROP TABLE IF EXISTS configuracao_odd CASCADE;
 
 DROP SEQUENCE IF EXISTS public.configuracao_odd_id_seq CASCADE;
-
-DROP SEQUENCE IF EXISTS public.eventos_apostas_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.taxas_taxa_id_seq CASCADE;
 

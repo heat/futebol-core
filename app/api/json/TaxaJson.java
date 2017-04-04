@@ -1,8 +1,6 @@
 package api.json;
 
-import models.apostas.Odd;
 import models.apostas.Taxa;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,36 +14,24 @@ public class TaxaJson implements Jsonable, Convertable<Taxa>{
     public Long odd;
     public BigDecimal taxa;
     public BigDecimal linha;
-    public Long evento;
-    public String alterado_em;
-    public String criado_em;
-    public Boolean isLinha;
-    public Boolean favorita;
-    public String abbr;
-    public String nome;
-    public String mercado;
+    public Long aposta;
+    public Boolean visivel;
 
     public TaxaJson() {
     }
 
-    public TaxaJson(Long id, Long odd, BigDecimal taxa, BigDecimal linha, Long evento, String alterado_em, String criado_em, Boolean isLinha, Boolean favorita, String abbr, String nome, String mercado) {
+    public TaxaJson(Long id, Long odd, BigDecimal taxa, BigDecimal linha, Long aposta, Boolean visivel) {
         this.id = id;
         this.odd = odd;
         this.taxa = taxa;
         this.linha = linha;
-        this.evento = evento;
-        this.alterado_em = alterado_em;
-        this.criado_em = criado_em;
-        this.isLinha = isLinha;
-        this.favorita = favorita;
-        this.abbr = abbr;
-        this.nome = nome;
-        this.mercado = mercado;
+        this.aposta = aposta;
+        this.visivel = visivel;
     }
 
     @Override
     public Taxa to() {
-        return new Taxa(null, null, taxa, linha);
+        return new Taxa(id, taxa, aposta, linha, visivel);
     }
 
     @Override
@@ -59,15 +45,13 @@ public class TaxaJson implements Jsonable, Convertable<Taxa>{
                 "odd='" + odd + '\'' +
                 ", taxa=" + taxa +
                 ", linha=" + linha +
-                ", aposta='" + evento + '\'' +
+                ", aposta='" + aposta + '\'' +
                 '}';
     }
 
     public static TaxaJson of(Taxa taxa, Long aposta) {
 
-        return new TaxaJson(taxa.getId(), taxa.getOdd().getId(), taxa.getTaxa(), taxa.getLinha(), aposta, calendarToString(taxa.getAlteradoEm()),
-                calendarToString(taxa.getCriadoEm()), false, taxa.isFavorita(), taxa.getOdd().getAbreviacao(),
-                taxa.getOdd().getNome(), taxa.getOdd().getMercado().getNome());
+        return new TaxaJson(taxa.getId(), taxa.getOdd().getId(), taxa.getTaxa(), taxa.getLinha(), aposta, taxa.isVisivel());
     }
 
     public static List<Jsonable> of(List<Taxa> taxas, Long aposta) {

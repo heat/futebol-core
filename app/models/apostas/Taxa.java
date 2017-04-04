@@ -47,11 +47,13 @@ public class Taxa implements Serializable{
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "criado_em")
-    private Calendar criadoEm;
+    private Calendar criadoEm = Calendar.getInstance();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "alterado_em")
-    private Calendar alteradoEm;
+    private Calendar alteradoEm = Calendar.getInstance();
+
+    private Boolean visivel = true;
 
     protected Taxa() {
 
@@ -65,6 +67,14 @@ public class Taxa implements Serializable{
         this.linha = linha;
         this.criadoEm = Calendar.getInstance();
         this.alteradoEm = Calendar.getInstance();
+    }
+
+    public Taxa(Long id, BigDecimal taxa, Long eventoAposta, BigDecimal linha, Boolean visivel) {
+        this.id = id;
+        this.taxa = taxa;
+        this.eventoAposta = eventoAposta;
+        this.linha = linha;
+        this.visivel = visivel;
     }
 
     public Long getId() {
@@ -133,6 +143,14 @@ public class Taxa implements Serializable{
 
     public OddConfiguracao getOddConfiguracao() {
         return oddConfiguracao;
+    }
+
+    public Boolean isVisivel() {
+        return visivel;
+    }
+
+    public void setVisivel(Boolean visivel) {
+        this.visivel = visivel;
     }
 
     @Override

@@ -32,7 +32,7 @@ public class ImparGolImparParOdd extends Odd<GolImparParMercado.Posicao> {
 
     @Override
     public Mercado getMercado() {
-        return Mercado.ResultadoFinal;
+        return Mercado.GolImparPar;
     }
 
     @Override

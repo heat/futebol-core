@@ -14,6 +14,7 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
     public static final String TIPO = "odds";
 
     public final Long id;
+    public final String codigo;
     public final String nome;
     public final String descricao;
     public final String abreviacao;
@@ -23,7 +24,8 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
     public final Long prioridade;
     public final String mercado;
 
-    public OddJson(Long id, String nome, String descricao, String abreviacao, Boolean favorita, Boolean visivel, BigDecimal linha, Long prioridade, String mercado) {
+    public OddJson(Long id, String nome, String descricao, String abreviacao, Boolean favorita, Boolean visivel,
+                   BigDecimal linha, Long prioridade, String mercado, String codigo) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -33,12 +35,13 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
         this.linha = linha;
         this.prioridade = prioridade;
         this.mercado = mercado;
+        this.codigo = codigo;
     }
 
     public static OddJson of(OddConfiguracao odd) {
 
         return new OddJson(odd.getId(), odd.getOdd().getNome(), odd.getOdd().getDescricao(), odd.getOdd().getAbreviacao(), odd.getFavorita(),
-                odd.isVisivel(), odd.getLinhaFavorita(), odd.getPrioridade(), odd.getOdd().getMercado().getId());
+                odd.isVisivel(), odd.getLinhaFavorita(), odd.getPrioridade(), odd.getOdd().getMercado().getId(), odd.getOdd().getCodigo());
     }
 
     public static List<Jsonable> of(List<OddConfiguracao> odds) {

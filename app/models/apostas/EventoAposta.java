@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,8 +15,6 @@ import java.util.List;
 public class EventoAposta implements Apostavel<Evento>, Serializable{
 
     @Id
-    @SequenceGenerator(name="eventos_apostas_id_seq", sequenceName = "eventos_apostas_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventos_apostas_id_seq")
     @Column(name = "evento_aposta_id",updatable = false)
     private Long id;
 
@@ -38,14 +37,15 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     private List<Taxa> taxas = new ArrayList<>();
 
     public EventoAposta() {
-        this.taxas = new ArrayList<Taxa>();
+        this.taxas = new ArrayList<>();
     }
 
-    private EventoAposta(Evento evento) {
-        this(evento, true, Collections.emptyList());
+    public EventoAposta(Evento evento) {
+        this(evento, true, new ArrayList<>());
     }
 
     public EventoAposta(Evento evento, boolean permitir, List<Taxa> taxas) {
+        this.id = evento.getId();
         this.evento = evento;
         this.permitir = permitir;
         this.taxas = taxas;
@@ -80,8 +80,19 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
     }
 
     public void addTaxa(Taxa taxa){
-        taxas.add(taxa);
+        int idx = taxas.indexOf(taxa);
+
+        if (idx >= 0){
+            Taxa t = taxas.get(idx);
+            t.setVisivel(taxa.isVisivel());
+            t.setTaxa(taxa.getTaxa());
+            t.setAlteradoEm(Calendar.getInstance());
+        } else {
+            taxas.add(taxa);
+        }
+
     }
+
     public Situacao getSituacao() {
         return situacao;
     }

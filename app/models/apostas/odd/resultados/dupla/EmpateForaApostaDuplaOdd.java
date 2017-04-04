@@ -32,7 +32,7 @@ public class EmpateForaApostaDuplaOdd extends Odd<ApostaDuplaMercado.Posicao> {
 
     @Override
     public Mercado getMercado() {
-        return Mercado.ResultadoFinal;
+        return Mercado.ApostaDupla;
     }
 
     @Override

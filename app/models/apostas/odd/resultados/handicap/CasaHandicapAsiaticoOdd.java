@@ -33,7 +33,7 @@ public class CasaHandicapAsiaticoOdd extends Odd<HandicapAsiaticoMercado.Posicao
 
     @Override
     public Mercado getMercado() {
-        return Mercado.ResultadoFinal;
+        return Mercado.HandicapAsiatico;
     }
 
     @Override

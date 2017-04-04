@@ -61,7 +61,9 @@ POST     /apostas/:id                   api.rest.EventoApostaController.atualiza
 
 GET      /taxas                         api.rest.TaxaController.buscar(aposta: Long)
 
-POST     /taxas/:apostaId               api.rest.TaxaController.inserir(apostaId: Long)
+POST     /taxas                         api.rest.TaxaController.inserir
+
+#PUT      /taxas/:id                     api.rest.TaxaController.atualizar(id: Long)
 
 DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long)
 

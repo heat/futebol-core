@@ -32,7 +32,7 @@ public class EmpateEmpateIntervaloFinalOdd extends Odd<ResultadoIntervaloFinalMe
 
     @Override
     public Mercado getMercado() {
-        return Mercado.ResultadoFinal;
+        return Mercado.ResultadoIntervaloFinal;
     }
 
     @Override

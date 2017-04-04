@@ -61,43 +61,40 @@ public class TaxaController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir(Long aposta) {
-
-        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), aposta);
-
-        if(!eventoApostaOptional.isPresent())
-            return badRequest("Aposta não encontrada!");
-
-        EventoAposta eventoAposta = eventoApostaOptional.get();
+    public Result inserir() {
 
         JsonNode body = Controller.request()
                 .body()
                 .asJson();
 
-        body.get("taxas").forEach( taxaJson -> {
-            TaxaJson t = Json.fromJson(taxaJson, TaxaJson.class);
-            t.evento = aposta;
-            Taxa taxa = t.to();
-            Optional<Odd> oddOptional = oddRepository.buscar(getTenant(),t.odd);
+        TaxaJson taxaJson = Json.fromJson(body.get("taxa"), TaxaJson.class);
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), taxaJson.aposta);
+
+        if(!eventoApostaOptional.isPresent())
+            return badRequest("Aposta não encontrada!");
+
+        EventoAposta eventoAposta = eventoApostaOptional.get();
+        Taxa taxa = taxaJson.to();
+
+        try {
+
+
+            Optional<Odd> oddOptional = oddRepository.buscar(getTenant(),taxaJson.odd);
             if(oddOptional.isPresent()) {
                 taxa.setOdd(oddOptional.get());
             }
+            taxa.setTenant(getTenant().get());
             eventoAposta.addTaxa(taxa);
-            System.out.println(t);
-        });
 
-        List<Validador> validadores = validadorRepository.todos(getTenant(), TaxaInserirProcessador.REGRA);
+            List<Validador> validadores = validadorRepository.todos(getTenant(), TaxaInserirProcessador.REGRA);
 
-        try {
-             inserirProcessador.executar(getTenant(), eventoAposta, validadores);
+            inserirProcessador.executar(getTenant(), eventoAposta, validadores);
         } catch (ValidadorExcpetion ex) {
             return internalServerError("definir melhor o erro");
         }
-
         // usa o builder
-        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
-        //adiciona as entidades
-        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa,aposta)));
+        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+        builder.comEntidade(TaxaJson.of(taxa, taxaJson.aposta));
         JsonNode retorno = builder.build();
         return created(retorno);
     }

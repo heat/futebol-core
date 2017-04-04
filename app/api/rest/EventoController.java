@@ -4,6 +4,7 @@ import actions.TenantAction;
 import api.json.CampeonatoJson;
 import api.json.EventoJson;
 import api.json.ObjectJson;
+import api.json.TimeJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.ApplicationController;
@@ -34,10 +35,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -92,14 +90,15 @@ public class EventoController extends ApplicationController{
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoInserirProcessador.REGRA);
         List<Validador> validadoresEventoAposta = validadorRepository.todos(getTenant(), EventoApostaInserirProcessador.REGRA);
 
-
-
         try {
             evento = inserirProcessador.executar(getTenant(), evento, validadores)
+                    .thenApply( eve -> {
+                        EventoAposta eventoAposta = new EventoAposta(eve);
+                        eventoApostaInserirProcessador.executar(getTenant(), eventoAposta, validadoresEventoAposta);
+                        return eve;
+                    })
                 .get();
-            EventoAposta eventoAposta = new EventoAposta();
-            eventoAposta.setEvento(evento);
-            eventoApostaInserirProcessador.executar(getTenant(), eventoAposta, validadoresEventoAposta);
+
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         } catch (InterruptedException e) {
@@ -117,6 +116,8 @@ public class EventoController extends ApplicationController{
 
         JsonNode retorno = builder.comEntidade(eventoJson)
                 .comRelacionamento(CampeonatoJson.TIPO, campeonatoJson)
+                .comRelacionamento(TimeJson.TIPO, TimeJson.of(evento.getCasa()))
+                .comRelacionamento(TimeJson.TIPO, TimeJson.of(evento.getFora()))
                 .build();
 
         return created(retorno);

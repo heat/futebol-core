@@ -10,6 +10,13 @@ public abstract class Mercado {
 
     public static Mercado ResultadoExato = new ResultadoExatoMercado();
     public static Mercado ResultadoFinal = new ResultadoFinalMercado();
+    public static Mercado HandicapAsiatico = new HandicapAsiaticoMercado();
+    public static Mercado ApostaDupla = new ApostaDuplaMercado();
+    public static Mercado GolImparPar = new GolImparParMercado();
+    public static Mercado Marcacao = new MarcacaoMercado();
+    public static Mercado NumeroGols = new NumeroGolsMercado();
+    public static Mercado ResultadoIntervaloFinal = new ResultadoIntervaloFinalMercado();
+    public static Mercado ResultadoIntervalo = new ResultadoIntervaloMercado();
 
     final String nome;
 

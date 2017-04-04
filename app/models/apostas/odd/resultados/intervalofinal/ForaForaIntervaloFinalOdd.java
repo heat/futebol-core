@@ -32,7 +32,7 @@ public class ForaForaIntervaloFinalOdd extends Odd<ResultadoIntervaloFinalMercad
 
     @Override
     public Mercado getMercado() {
-        return Mercado.ResultadoFinal;
+        return Mercado.ResultadoIntervaloFinal;
     }
 
     @Override
