@@ -1,9 +1,11 @@
 package repositories;
 
+import filters.Paginacao;
 import models.eventos.Time;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
+import services.PaginacaoService;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -33,13 +35,14 @@ public class TimeRepository implements  Repository<Long, Time>{
         return query.getResultList();
     }
 
-    public List<Time> todos(Tenant tenant, String nome) {
+    public List<Time> todos(Tenant tenant, String nome, Paginacao paginacao) {
 
         EntityManager em = jpaApi.em();
-        Query query = em.createQuery("FROM Time as t WHERE t.tenant = :tenant AND (UPPER(t.nome) LIKE UPPER(:nome) or :nome IS NULL) AND t.situacao = 'A' ORDER BY t.nome");
+        Query query = em.createQuery("SELECT t FROM Time as t WHERE t.tenant = :tenant AND (UPPER(t.nome) LIKE UPPER(:nome) or :nome IS NULL) AND t.situacao = 'A' ORDER BY t.nome");
         query.setParameter("tenant", tenant.get());
         query.setParameter("nome", "%" + nome + "%");
-        return query.getResultList();
+
+        return PaginacaoService.incluiPaginacao(query, paginacao).getResultList();
     }
 
     @Override

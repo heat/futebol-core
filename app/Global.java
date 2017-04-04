@@ -313,8 +313,16 @@ public class Global extends GlobalSettings {
 
         Time palmeiras = new Time(Tenant.SYSBET.get(), "Palmeiras");
         Time coritiba = new Time(Tenant.SYSBET.get(), "Coritiba");
+        Time gremio = new Time(Tenant.SYSBET.get(), "Gremio");
+        Time inter = new Time(Tenant.SYSBET.get(), "Inter");
+        Time santos = new Time(Tenant.SYSBET.get(), "Santos");
+        Time vasco = new Time(Tenant.SYSBET.get(), "Vasco");
         em.persist(palmeiras);
         em.persist(coritiba);
+        em.persist(gremio);
+        em.persist(inter);
+        em.persist(santos);
+        em.persist(vasco);
 
         //Não é possível inserir dois campeonatos com o mesmo nome
         Campeonato campeonato = new Campeonato(Tenant.SYSBET.get(), "Brasileirao");

@@ -32,7 +32,7 @@ DELETE   /eventos/:id                api.rest.EventoController.excluir(id: Long)
 POST     /resultados/:idEvento          api.rest.ResultadoController.inserir(idEvento: Long)
 
 # ------- CRUD de times
-GET      /times                         api.rest.TimeController.todos(nome: String ?= "", q: String ?= "")
+GET      /times                         api.rest.TimeController.todos(nome: String ?= "", q: String ?= "", page: Integer ?= 0, limit: Integer ?= 0)
 
 GET      /times/:id                     api.rest.TimeController.buscar(id: Long)
 

@@ -11,6 +11,7 @@ import dominio.processadores.eventos.TimeAtualizarProcessador;
 import dominio.processadores.eventos.TimeInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import filters.Paginacao;
 import models.eventos.Time;
 import models.vo.Chave;
 import org.pac4j.play.java.Secure;
@@ -103,11 +104,13 @@ public class TimeController extends ApplicationController{
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result todos(String nome, String q) {
+    public Result todos(String nome, String q, Integer page, Integer limit) {
 
         nome = Strings.isNullOrEmpty(nome) ? q : nome;
 
-        List<Time> times = timeRepository.todos(getTenant(), nome);
+        Paginacao paginacao = new Paginacao(page, limit);
+
+        List<Time> times = timeRepository.todos(getTenant(), nome, paginacao);
 
         List<Jsonable> jsons =  TimeJson.of(times);
         // usa o builder
