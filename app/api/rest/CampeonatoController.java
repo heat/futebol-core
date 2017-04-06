@@ -12,6 +12,7 @@ import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
 import dominio.processadores.eventos.CampeonatoInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import filters.Paginacao;
 import models.eventos.Campeonato;
 import models.seguranca.RegistroAplicativo;
 import models.vo.Chave;
@@ -105,13 +106,15 @@ public class CampeonatoController extends ApplicationController {
 
     @Transactional
     @With(TenantAction.class)
-    public Result todos(String nome, String q) {
+    public Result todos(String nome, String q, Integer page, Integer limit) {
 
         nome = Strings.isNullOrEmpty(nome) ? q : nome;
 
         Tenant tenant = getTenantAppCode();
 
-        List<Campeonato> campeonatos = campeonatoRepository.todos(tenant, nome);
+        Paginacao paginacao = new Paginacao(page, limit);
+
+        List<Campeonato> campeonatos = campeonatoRepository.todos(tenant, nome, paginacao);
 
         List<Jsonable> jsons =  CampeonatoJson.of(campeonatos);
 
@@ -119,7 +122,8 @@ public class CampeonatoController extends ApplicationController {
         ObjectJson.JsonBuilder<CampeonatoJson> builder = ObjectJson.build(CampeonatoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
         campeonatos.forEach( campeonato -> builder.comEntidade(CampeonatoJson.of(campeonato)));
-
+        builder.comMetaData("page", page)
+                .comMetaData("limit", limit);
         JsonNode retorno = builder.build();
         return ok(retorno);
     }

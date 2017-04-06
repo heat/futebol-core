@@ -1,9 +1,11 @@
 package repositories;
 
+import filters.Paginacao;
 import models.eventos.Campeonato;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
+import services.PaginacaoService;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -32,13 +34,13 @@ public class CampeonatoRepository implements Repository<Long, Campeonato> {
         return query.getResultList();
     }
 
-    public List<Campeonato> todos(Tenant tenant, String nome) {
+    public List<Campeonato> todos(Tenant tenant, String nome, Paginacao paginacao) {
 
         EntityManager em = jpaApi.em();
         Query query = em.createQuery("SELECT c FROM Campeonato as c WHERE c.tenant = :tenant AND (UPPER(c.nome) LIKE UPPER(:nome) or :nome IS NULL) AND c.situacao = 'A' ORDER BY c.nome ");
         query.setParameter("tenant", tenant.get());
         query.setParameter("nome", "%" + nome + "%");
-        return query.getResultList();
+        return PaginacaoService.incluiPaginacao(query, paginacao).getResultList();
     }
 
     @Override

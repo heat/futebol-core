@@ -117,6 +117,8 @@ public class TimeController extends ApplicationController{
         ObjectJson.JsonBuilder<TimeJson> builder = ObjectJson.build(TimeJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
         times.forEach( time -> builder.comEntidade(TimeJson.of(time)));
+        builder.comMetaData("page", page)
+                .comMetaData("limit", limit);
 
         JsonNode retorno = builder.build();
         return ok(retorno);

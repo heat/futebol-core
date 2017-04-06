@@ -7,7 +7,7 @@ POST    /autenticacaos              api.rest.UsuarioController.authenticar
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
 
 # ------ CRUD de campeonatos
-GET      /campeonatos                api.rest.CampeonatoController.todos(nome: String ?= "", q: String ?= "")
+GET      /campeonatos                api.rest.CampeonatoController.todos(nome: String ?= "", q: String ?= "", page: Integer ?= 0, limit: Integer ?= 0)
 
 GET      /campeonatos/:id            api.rest.CampeonatoController.buscar(id: Long)
 
