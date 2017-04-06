@@ -4,6 +4,7 @@ package repositories;
 import com.google.inject.Inject;
 import models.apostas.Odd;
 import models.financeiro.Conta;
+import models.financeiro.SolicitacaoSaldo;
 import models.financeiro.comissao.Comissao;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
@@ -78,4 +79,11 @@ public class ContaRepository implements Repository<Long, Conta>{
         return CompletableFuture.completedFuture(comissao);
     }
 
+    public CompletableFuture<SolicitacaoSaldo> inserirSolicitacaoSaldo(SolicitacaoSaldo solicitacaoSaldo) {
+
+        EntityManager em = jpaApi.em();
+        em.persist(solicitacaoSaldo);
+        return CompletableFuture.completedFuture(solicitacaoSaldo);
+
+    }
 }
