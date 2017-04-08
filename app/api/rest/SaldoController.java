@@ -4,6 +4,7 @@ import actions.TenantAction;
 import api.json.CampeonatoJson;
 import api.json.Jsonable;
 import api.json.ObjectJson;
+import api.json.SolicitacaoSaldoJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Strings;
 import controllers.ApplicationController;
@@ -14,6 +15,7 @@ import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import filters.Paginacao;
 import models.eventos.Campeonato;
+import models.financeiro.Conta;
 import models.financeiro.Saldo;
 import models.financeiro.SolicitacaoSaldo;
 import models.financeiro.debito.AdicionarSaldoDebito;
@@ -63,14 +65,20 @@ public class SaldoController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir(Long id) {
+    public Result inserir(Long usuario) {
 
         JsonNode json = request().body().asJson();
         BigDecimal valor = json.findPath("valor").decimalValue();
 
-        Chave chave = Chave.of(getTenant(), id);
+        Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), usuario);
 
-        SolicitacaoSaldo solicitacaoSaldo = new SolicitacaoSaldo(id, valor);
+        if (!contaOptional.isPresent()){
+            return badRequest("Conta não encontrada.");
+        }
+
+        Chave chave = Chave.of(getTenant(), contaOptional.get().getId());
+
+        SolicitacaoSaldo solicitacaoSaldo = new SolicitacaoSaldo(chave.getId(), valor);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), AdicionarSaldoProcessador.REGRA);
 
@@ -80,9 +88,10 @@ public class SaldoController extends ApplicationController {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
 
-        /*JsonNode json = ObjectJson.build(CampeonatoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
-                .comEntidade(toJson(solicitacaoSaldo))
-                .build();*/
-        return created(toJson(solicitacaoSaldo));
+        JsonNode retorno = ObjectJson.build(SolicitacaoSaldoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(SolicitacaoSaldoJson.of(solicitacaoSaldo))
+                .build();
+
+        return created(retorno);
     }
 }
