@@ -85,6 +85,24 @@ CREATE TABLE public.solicitacao_saldo
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+CREATE SEQUENCE public.transferencia_saldo_id_seq;
+
+CREATE TABLE public.transferencia_saldo
+(
+  transferencia_saldo_id INTEGER NOT NULL DEFAULT nextval('public.transferencia_saldo_id_seq'),
+  conta_origem INTEGER NOT NULL,
+  conta_destino INTEGER NOT NULL,
+  criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  valor DECIMAL(10,2) NOT NULL,
+  CONSTRAINT transferencia_saldo_pk PRIMARY KEY (transferencia_saldo_id),
+  CONSTRAINT transferencia_saldo_conta_origem_fk FOREIGN KEY (conta_origem)
+  REFERENCES public.contas (conta_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT transferencia_saldo_conta_destino_fk FOREIGN KEY (conta_destino)
+  REFERENCES public.contas (conta_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
 # --- !Downs
 
 DROP TABLE IF EXISTS registro_aplicativo CASCADE;
@@ -96,6 +114,10 @@ DROP TABLE IF EXISTS palpites_pin CASCADE;
 DROP TABLE IF EXISTS importacao CASCADE;
 
 DROP TABLE IF EXISTS solicitacao_saldo CASCADE;
+
+DROP TABLE IF EXISTS transferencia_saldo CASCADE;
+
+DROP SEQUENCE IF EXISTS public.transferencia_saldo_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.solicitacao_saldo_id_seq CASCADE;
 

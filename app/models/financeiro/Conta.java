@@ -66,11 +66,14 @@ public class Conta {
 
     public Saldo getSaldo(){
         BigDecimal saldo = BigDecimal.ZERO;
+
         if (!this.lancamentos.isEmpty()){
-            saldo.add(this.lancamentos.stream()
-                    .sorted()
+            BigDecimal s = this.lancamentos.stream()
+                    .sorted((o1, o2) -> Long.compare(o2.getId(), o1.getId()))
                     .map(l -> l.getSaldo().getSaldo())
-                    .reduce((first, second) -> second).get());
+                    .findFirst().get();
+
+            saldo = saldo.add(s);
         }
 
         return new Saldo(saldo);

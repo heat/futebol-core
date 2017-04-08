@@ -114,8 +114,9 @@ POST    /importacao                    api.rest.ImportacaoController.inserir
 
 GET     /odds                          api.rest.OddController.todos
 
-
 POST    /saldo/:id                     api.rest.SaldoController.inserir(id: Long)
+
+POST    /transferencia                 api.rest.TransferenciaController.inserir
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index

@@ -56,6 +56,8 @@ public class Global extends GlobalSettings {
             em.createQuery("DELETE FROM Importacao t").executeUpdate();
             em.createQuery("DELETE FROM Lancamento t").executeUpdate();
             em.createQuery("DELETE FROM Comissao t").executeUpdate();
+            em.createQuery("DELETE FROM DocumentoTransferencia t").executeUpdate();
+            em.createQuery("DELETE FROM SolicitacaoSaldo t").executeUpdate();
             em.createQuery("DELETE FROM Conta t").executeUpdate();
             em.createQuery("DELETE FROM Palpite t").executeUpdate();
             em.createQuery("DELETE FROM Bilhete t").executeUpdate();
@@ -386,6 +388,13 @@ public class Global extends GlobalSettings {
         conta.setProprietario(usuario);
 
         em.persist(conta);
+
+        Usuario usuario1 = em.find(Usuario.class, 3L);
+
+        Conta conta1 = new Conta();
+        conta1.setProprietario(usuario1);
+
+        em.persist(conta1);
 
         PlanoComissaoBilhete planoComissaoBilhete = new PlanoComissaoBilhete();
         planoComissaoBilhete.setNome("ComissaoBilhete");

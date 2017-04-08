@@ -4,6 +4,7 @@ package repositories;
 import com.google.inject.Inject;
 import models.apostas.Odd;
 import models.financeiro.Conta;
+import models.financeiro.DocumentoTransferencia;
 import models.financeiro.SolicitacaoSaldo;
 import models.financeiro.comissao.Comissao;
 import models.vo.Confirmacao;
@@ -84,6 +85,14 @@ public class ContaRepository implements Repository<Long, Conta>{
         EntityManager em = jpaApi.em();
         em.persist(solicitacaoSaldo);
         return CompletableFuture.completedFuture(solicitacaoSaldo);
+
+    }
+
+    public CompletableFuture<DocumentoTransferencia> inserirTransferencia(DocumentoTransferencia documentoTransferencia) {
+
+        EntityManager em = jpaApi.em();
+        em.persist(documentoTransferencia);
+        return CompletableFuture.completedFuture(documentoTransferencia);
 
     }
 
