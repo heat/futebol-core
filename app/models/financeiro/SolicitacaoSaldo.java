@@ -20,7 +20,15 @@ public class SolicitacaoSaldo {
     private BigDecimal valor;
 
     @Column(name = "criado_em")
-    private Calendar criadoEm;
+    private Calendar criadoEm = Calendar.getInstance();
+
+    public SolicitacaoSaldo() {
+    }
+
+    public SolicitacaoSaldo(Long solicitante, BigDecimal valor) {
+        this.solicitante = solicitante;
+        this.valor = valor;
+    }
 
     public Long getId() {
         return id;

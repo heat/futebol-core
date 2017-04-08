@@ -115,6 +115,8 @@ POST    /importacao                    api.rest.ImportacaoController.inserir
 GET     /odds                          api.rest.OddController.todos
 
 
+POST    /saldo/:id                     api.rest.SaldoController.inserir(id: Long)
+
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 # An example controller showing how to use dependency injection

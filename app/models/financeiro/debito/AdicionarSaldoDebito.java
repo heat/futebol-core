@@ -7,12 +7,16 @@ import models.financeiro.SolicitacaoSaldo;
 import models.financeiro.TipoLancamento;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
+@Entity
 public class AdicionarSaldoDebito extends Lancamento<SolicitacaoSaldo> implements Debito {
 
-    @Column(name = "solicitacao_saldo_id")
+    @OneToOne
+    @JoinColumn(name = "origem_solicitacao_saldo")
     public SolicitacaoSaldo origem;
-
 
     @Override
     public SolicitacaoSaldo getOrigem() {

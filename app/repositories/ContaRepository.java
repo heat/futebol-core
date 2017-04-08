@@ -86,4 +86,17 @@ public class ContaRepository implements Repository<Long, Conta>{
         return CompletableFuture.completedFuture(solicitacaoSaldo);
 
     }
+
+    public Optional<Conta> buscarPorId(Tenant tenant, Long conta) {
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Conta> query = em.createQuery("SELECT c FROM Conta c WHERE c.id = :conta ", Conta.class);
+            query.setParameter("conta", conta);
+            return Optional.ofNullable(query.getSingleResult());
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
 }
