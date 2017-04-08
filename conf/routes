@@ -114,7 +114,7 @@ POST    /importacao                    api.rest.ImportacaoController.inserir
 
 GET     /odds                          api.rest.OddController.todos
 
-POST    /saldos/:usuario               api.rest.SaldoController.inserir(usuario: Long)
+POST    /saldos                       api.rest.SaldoController.inserir
 
 POST    /transferencia                 api.rest.TransferenciaController.inserir
 

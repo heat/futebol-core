@@ -72,6 +72,16 @@ public class Perfil implements Serializable {
         this.localizacao = localizacao;
     }
 
+    public Perfil(String email, String primeiroNome, String sobreNome, String nomeExibicao, Genero genero, Locale localidade, String localizacao) {
+        this.email = email;
+        this.primeiroNome = primeiroNome;
+        this.sobreNome = sobreNome;
+        this.nomeExibicao = nomeExibicao;
+        this.genero = genero;
+        this.localidade = localidade;
+        this.localizacao = localizacao;
+    }
+
     public Long getId() {
         return id;
     }
@@ -157,6 +167,7 @@ public class Perfil implements Serializable {
     }
 
     public void setUsuario(Usuario usuario) {
+        this.id = usuario.getId();
         this.usuario = usuario;
     }
 

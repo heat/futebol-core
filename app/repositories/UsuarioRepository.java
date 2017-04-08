@@ -1,5 +1,6 @@
 package repositories;
 
+import models.seguranca.Perfil;
 import models.seguranca.Usuario;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
@@ -80,8 +81,13 @@ public class UsuarioRepository implements Repository<Long,Usuario>{
     @Override
     public CompletableFuture<Usuario> inserir(Tenant tenant, Usuario novo) {
         EntityManager em = jpaApi.em();
+        Perfil perfil = novo.getPerfil();
+        novo.setPerfil(null);
         novo.setTenant(tenant.get());
         em.persist(novo);
+        perfil.setUsuario(novo);
+        em.persist(perfil);
+        novo.setPerfil(perfil);
         return CompletableFuture.completedFuture(novo);
     }
 

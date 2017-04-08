@@ -65,9 +65,10 @@ public class SaldoController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir(Long usuario) {
+    public Result inserir() {
 
         JsonNode json = request().body().asJson();
+        Long usuario = json.findPath("usuario").longValue();
         BigDecimal valor = json.findPath("valor").decimalValue();
 
         Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), usuario);

@@ -48,13 +48,12 @@ public class Usuario implements Serializable{
 
     @Enumerated(EnumType.STRING)
     @Column(name="status")
-    private Status status;
+    private Status status = Status.ATIVO;
 
     @OneToOne
     @JoinColumn(name="papel_id")
     private Papel papel;
 
-    //TODO Remover referencia cicular
     @OneToOne(mappedBy = "usuario")
     private Perfil perfil;
 
@@ -71,6 +70,12 @@ public class Usuario implements Serializable{
         this.senha = senha;
         this.tenant = tenant;
         this.status = status;
+    }
+
+    public Usuario(String login, String senha, Papel papel) {
+        this.login = login;
+        this.senha = senha;
+        this.papel = papel;
     }
 
     public Long getId() {

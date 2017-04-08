@@ -110,24 +110,32 @@ public class UsuarioController extends ApplicationController{
         return ok(retorno);
     }
 
+
+
     @With(TenantAction.class)
-    @Transactional
     @Secure(clients = "headerClient")
+    @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result inserir() {
 
-        Usuario usuario = Json.fromJson(Controller.request()
+        UsuarioJson usuarioJson = Json.fromJson(Controller.request()
                 .body()
-                .asJson(), Usuario.class);
+                .asJson().get("usuario"), UsuarioJson.class);
 
-        List<Validador> validadores = validadorRepository.todos(getTenant(), UsuarioInserirProcessador.REGRA);
+        Usuario usuario = usuarioJson.to();
 
         try {
+            List<Validador> validadores = validadorRepository.todos(getTenant(), UsuarioInserirProcessador.REGRA);
             usuarioInserirProcessador.executar(getTenant(), usuario, validadores);
         } catch (ValidadorExcpetion validadorExcpetion) {
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
-        return created(Json.toJson(usuario));
+
+        JsonNode retorno = ObjectJson.build(UsuarioJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT)
+                .comEntidade(UsuarioJson.of(usuario))
+                .build();
+
+        return created(retorno);
     }
 
     @With(TenantAction.class)
