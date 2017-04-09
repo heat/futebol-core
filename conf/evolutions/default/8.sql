@@ -103,6 +103,28 @@ CREATE TABLE public.transferencia_saldo
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+INSERT INTO odds VALUES (1, 'resultado-final.casa', 'CasaResultadoFinalOdd', NULL);
+INSERT INTO odds VALUES (2, 'resultado-final.empate', 'EmpateResultadoFinalOdd', NULL);
+INSERT INTO odds VALUES (3, 'resultado-final.fora', 'ForaResultadoFinalOdd', NULL);
+INSERT INTO odds VALUES (4, 'aposta-dupla.casa_empate', 'CasaEmpateApostaDuplaOdd', NULL);
+INSERT INTO odds VALUES (5, 'aposta-dupla.empate_fora', 'EmpateForaApostaDuplaOdd', NULL);
+INSERT INTO odds VALUES (6, 'aposta-dupla.casa_fora', 'CasaForaApostaDuplaOdd', NULL);
+INSERT INTO odds VALUES (7, 'handicap-asiatico.casa', 'CasaHandicapAsiaticoOdd', NULL);
+INSERT INTO odds VALUES (8, 'handicap-asiatico.fora', 'ForaHandicapAsiaticoOdd', NULL);
+INSERT INTO odds VALUES (9, 'numero-gols.acima', 'AcimaNumeroGolsOdd', NULL);
+INSERT INTO odds VALUES (10, 'numero-gols.abaixo', 'AbaixoNumeroGolsOdd', NULL);
+
+INSERT INTO configuracao_odd VALUES (1, 1, 1, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (2, 1, 2, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (3, 1, 3, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (4, 1, 4, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (5, 1, 5, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (6, 1, 6, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (7, 1, 7, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (8, 1, 8, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (9, 1, 9, true, '0', 0.00, 1);
+INSERT INTO configuracao_odd VALUES (10, 1, 10, true, '0', 0.00, 1);
+
 # --- !Downs
 
 DROP TABLE IF EXISTS registro_aplicativo CASCADE;
