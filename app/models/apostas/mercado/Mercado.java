@@ -46,4 +46,8 @@ public abstract class Mercado {
             this.tipo = tipo;
         }
     }
+
+    public Boolean isLinha(){
+        return tipo == TipoMercado.L;
+    }
 }

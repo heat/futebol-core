@@ -120,9 +120,9 @@ public class JogoController extends ApplicationController {
 
         EventoAposta eventoAposta = eventoApostaOptional.get();
         // usa o builder
-        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        ObjectJson.JsonBuilder<TaxaJogoJson> builder = ObjectJson.build(TaxaJogoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
-        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa, evento)));
+        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJogoJson.of(taxa, evento)));
         JsonNode retorno = builder.build();
         return created(retorno);
 
