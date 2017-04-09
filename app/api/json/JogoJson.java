@@ -45,7 +45,7 @@ public class JogoJson extends EventoJson {
         this.modalidade = modalidade;
         this.permitir = permitir;
         this.links = Json.newObject();
-        this.links.put("taxas", getContext() + "/jogos/" + evento + "/taxas/");
+        this.links.put("taxas", getContext() + "/jogos/" + evento + "/taxas");
         this.quantidadeTaxas = taxas.size();
         this.favoritas = taxas.stream().filter(p -> p.isFavorita()).map(m -> m.getOdd().getId()).collect(Collectors.toList());
 
