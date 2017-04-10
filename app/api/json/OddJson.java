@@ -40,7 +40,7 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
 
     public static OddJson of(OddConfiguracao odd) {
 
-        return new OddJson(odd.getId(), odd.getOdd().getNome(), odd.getOdd().getDescricao(), odd.getOdd().getAbreviacao(), odd.getFavorita(),
+        return new OddJson(odd.getIdOdd(), odd.getOdd().getNome(), odd.getOdd().getDescricao(), odd.getOdd().getAbreviacao(), odd.getFavorita(),
                 odd.isVisivel(), odd.getLinhaFavorita(), odd.getPrioridade(), odd.getOdd().getMercado().getId(), odd.getOdd().getCodigo());
     }
 
