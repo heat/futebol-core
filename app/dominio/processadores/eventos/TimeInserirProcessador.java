@@ -29,7 +29,6 @@ public class TimeInserirProcessador implements Processador<Tenant, Time> {
             validador.validate(time);
         }
 
-        repository.inserir(tenant, time);
-        return CompletableFuture.completedFuture(time);
+        return repository.inserir(tenant, time);
     }
 }

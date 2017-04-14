@@ -28,7 +28,6 @@ public class CampeonatoInserirProcessador implements Processador<Tenant, Campeon
             validador.validate(campeonato);
         }
 
-        repository.inserir(tenant, campeonato);
-        return CompletableFuture.completedFuture(campeonato);
+        return repository.inserir(tenant, campeonato);
     }
 }
