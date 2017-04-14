@@ -3,12 +3,12 @@ package models.apostas;
 import models.eventos.Evento;
 
 import javax.persistence.*;
+import javax.swing.text.html.Option;
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 @Entity
 @Table( name = "evento_apostas")
@@ -79,11 +79,11 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
         this.taxas = taxas;
     }
 
-    public void addTaxa(Taxa taxa){
-        int idx = taxas.indexOf(taxa);
+    public void addTaxa(Taxa taxa, Predicate<Taxa> predicate) {
+        Optional<Taxa> taxaOptional = contains(taxa, predicate);
 
-        if (idx >= 0){
-            Taxa t = taxas.get(idx);
+        if(taxaOptional.isPresent()) {
+            Taxa t = taxaOptional.get();
             t.setVisivel(taxa.isVisivel());
             t.setTaxa(taxa.getTaxa());
             t.setAlteradoEm(Calendar.getInstance());
@@ -91,6 +91,21 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
             taxas.add(taxa);
         }
 
+    }
+
+    public void addTaxa(Taxa taxa){
+        addTaxa(taxa, (other) -> taxa.equals(other));
+
+    }
+
+    private Optional<Taxa> contains(Taxa taxa, Predicate<Taxa> predicate) {
+
+        for(Taxa t : taxas) {
+            if(predicate.test(t))
+                return Optional.of(t);
+        }
+
+        return Optional.empty();
     }
 
     public Situacao getSituacao() {
