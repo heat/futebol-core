@@ -83,11 +83,13 @@ public class EventoRepository implements Repository<Long, Evento>{
         EntityManager em = jpaApi.em();
         evento.setTenant(tenant.get());
         evento.setResultados(null);
+        if(!em.contains(evento.getCasa()))
         evento.setCasa(em.find(Time.class, evento.getCasa().getId()));
+        if(!em.contains(evento.getFora()))
         evento.setFora(em.find(Time.class, evento.getFora().getId()));
+        if(!em.contains(evento.getCampeonato()))
         evento.setCampeonato(em.find(Campeonato.class, evento.getCampeonato().getId()));
         em.persist(evento);
-        em.flush();
         return CompletableFuture.completedFuture(evento);
     }
 
