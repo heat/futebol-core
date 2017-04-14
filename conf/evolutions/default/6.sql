@@ -17,6 +17,8 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
+INSERT INTO public.contas (usuario_id) values (1), (2), (3), (4), (5);
+
 CREATE SEQUENCE public.lancamentos_lancamento_id_seq;
 
 CREATE TABLE public.lancamentos (

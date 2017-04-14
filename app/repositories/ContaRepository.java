@@ -7,6 +7,7 @@ import models.financeiro.Conta;
 import models.financeiro.DocumentoTransferencia;
 import models.financeiro.SolicitacaoSaldo;
 import models.financeiro.comissao.Comissao;
+import models.financeiro.comissao.ComissaoBilhete;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
 import play.db.jpa.JPAApi;
@@ -107,5 +108,15 @@ public class ContaRepository implements Repository<Long, Conta>{
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    public List<ComissaoBilhete> buscarComissaoBilhete(Tenant tenant, Long bilhete) {
+
+            EntityManager em = jpaApi.em();
+            Query query = em.createQuery("SELECT c FROM ComissaoBilhete c WHERE c.tenant = :tenant AND c.bilhete.id = :bilhete", ComissaoBilhete.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("bilhete", bilhete);
+
+            return query.getResultList();
     }
 }

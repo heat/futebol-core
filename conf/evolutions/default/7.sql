@@ -15,10 +15,13 @@ CREATE SEQUENCE public.comissao_id_seq;
 CREATE TABLE public.comissao
 (
   comissao_id INTEGER NOT NULL,
+  tenant_id INTEGER NOT NULL,
   criado_em TIMESTAMP NOT NULL,
   evento_comissao INTEGER NOT NULL,
   valor DECIMAL(10,2) NOT NULL,
   conta_id INTEGER NOT NULL,
+  dtype VARCHAR(31) NOT NULL,
+  origem_bilhete INTEGER,
   CONSTRAINT comissao_pk PRIMARY KEY (comissao_id)
 );
 
@@ -55,6 +58,8 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 # --- !Downs
+
+UPDATE public.usuarios SET plano_comissao_id = null;
 
 DROP TABLE IF EXISTS plano_comissao_parametro CASCADE;
 

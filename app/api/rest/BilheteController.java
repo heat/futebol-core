@@ -27,12 +27,14 @@ import models.bilhetes.Palpite;
 import models.financeiro.Conta;
 import models.financeiro.comissao.Comissionavel;
 import models.financeiro.comissao.PlanoComissao;
+import models.seguranca.Permissao;
 import models.seguranca.Usuario;
 import models.vo.Chave;
 import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
+import play.api.http.HttpChunk;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -122,8 +124,6 @@ public class BilheteController extends ApplicationController {
         bilhete.setCliente(bilheteJson.cliente);
         bilhete.setEventosAposta(eventosAposta);
 
-
-
         try {
             Tenant tenant = getTenant();
 
@@ -131,7 +131,7 @@ public class BilheteController extends ApplicationController {
             Optional<Conta> contaOptional = contaRepository.buscar(tenant, bilhete.getUsuario().getId());
 
             if (!contaOptional.isPresent()){
-                return notFound("Usuário sem conta.");
+                return status(Http.Status.UNPROCESSABLE_ENTITY, "Usuário sem conta.");
             }
 
             Conta conta = contaOptional.get();
@@ -148,10 +148,13 @@ public class BilheteController extends ApplicationController {
                         // transforma o bilhete em um comissionavel
                         Comissionavel<Bilhete> comissaoBilhete = Comissionavel.aposta(b);
                         // calcula comissao
-                        Optional<Comissao> comissao = planoComissao.calcular(comissaoBilhete, PlanoComissao.EVENTO_COMISSAO.VENDA_BILHETE);
-                        if(comissao.isPresent()) {
+                        Optional<Comissao> comissaoOptional = planoComissao.calcular(comissaoBilhete, PlanoComissao.EVENTO_COMISSAO.VENDA_BILHETE);
+
+                        if(comissaoOptional.isPresent()) {
+                            Comissao comissao = comissaoOptional.get();
+                            comissao.setTenant(tenant.get());
                             // salva comissao somente se tiver comissao a pagar
-                            pagarComissaoProcessador.executar(conta, comissao.get(), _validadores);
+                            pagarComissaoProcessador.executar(conta, comissao, _validadores);
                         }
                       return b;
             }).get();
@@ -230,7 +233,7 @@ public class BilheteController extends ApplicationController {
         return ok(retorno);
     }
 
-    @Secure(clients = "headerClient")
+    @Secure(clients = "headerClient, anonymousClient")
     @Transactional
     public Result buscar(String codigo) {
 
@@ -239,8 +242,16 @@ public class BilheteController extends ApplicationController {
         if (!bilheteOptional.isPresent()) {
             return notFound("Bilhete não encontrado!");
         }
+
+        Bilhete bilhete = bilheteOptional.get();
+
+        Optional<CommonProfile> profile = getProfile();
+
+        boolean full = profile.get().getPermissions().contains(Permissao.BILHETE_DETALHE);
+
         ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
-        builder.comEntidade(BilheteJson.of(bilheteOptional.get()));
+        builder.comEntidade(BilheteJson.of(bilheteOptional.get(), full));
+
         JsonNode retorno = builder.build();
 
         return ok(retorno);

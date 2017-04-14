@@ -340,7 +340,7 @@ public class Global extends GlobalSettings {
         evento.setCampeonato(campeonato);
         evento.setSituacao(Evento.Situacao.A);
         Calendar dataJogo = Calendar.getInstance();
-        dataJogo.add(Calendar.HOUR, random.nextInt(10));
+        dataJogo.add(Calendar.HOUR, 10);
         evento.setDataEvento(dataJogo);
         evento.setModalidade(Evento.Modalidade.FUTEBOL);
 
@@ -355,7 +355,7 @@ public class Global extends GlobalSettings {
 
         em.persist(eventoAposta);
 
-        eventoAposta.addTaxa(new Taxa(Tenant.SYSBET.get(), odds.get(0), BigDecimal.ONE, BigDecimal.ZERO));
+        eventoAposta.addTaxa(new Taxa(Tenant.SYSBET.get(), odds.get(0), BigDecimal.valueOf(2.23), BigDecimal.ZERO));
 
         em.merge(eventoAposta);
 
