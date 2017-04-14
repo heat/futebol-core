@@ -74,10 +74,6 @@ public class TimeRepository implements  Repository<Long, Time>{
             return Optional.ofNullable(query.getSingleResult());
 
         } catch (NoResultException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        } catch (Exception e) {
-            e.printStackTrace();
             return Optional.empty();
         }
     }
