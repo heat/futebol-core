@@ -108,7 +108,7 @@ GET      /pins/:id                     api.rest.PinController.buscar(id: Long)
 
 # ------ Importacao
 
-POST    /importacao                    api.rest.ImportacaoController.inserir
+POST    /importacaos                   api.rest.ImportacaoController.inserir
 
 # ------ ODD
 

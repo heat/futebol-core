@@ -98,7 +98,7 @@ insert into usuarios (tenant_id,
 VALUES (1, 'admin.demo', 1, '123456', 'ATIVO', 1),
        (1, 'supervisor.demo', 2, '123456', 'ATIVO', 2),
        (1, 'operador.demo', 3, '123456', 'ATIVO', 3),
-       (1, 'revendedor.demo', 4, '12456', 'ATIVO', 4),
+       (1, 'revendedor.demo', 4, '123456', 'ATIVO', 4),
        (1, 'usuario.demo', 5, '123456', 'ATIVO', 5);
 
 insert into perfis (email,

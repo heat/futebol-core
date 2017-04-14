@@ -3,6 +3,7 @@ package models.bilhetes;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.apostas.EventoAposta;
+import models.financeiro.comissao.ComissaoBilhete;
 import models.seguranca.Usuario;
 import models.serializacoes.CalendarDeserializer;
 import models.serializacoes.CalendarSerializer;
@@ -10,8 +11,10 @@ import models.serializacoes.CalendarSerializer;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "bilhetes")
@@ -91,6 +94,9 @@ public class Bilhete implements Serializable {
 
     @Transient
     private List<EventoAposta> eventosAposta;
+
+    @Transient
+    private List<ComissaoBilhete> comissoes = new ArrayList<>();
 
     public Bilhete() {
 
@@ -204,6 +210,19 @@ public class Bilhete implements Serializable {
 
     public void setEventosAposta(List<EventoAposta> eventosAposta) {
         this.eventosAposta = eventosAposta;
+    }
+
+    public List<ComissaoBilhete> getComissoes() {
+        return comissoes;
+    }
+
+    public void setComissoes(List<ComissaoBilhete> comissoes) {
+        this.comissoes = comissoes;
+    }
+
+    public BigDecimal valorComissao() {
+
+        return getComissoes().stream().map( c -> c.getValor() ).reduce(BigDecimal.ZERO, (acc, v) -> acc.add(v));
     }
 
     public int size() {

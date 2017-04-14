@@ -2,6 +2,7 @@ package repositories;
 
 import filters.FiltroBilhete;
 import models.bilhetes.Bilhete;
+import models.financeiro.comissao.ComissaoBilhete;
 import models.seguranca.Usuario;
 import models.vo.Confirmacao;
 import models.vo.Tenant;
@@ -19,10 +20,13 @@ import java.util.concurrent.CompletableFuture;
 public class BilheteRepository implements Repository<Long, Bilhete> {
 
     JPAApi jpaApi;
+    ContaRepository contaRepository;
 
     @Inject
-    public BilheteRepository(JPAApi jpaApi) {
+    public BilheteRepository(JPAApi jpaApi, ContaRepository contaRepository) {
+
         this.jpaApi = jpaApi;
+        this.contaRepository = contaRepository;
     }
 
     @Override
@@ -62,7 +66,13 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
             TypedQuery<Bilhete> query = em.createQuery("SELECT b FROM Bilhete b WHERE b.tenant = :tenant and b.codigo = :codigo", Bilhete.class);
             query.setParameter("tenant", tenant.get());
             query.setParameter("codigo", codigo);
-            return Optional.ofNullable(query.getSingleResult());
+
+            Bilhete bilhete = query.getSingleResult();
+
+            List<ComissaoBilhete> comissoes = contaRepository.buscarComissaoBilhete(tenant, bilhete.getId());
+            bilhete.setComissoes(comissoes);
+
+            return Optional.ofNullable(bilhete);
         } catch (NoResultException e) {
             e.printStackTrace();
             return Optional.empty();

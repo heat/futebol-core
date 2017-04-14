@@ -23,6 +23,7 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
     public BigDecimal valorAposta;
     public String criadoEm;
     public String login;
+    public BigDecimal comissao;
     public List<Long> palpites;
 
     public BilheteJson() {
@@ -39,7 +40,7 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
         this.criadoEm = criadoEm;
     }
 
-    public BilheteJson(String id, String codigo, Bilhete.Situacao situacao, String cliente,BigDecimal valorPremio, BigDecimal valorAposta, String criadoEm, List<Palpite> palpites, String username) {
+    public BilheteJson(String id, String codigo, Bilhete.Situacao situacao, String cliente,BigDecimal valorPremio, BigDecimal valorAposta, String criadoEm, BigDecimal comissao, List<Palpite> palpites, String username) {
         this.id = id;
         this.codigo = codigo;
         this.situacao = situacao;
@@ -49,6 +50,7 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
         this.palpites = palpites.stream().map(p -> p.getId()).collect(Collectors.toList());
         this.criadoEm = criadoEm;
         this.login = username;
+        this.comissao = comissao;
     }
 
     @Override
@@ -61,29 +63,43 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
         return TIPO;
     }
 
-    public static BilheteJson of(Bilhete bilhete) {
-        return new BilheteJson(
-                String.valueOf(bilhete.getId()),
-                bilhete.getCodigo(),
-                bilhete.getSituacao(),
-                bilhete.getCliente(),
-                bilhete.getValorPremio(),
-                bilhete.getValorAposta(),
-                calendarToString(bilhete.getCriadoEm()),
-                bilhete.getPalpites());
+
+    public static BilheteJson of(Bilhete bilhete, boolean full) {
+
+        if (full){
+            return new BilheteJson(
+                    String.valueOf(bilhete.getId()),
+                    bilhete.getCodigo(),
+                    bilhete.getSituacao(),
+                    bilhete.getCliente(),
+                    bilhete.getValorPremio(),
+                    bilhete.getValorAposta(),
+                    calendarToString(bilhete.getCriadoEm()),
+                    bilhete.valorComissao(),
+                    bilhete.getPalpites(),
+                    bilhete.getUsuario().getLogin()
+            );
+        } else {
+            return new BilheteJson(
+                    String.valueOf(bilhete.getId()),
+                    bilhete.getCodigo(),
+                    bilhete.getSituacao(),
+                    bilhete.getCliente(),
+                    bilhete.getValorPremio(),
+                    bilhete.getValorAposta(),
+                    calendarToString(bilhete.getCriadoEm()),
+                    bilhete.getPalpites()
+            );
+        }
     }
 
+        public static BilheteJson of(Bilhete bilhete) {
+            return of(bilhete, false);
+    }
+
+    @Deprecated
     public static BilheteJson of(Bilhete bilhete, String username) {
-        return new BilheteJson(
-                String.valueOf(bilhete.getId()),
-                bilhete.getCodigo(),
-                bilhete.getSituacao(),
-                bilhete.getCliente(),
-                bilhete.getValorPremio(),
-                bilhete.getValorAposta(),
-                calendarToString(bilhete.getCriadoEm()),
-                bilhete.getPalpites(),
-                username);
+        return of(bilhete, true);
     }
 
     private static String calendarToString(Calendar calendar){

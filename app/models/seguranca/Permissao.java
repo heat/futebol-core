@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Table(name = "permissoes")
 public class Permissao implements Serializable{
 
+    public static final String BILHETE_DETALHE = "BILHETE_DETALHE_COMPLETO";
     @Id
     @Column(name = "permissao_id",updatable = false)
     private Long id;

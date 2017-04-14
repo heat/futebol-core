@@ -1,6 +1,7 @@
 package models.financeiro.comissao;
 
 import models.financeiro.Conta;
+import models.financeiro.Lancamento;
 import models.seguranca.Usuario;
 
 import javax.persistence.*;
@@ -9,13 +10,17 @@ import java.util.Calendar;
 
 @Entity
 @Table(name = "comissao")
-public class Comissao {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Comissao<B> {
 
     @Id
     @SequenceGenerator(name="comissao_id_seq", sequenceName = "comissao_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comissao_id_seq")
     @Column(name = "comissao_id",updatable = false)
     private Long id;
+
+    @Column(name = "tenant_id")
+    private Long tenant;
 
     @OneToOne
     @JoinColumn(name = "conta_id")
@@ -80,6 +85,16 @@ public class Comissao {
     public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
+
+    public Long getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
+    }
+
+    public abstract Comissionavel<B> getComissionavel();
 
     @Override
     public boolean equals(Object o) {

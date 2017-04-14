@@ -6,6 +6,7 @@ import authenticators.SysbetRoleHandler;
 import be.objectify.deadbolt.java.cache.HandlerCache;
 import com.google.inject.AbstractModule;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.client.direct.AnonymousClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.CredentialsExtractor;
@@ -64,7 +65,9 @@ public class SecurityModule  extends AbstractModule {
                         new SecretEncryptionConfiguration(JWT_SALT)));
         parameterClient.setSupportGetRequest(true);
 
-        final Clients clients = new Clients(parameterClient, headerClient, directFormClient);
+        AnonymousClient anonymousClient = AnonymousClient.INSTANCE;
+
+        final Clients clients = new Clients(parameterClient, headerClient, directFormClient, anonymousClient);
 
         final Config config = new Config(clients);
         config.setHttpActionAdapter(new DefaultHttpActionAdapter());
