@@ -10,6 +10,7 @@ import models.vo.Tenant;
 import repositories.BilheteRepository;
 import repositories.ImportacaoRepository;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,7 +32,10 @@ public class ImportacaoInserirProcessador implements Processador<Tenant, Importa
         for (Validador<Importacao> validador: validadores) {
             validador.validate(importacao);
         }
-
+        if (importacaoRepository.contains(importacao)) {
+            importacao.setAlteradoEm(Calendar.getInstance());
+            return importacaoRepository.atualizar(tenant, importacao.getId(), importacao);
+        }
         return importacaoRepository.inserir(tenant, importacao) ;
     }
 }

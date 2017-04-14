@@ -6,10 +6,10 @@ import api.json.PinJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.inject.Inject;
 import controllers.ApplicationController;
 import dominio.processadores.Importacao.ImportacaoInserirProcessador;
 import dominio.processadores.apostas.EventoApostaInserirProcessador;
+import dominio.processadores.apostas.TaxaInserirProcessador;
 import dominio.processadores.bilhetes.PinInserirProcessador;
 import dominio.processadores.eventos.CampeonatoInserirProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
@@ -29,6 +29,8 @@ import models.eventos.Evento;
 import models.eventos.Time;
 import models.vo.Chave;
 import models.vo.Tenant;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.play.PlayWebContext;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.JPAApi;
@@ -45,6 +47,8 @@ import play.mvc.With;
 import repositories.*;
 
 import javax.annotation.processing.Completion;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Collections;
@@ -52,7 +56,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -70,6 +76,8 @@ public class ImportacaoController extends ApplicationController {
     CampeonatoInserirProcessador campeonatoInserirProcessador;
     ImportacaoRepository importacaoRepository;
     EventoInserirProcessador eventoInserirProcessador;
+    TaxaInserirProcessador taxaInserirProcessador;
+
     WSClient ws;
     JPAApi jpaApi;
     OddRepository oddRepository;
@@ -81,14 +89,7 @@ public class ImportacaoController extends ApplicationController {
     HttpExecutionContext ec;
 
     @Inject
-    public ImportacaoController(PlaySessionStore playSessionStore, ValidadorRepository validadorRepository,
-                                TenantRepository tenantRepository, EventoApostaRepository eventoApostaRepository,
-                                PinInserirProcessador inserirProcessador, UsuarioRepository usuarioRepository,
-                                PinRepository pinRepository, WSClient ws, TimeInserirProcessador timeInserirProcessador,
-                                CampeonatoInserirProcessador campeonatoInserirProcessador,
-                                JPAApi jpaApi, ImportacaoRepository importacaoRepository,
-                                EventoInserirProcessador eventoInserirProcessador, OddRepository oddRepository,
-                                EventoApostaInserirProcessador eventoApostaInserirProcessador, ImportacaoInserirProcessador importacaoInserirProcessador) {
+    public ImportacaoController(PlaySessionStore playSessionStore, ValidadorRepository validadorRepository, TenantRepository tenantRepository, EventoApostaRepository eventoApostaRepository, PinInserirProcessador inserirProcessador, UsuarioRepository usuarioRepository, PinRepository pinRepository, TimeInserirProcessador timeInserirProcessador, CampeonatoInserirProcessador campeonatoInserirProcessador, ImportacaoRepository importacaoRepository, EventoInserirProcessador eventoInserirProcessador, TaxaInserirProcessador taxaInserirProcessador, WSClient ws, JPAApi jpaApi, OddRepository oddRepository, EventoApostaInserirProcessador eventoApostaInserirProcessador, ImportacaoInserirProcessador importacaoInserirProcessador) {
         super(playSessionStore);
         this.validadorRepository = validadorRepository;
         this.tenantRepository = tenantRepository;
@@ -96,17 +97,32 @@ public class ImportacaoController extends ApplicationController {
         this.inserirProcessador = inserirProcessador;
         this.usuarioRepository = usuarioRepository;
         this.pinRepository = pinRepository;
-        this.ws = ws;
         this.timeInserirProcessador = timeInserirProcessador;
         this.campeonatoInserirProcessador = campeonatoInserirProcessador;
-        this.jpaApi = jpaApi;
         this.importacaoRepository = importacaoRepository;
         this.eventoInserirProcessador = eventoInserirProcessador;
+        this.taxaInserirProcessador = taxaInserirProcessador;
+        this.ws = ws;
+        this.jpaApi = jpaApi;
         this.oddRepository = oddRepository;
         this.eventoApostaInserirProcessador = eventoApostaInserirProcessador;
         this.importacaoInserirProcessador = importacaoInserirProcessador;
     }
 
+    @Secure(clients = "headerClient")
+    @Transactional
+    @BodyParser.Of(BodyParser.Json.class)
+    public CompletionStage<Result> importar() {
+
+        final Tenant tenant = getTenant();
+
+        final Executor ex = ec.current();
+        String chave = "";
+
+        Optional<Importacao> importacao = importacaoRepository.buscar(tenant, chave);
+
+        return null;
+    }
     public CompletionStage<Result> testar() {
 
         return CompletableFuture.supplyAsync(() -> {
@@ -152,58 +168,103 @@ public class ImportacaoController extends ApplicationController {
                 .map( c -> c.getOdd())
                 .collect(Collectors.toList());
 
+        final ConversorJsonImportacao conversor = new ConversorJsonImportacao(oddsConfiguracaos, tenant);
+
         CompletionStage<JsonNode> promise = request.get().thenApplyAsync(WSResponse::asJson, ex);
 
         CompletionStage<Result> result = promise
                 //pega a lista de importacoes
                 .thenApply( j -> j.get("data"))
                 .thenApply(this::asStream)
-                .thenApplyAsync( v -> fromJson(v, oddsConfiguracaos, tenant, i -> i.codigo.equals(chave)), ex)
-                .thenApply(importacoes -> importacoes.findAny())
-                .thenApply( j -> {
-                    if(!j.isPresent())
+                //filtra
+                .thenApply( stream ->
+                    stream.filter( node -> {
+                        return node.get("codigo").asText().equals(chave);
+                    }).findFirst()
+                )
+                //verifica se encontrou
+                .thenApply( node -> {
+                    if(!node.isPresent())
                         throw new RejectedExecutionException("Sem jogo para importar");
-                    return j.get();
+                    return node.get();
                 })
-                .thenComposeAsync(this::iserirEvento, ex)
-                //insere evento
-                .thenApplyAsync( ev -> jpaApi.withTransaction( em ->  {
-                    try {
-                        Importacao i = eventoApostaInserirProcessador.
-                                executar(tenant, ev, validadorRepository.todos(tenant, eventoApostaInserirProcessador.REGRA))
-                                .thenCompose( ap -> {
-                                    Importacao importacao = new Importacao(tenant.get(), chave, variacao, ap.getId());
-                                    return importacaoInserirProcessador
-                                            //inserir ou atualizar
-                                            .executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA));
-                                }).get();
-                        return i;
-                    } catch (InterruptedException|ExecutionException e) {
-                        throw new RejectedExecutionException("Não conseguimos salvar a aposta");
+                .thenApplyAsync(conversor::fromJson, ex)
+                .<Importacao>thenComposeAsync( reg -> jpaApi.withTransaction( em -> {
+                    Optional<Importacao> importacao = importacaoRepository.buscar(tenant, reg.codigo);
+                    if(!importacao.isPresent()) {
+                        return this.inserirEvento(reg)
+                                    .thenCompose(this.atualizaTaxa(tenant, reg))
+                                    .thenApply((ap) -> {
+                                        return new Importacao(tenant.get(), chave, variacao, ap.getEvento().getId());
+                                    });
                     }
+                    Importacao importacaoPresente  = importacao.get();
+                    Optional<EventoAposta> aposta = eventoApostaRepository.buscarPorEvento(tenant, importacaoPresente.getEvento());
+
+                    if(!aposta.isPresent())
+                        throw new RejectedExecutionException("Não encontrou a aposta da importacao");
+                    return CompletableFuture.completedFuture(aposta.get())
+                            .thenApply(this.atualizaTaxa(tenant, reg))
+                            .thenApply((ap) -> { return importacaoPresente; });
                 }), ex)
+                .thenComposeAsync( importacao ->  {
+                    return jpaApi.withTransaction( () ->
+                            importacaoInserirProcessador.executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA)));
+                }, ex)
                 // response
                 .handleAsync( (r, e) -> {
 
-                     Optional _r = Optional.ofNullable(r);
-                    Optional _e = Optional.ofNullable(e);
-                    if(_e.isPresent())
+                     Optional<Importacao> _r = Optional.ofNullable(r);
+                    Optional<Throwable> _e = Optional.ofNullable(e);
+                    if(_e.isPresent()) {
+                        e.printStackTrace();
                         return internalServerError(e.getMessage());
-                    return ok(Json.toJson(r));
+                    }
+
+                    return created(Json.toJson(r));
         }, ex);
         return result;
     }
 
-    private Stream<ImportacaoJson> fromJson(Stream<JsonNode> stream, List<Odd> odds, Tenant tenant, Predicate<ImportacaoJson> f) {
+    private Function<EventoAposta, CompletableFuture<EventoAposta>> atualizaTaxa(Tenant tenant, ImportacaoJson json) {
 
-        ConversorOdd conversorOdd = new ConversorOdd(odds);
-        return  stream.map( i ->  {
-            ImportacaoJson j = Json.fromJson(i, ImportacaoJson.class);
-            if(f.test(j))
+        return (ap) -> {
+            return jpaApi.withTransaction( em-> {
+                json.getTaxas().forEach( taxa -> {
 
-            i.fields().forEachRemaining( (n) -> {
+                    ap.addTaxa(taxa, (other) -> {
+                        return taxa.getOdd().getCodigo().equals(other.getOdd().getCodigo())
+                                &&  taxa.getLinha().setScale(2).equals(other.getLinha().setScale(2));
+                    });
+                });
+               return taxaInserirProcessador.executar(tenant, ap, validadorRepository.todos(tenant, taxaInserirProcessador.REGRA));
+            });
+        };
+    }
+
+
+    class ConversorJsonImportacao {
+
+        final List<Odd> odds;
+        final Tenant tenant;
+
+        public ConversorJsonImportacao(List<Odd> odds, Tenant tenant) {
+            this.odds = odds;
+            this.tenant = tenant;
+        }
+
+        public ImportacaoJson fromJson(JsonNode json) {
+
+            ConversorOdd conversorOdd = new ConversorOdd(odds);
+
+            ImportacaoJson j = Json.fromJson(json, ImportacaoJson.class);
+
+
+            json.fields().forEachRemaining( n -> {
                 String oddName = n.getKey();
+
                 Optional<Odd> odd = conversorOdd.from(oddName);
+                //insere a odd na taxa
                 if(odd.isPresent()) {
                     Odd oddPresente = odd.get();
                     BigDecimal valorTaxa = BigDecimal.valueOf(n.getValue().asDouble());
@@ -212,32 +273,41 @@ public class ImportacaoController extends ApplicationController {
                 }
             });
             return j;
-        }).filter(f);
+        }
     }
 
-    private CompletionStage<EventoAposta> iserirEvento(ImportacaoJson j) {
+
+    protected CompletionStage<EventoAposta> inserirEvento(ImportacaoJson j) {
             Tenant tenant = getTenant();
-            EventoAposta aposta = jpaApi.withTransaction( em -> {
+            EventoAposta aposta = jpaApi.withTransaction( (EntityManager em) -> {
                 Evento.EventoBuilder builder = Evento.builder(tenant)
-                        .em(j.dataJogo);
+                        .em(j.dataJogo)
+                        .comModalidade(Evento.Modalidade.FUTEBOL);
                 try {
                     EventoAposta _a = CompletableFuture.allOf(
                             //insere casa
                             timeInserirProcessador.
                                     executar(tenant, Time.of(j.time1), validadorRepository.todos(tenant, timeInserirProcessador.REGRA))
-                                    .thenApply( t -> builder.comTimeCasa(t)),
+                                    .thenAccept( t -> builder.comTimeCasa(t)),
                             //insere fora
                             timeInserirProcessador
                                     .executar(tenant, Time.of(j.time2), validadorRepository.todos(tenant, timeInserirProcessador.REGRA))
-                                    .thenApply( f -> builder.comTimeFora(f)),
+                                    .thenAccept( f -> builder.comTimeFora(f)),
                             campeonatoInserirProcessador
                                     .executar(tenant, Campeonato.of(j.campeonato), validadorRepository.todos(tenant, campeonatoInserirProcessador.REGRA))
                                     .thenAccept(c -> builder.comCampeonato(c)))
                             .thenApply( v -> builder.build())
                             //insere um evento
-                            .thenCompose( e -> eventoInserirProcessador.executar(tenant, e, validadorRepository.todos(tenant, eventoInserirProcessador.REGRA)))
+                            .thenCompose( e -> {
+                                return eventoInserirProcessador.executar(tenant, e, validadorRepository.todos(tenant, eventoInserirProcessador.REGRA));
+                            })
                             //evento salvo
-                            .thenApply( e -> EventoAposta.of(e))
+                            .thenCompose( (ev) ->
+                                    {
+                                        EventoAposta _ap = new EventoAposta(ev);
+                                    return eventoApostaInserirProcessador.executar(tenant, _ap,
+                                            validadorRepository.todos(tenant, eventoApostaInserirProcessador.REGRA));
+                                    })
                             .get();
                     return _a;
                 } catch (InterruptedException e) {

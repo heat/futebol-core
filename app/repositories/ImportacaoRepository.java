@@ -7,10 +7,7 @@ import models.vo.Tenant;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -44,8 +41,6 @@ public class ImportacaoRepository implements  Repository<Long, Importacao>{
             return Optional.ofNullable(query.getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
-        } catch (Exception e) {
-            return Optional.empty();
         }
     }
 
@@ -58,7 +53,7 @@ public class ImportacaoRepository implements  Repository<Long, Importacao>{
     public CompletableFuture<Importacao> inserir(Tenant tenant, Importacao novo) {
         EntityManager em = jpaApi.em();
         novo.setTenant(tenant.get());
-        em.persist(novo);
+        em.merge(novo);
         return CompletableFuture.completedFuture(novo);
     }
 
@@ -68,4 +63,8 @@ public class ImportacaoRepository implements  Repository<Long, Importacao>{
     }
 
 
+    public boolean contains(Importacao importacao) {
+        EntityManager em = jpaApi.em();
+        return em.contains(importacao);
+    }
 }
