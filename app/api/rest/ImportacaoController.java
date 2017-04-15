@@ -173,6 +173,7 @@ public class ImportacaoController extends ApplicationController {
                     return node.get();
                 })
                 .thenApplyAsync(conversor::fromJson, ex)
+                .thenApply(i -> conversor.aplicarVariacao(variacao, i))
                 .<Importacao>thenComposeAsync( reg -> jpaApi.withTransaction( em -> {
                     Optional<Importacao> importacao = importacaoRepository.buscar(tenant, reg.codigo);
                     if(!importacao.isPresent()) {
@@ -262,6 +263,15 @@ public class ImportacaoController extends ApplicationController {
                 }
             });
             return j;
+        }
+
+        public OddFeedJson aplicarVariacao(BigDecimal variacao, OddFeedJson json){
+
+            if (variacao.compareTo(BigDecimal.ZERO) != 0){
+                json.getTaxas().forEach(j -> j.setTaxa(j.getTaxa().multiply(BigDecimal.ONE.add(variacao))));
+            }
+
+            return json;
         }
     }
 
