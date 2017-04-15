@@ -57,7 +57,14 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
         query.setParameter("termino", filtro.termino);
         query.setParameter("evento", filtro.evento);
 
-        return query.getResultList();
+        List<Bilhete> bilhetes = query.getResultList();
+
+        bilhetes.forEach(b -> {
+            List<ComissaoBilhete> comissoes = contaRepository.buscarComissaoBilhete(tenant, b.getId());
+            b.setComissoes(comissoes);
+        });
+
+        return bilhetes;
     }
 
     public Optional<Bilhete> buscar(Tenant tenant, String codigo) {

@@ -173,8 +173,8 @@ public class UsuarioController extends ApplicationController{
     }
 
     @With(TenantAction.class)
-    @Transactional
     @Secure(clients = "headerClient")
+    @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result alterarSenha() {
 
