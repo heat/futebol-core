@@ -2,10 +2,9 @@ package api.rest;
 
 import actions.TenantAction;
 import api.json.ImportacaoJson;
-import api.json.PinJson;
+import api.json.ObjectJson;
+import api.json.OddFeedJson;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.ApplicationController;
 import dominio.processadores.Importacao.ImportacaoInserirProcessador;
 import dominio.processadores.apostas.EventoApostaInserirProcessador;
@@ -14,23 +13,15 @@ import dominio.processadores.bilhetes.PinInserirProcessador;
 import dominio.processadores.eventos.CampeonatoInserirProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
 import dominio.processadores.eventos.TimeInserirProcessador;
-import dominio.validadores.Validador;
-import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.Importacao.ConversorOdd;
 import models.Importacao.Importacao;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
-import models.apostas.OddConfiguracao;
 import models.apostas.Taxa;
-import models.bilhetes.PalpitePin;
-import models.bilhetes.Pin;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
-import models.vo.Chave;
 import models.vo.Tenant;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.play.PlayWebContext;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.JPAApi;
@@ -41,24 +32,17 @@ import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import play.libs.ws.WSResponse;
 import play.mvc.BodyParser;
-import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
 import repositories.*;
 
-import javax.annotation.processing.Completion;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -208,8 +192,10 @@ public class ImportacaoController extends ApplicationController {
                             .thenApply((ap) -> { return importacaoPresente; });
                 }), ex)
                 .thenComposeAsync( importacao ->  {
-                    return jpaApi.withTransaction( () ->
-                            importacaoInserirProcessador.executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA)));
+                    return jpaApi.withTransaction( () -> {
+                            importacao.setSituacao(Importacao.Situacao.C);
+                            return importacaoInserirProcessador.executar(tenant, importacao, validadorRepository.todos(tenant, importacaoInserirProcessador.REGRA));
+                            });
                 }, ex)
                 // response
                 .handleAsync( (r, e) -> {
@@ -221,12 +207,15 @@ public class ImportacaoController extends ApplicationController {
                         return internalServerError(e.getMessage());
                     }
 
-                    return created(Json.toJson(r));
+                    ObjectJson.JsonBuilder builder = ObjectJson.build("importacaos", ObjectJson.JsonBuilderPolicy.OBJECT);
+
+                    builder.comEntidade(ImportacaoJson.to(r));
+                    return created(Json.toJson(builder.build()));
         }, ex);
         return result;
     }
 
-    private Function<EventoAposta, CompletableFuture<EventoAposta>> atualizaTaxa(Tenant tenant, ImportacaoJson json) {
+    private Function<EventoAposta, CompletableFuture<EventoAposta>> atualizaTaxa(Tenant tenant, OddFeedJson json) {
 
         return (ap) -> {
             return jpaApi.withTransaction( em-> {
@@ -253,11 +242,11 @@ public class ImportacaoController extends ApplicationController {
             this.tenant = tenant;
         }
 
-        public ImportacaoJson fromJson(JsonNode json) {
+        public OddFeedJson fromJson(JsonNode json) {
 
             ConversorOdd conversorOdd = new ConversorOdd(odds);
 
-            ImportacaoJson j = Json.fromJson(json, ImportacaoJson.class);
+            OddFeedJson j = Json.fromJson(json, OddFeedJson.class);
 
 
             json.fields().forEachRemaining( n -> {
@@ -277,7 +266,7 @@ public class ImportacaoController extends ApplicationController {
     }
 
 
-    protected CompletionStage<EventoAposta> inserirEvento(ImportacaoJson j) {
+    protected CompletionStage<EventoAposta> inserirEvento(OddFeedJson j) {
             Tenant tenant = getTenant();
             EventoAposta aposta = jpaApi.withTransaction( (EntityManager em) -> {
                 Evento.EventoBuilder builder = Evento.builder(tenant)

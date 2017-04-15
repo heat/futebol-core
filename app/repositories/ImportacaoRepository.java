@@ -9,6 +9,7 @@ import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,7 +30,14 @@ public class ImportacaoRepository implements  Repository<Long, Importacao>{
 
     @Override
     public Optional<Importacao> buscar(Tenant tenant, Long id) {
-        return null;
+        EntityManager em = jpaApi.em();
+        try {
+            TypedQuery<Importacao> query = em.createQuery("SELECT i FROM Importacao i WHERE i.tenant = :tenant AND i.id = :id", Importacao.class);
+            return Optional.of(query.getSingleResult());
+
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     public Optional<Importacao> buscar(Tenant tenant, String chave) {
@@ -46,14 +54,19 @@ public class ImportacaoRepository implements  Repository<Long, Importacao>{
 
     @Override
     public CompletableFuture<Importacao> atualizar(Tenant tenant, Long id, Importacao updetable) {
-        return null;
+
+        EntityManager em = jpaApi.em();
+        updetable.setId(id);
+        updetable.setTenant(tenant.get());
+        em.merge(updetable);
+        return CompletableFuture.completedFuture(updetable);
     }
 
     @Override
     public CompletableFuture<Importacao> inserir(Tenant tenant, Importacao novo) {
         EntityManager em = jpaApi.em();
         novo.setTenant(tenant.get());
-        em.merge(novo);
+        em.persist(novo);
         return CompletableFuture.completedFuture(novo);
     }
 
@@ -65,6 +78,11 @@ public class ImportacaoRepository implements  Repository<Long, Importacao>{
 
     public boolean contains(Importacao importacao) {
         EntityManager em = jpaApi.em();
-        return em.contains(importacao);
+        if (em.contains(importacao))
+            return true;
+        if(!Objects.isNull(importacao.getId()))
+            return true;
+
+        return false;
     }
 }

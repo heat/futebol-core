@@ -1,110 +1,58 @@
 package api.json;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import models.apostas.Taxa;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import models.Importacao.Importacao;
+import models.serializacoes.CalendarDeserializer;
+import models.serializacoes.CalendarSerializer;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.UUID;
 
-public class ImportacaoJson {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ImportacaoJson implements Jsonable {
 
-    public String time1;
-    public String time2;
-    public String campeonato;
-    public String codigo;
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ssZ", timezone="America/Sao_Paulo")
-    public Calendar dataJogo;
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ssZ", timezone="America/Sao_Paulo")
-    public Calendar atualizadoEm;
-    public String sistema;
-    public BigDecimal oddCasa;
-    public BigDecimal oddEmpate;
-    public BigDecimal oddFora;
-    public BigDecimal oddCasaEmpate;
-    public BigDecimal oddForaEmpate;
-    public BigDecimal oddCasaFora;
-    public BigDecimal oddCasa15;
-    public BigDecimal oddFora15;
-    public BigDecimal oddAmbosMarcam;
-    public BigDecimal oddApenasMarca;
-    public BigDecimal oddAcima25;
-    public BigDecimal oddAbaixo25;
-    public BigDecimal oddCasa1T;
-    public BigDecimal oddEmpate1T;
-    public BigDecimal oddFora1T;
-    public BigDecimal oddGolPar;
-    public BigDecimal oddGolImpar;
-    public BigDecimal oddAcima05;
-    public BigDecimal oddAcima15;
-    public BigDecimal oddAcima35;
-    public BigDecimal oddAcima45;
-    public BigDecimal oddAbaixo05;
-    public BigDecimal oddAbaixo15;
-    public BigDecimal oddAbaixo35;
-    public BigDecimal oddAbaixo45;
-    public BigDecimal oddResultado00;
-    public BigDecimal oddResultado10;
-    public BigDecimal oddResultado20;
-    public BigDecimal oddResultado30;
-    public BigDecimal oddResultado40;
-    public BigDecimal oddResultado50;
-    public BigDecimal oddResultado01;
-    public BigDecimal oddResultado11;
-    public BigDecimal oddResultado21;
-    public BigDecimal oddResultado31;
-    public BigDecimal oddResultado41;
-    public BigDecimal oddResultado51;
-    public BigDecimal oddResultado02;
-    public BigDecimal oddResultado12;
-    public BigDecimal oddResultado22;
-    public BigDecimal oddResultado32;
-    public BigDecimal oddResultado42;
-    public BigDecimal oddResultado52;
-    public BigDecimal oddResultado03;
-    public BigDecimal oddResultado13;
-    public BigDecimal oddResultado23;
-    public BigDecimal oddResultado33;
-    public BigDecimal oddResultado43;
-    public BigDecimal oddResultado53;
-    public BigDecimal oddResultado04;
-    public BigDecimal oddResultado14;
-    public BigDecimal oddResultado24;
-    public BigDecimal oddResultado34;
-    public BigDecimal oddResultado44;
-    public BigDecimal oddResultado54;
-    public BigDecimal oddResultado05;
-    public BigDecimal oddResultado15;
-    public BigDecimal oddResultado25;
-    public BigDecimal oddResultado35;
-    public BigDecimal oddResultado45;
-    public BigDecimal oddResultado55;
-    public BigDecimal oddCasa05;
-    public BigDecimal oddCasa25;
-    public BigDecimal oddCasa35;
-    public BigDecimal oddFora05;
-    public BigDecimal oddFora25;
-    public BigDecimal oddFora35;
-    public BigDecimal oddResultadoCasaCasa;
-    public BigDecimal oddResultadoCasaEmpate;
-    public BigDecimal oddResultadoCasaFora;
-    public BigDecimal oddResultadoEmpateCasa;
-    public BigDecimal oddResultadoEmpateEmpate;
-    public BigDecimal oddResultadoEmpateFora;
-    public BigDecimal oddResultadoForaCasa;
-    public BigDecimal oddResultadoForaEmpate;
-    public BigDecimal oddResultadoForaFora;
+    private static final long serialVersionUID = -868655637252381796L;
 
-    @JsonIgnore
-    private List<Taxa> taxas = new ArrayList<>();
+    private static final String TIPO = "importacaos";
 
-    public void addTaxa(Taxa t) {
-        this.taxas.add(t);
+    public UUID id;
+
+    public String chave;
+
+    public BigDecimal variacao;
+
+    @JsonDeserialize(using= CalendarDeserializer.class)
+    @JsonSerialize(using = CalendarSerializer.class)
+    public Calendar alteradoEm;
+
+    public Importacao.Situacao situacao;
+
+    public ImportacaoJson() {
     }
 
-    public List<Taxa> getTaxas() {
-        return taxas;
+    public ImportacaoJson(UUID id, String chave, BigDecimal variacao, Calendar alteradoEm, Importacao.Situacao situacao) {
+        this.id = id;
+        this.chave = chave;
+        this.variacao = variacao;
+        this.alteradoEm = alteradoEm;
+        this.situacao = situacao;
+    }
+
+    @Override
+    public String type() {
+        return TIPO;
+    }
+
+    @Override
+    public String getContext() {
+        return null;
+    }
+
+    public static ImportacaoJson to(Importacao r) {
+        return new ImportacaoJson(UUID.randomUUID(), r.getChave(), r.getVariacao(), r.getAlteradoEm(), r.getSituacao());
     }
 }
