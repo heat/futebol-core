@@ -106,7 +106,7 @@ public class BilheteController extends ApplicationController {
         BigDecimal valorPremio = bilheteJson.valorAposta;
         Double somaTaxas = taxas.stream().mapToDouble(t -> t.getTaxa().doubleValue()).sum();
 
-        valorPremio = valorPremio.add(BigDecimal.valueOf(somaTaxas));
+        valorPremio = valorPremio.multiply(BigDecimal.valueOf(somaTaxas));
 
         taxas.forEach(t -> {
             Palpite palpite = new Palpite(getTenant().get(), t, t.getTaxa(), Palpite.Status.A);
