@@ -3,6 +3,7 @@ package api.rest;
 import actions.TenantAction;
 import api.json.ObjectJson;
 import api.json.PinJson;
+import api.json.TaxaJogoJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
@@ -11,6 +12,7 @@ import dominio.processadores.bilhetes.PinInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.EventoAposta;
+import models.apostas.Taxa;
 import models.bilhetes.PalpitePin;
 import models.bilhetes.Pin;
 import models.financeiro.Conta;
@@ -43,12 +45,13 @@ public class PinController extends ApplicationController {
     PinInserirProcessador inserirProcessador;
     UsuarioRepository usuarioRepository;
     PinRepository pinRepository;
+    TaxaRepository taxaRepository;
 
     @Inject
     public PinController(PlaySessionStore playSessionStore, ValidadorRepository validadorRepository,
             TenantRepository tenantRepository, EventoApostaRepository eventoApostaRepository,
                          PinInserirProcessador inserirProcessador, UsuarioRepository usuarioRepository,
-                         PinRepository pinRepository) {
+                         PinRepository pinRepository, TaxaRepository taxaRepository) {
         super(playSessionStore);
         this.validadorRepository = validadorRepository;
         this.tenantRepository = tenantRepository;
@@ -56,6 +59,7 @@ public class PinController extends ApplicationController {
         this.inserirProcessador = inserirProcessador;
         this.usuarioRepository = usuarioRepository;
         this.pinRepository = pinRepository;
+        this.taxaRepository = taxaRepository;
     }
 
     @Transactional
@@ -75,11 +79,9 @@ public class PinController extends ApplicationController {
         pin.setCliente(pinJson.cliente);
         pin.setValorAposta(pinJson.valorAposta);
 
-        pinJson.palpites.forEach(p -> pin.addPalpitesPin(new PalpitePin(p)));
+        List<Taxa> taxas = taxaRepository.buscar(tenant, pinJson.palpites);
 
-//        List<EventoAposta> eventosAposta = eventoApostaRepository.buscar(getTenant().get(), pinJson.palpites);
-        //TODO: Calcular a menor data dos jogos e setar em ExpiraEm
-
+        taxas.forEach(t -> pin.addPalpitesPin(new PalpitePin(t)));
         try {
             List<Validador> validadores = validadorRepository.todos(tenant, PinInserirProcessador.REGRA);
 
@@ -121,6 +123,9 @@ public class PinController extends ApplicationController {
 
         ObjectJson.JsonBuilder<PinJson> builder = ObjectJson.build(PinJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
         builder.comEntidade(pinJson);
+
+        pin.getPalpitesPin().forEach(p -> builder.comRelacionamento(TaxaJogoJson.TIPO, TaxaJogoJson.of(p.getTaxa(), p.getTaxa().getEventoAposta())));
+
         JsonNode retorno = builder.build();
 
         return ok(retorno);

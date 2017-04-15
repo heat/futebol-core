@@ -65,7 +65,7 @@ public class JogoJson extends EventoJson {
                 evento.getSituacao(),
                 evento.getCampeonato().getId(),
                 evento.getModalidade(),
-                aposta.getTaxas());
+                aposta.getTaxasAtivas());
     }
 
     private static String calendarToString(Calendar calendar){

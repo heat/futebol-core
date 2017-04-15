@@ -15,7 +15,7 @@ public class TaxaJogoJson implements Jsonable, Convertable<Taxa>{
     public Long odd;
     public BigDecimal taxa;
     public BigDecimal linha;
-    public Long aposta;
+    public Long jogo;
     public Boolean visivel;
     public String mercado;
     public String nome;
@@ -26,12 +26,12 @@ public class TaxaJogoJson implements Jsonable, Convertable<Taxa>{
     public TaxaJogoJson() {
     }
 
-    public TaxaJogoJson(Long id, Long odd, BigDecimal taxa, BigDecimal linha, Long aposta, Boolean visivel, String mercado, String nome, String abbr, Boolean favorita, Boolean isLinha) {
+    public TaxaJogoJson(Long id, Long odd, BigDecimal taxa, BigDecimal linha, Long jogo, Boolean visivel, String mercado, String nome, String abbr, Boolean favorita, Boolean isLinha) {
         this.id = id;
         this.odd = odd;
         this.taxa = taxa;
         this.linha = linha;
-        this.aposta = aposta;
+        this.jogo = jogo;
         this.visivel = visivel;
         this.mercado = mercado;
         this.nome = nome;
@@ -42,7 +42,7 @@ public class TaxaJogoJson implements Jsonable, Convertable<Taxa>{
 
     @Override
     public Taxa to() {
-        return new Taxa(id, taxa, aposta, linha, visivel);
+        return new Taxa(id, taxa, jogo, linha, visivel);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class TaxaJogoJson implements Jsonable, Convertable<Taxa>{
                 "odd='" + odd + '\'' +
                 ", taxa=" + taxa +
                 ", linha=" + linha +
-                ", aposta='" + aposta + '\'' +
+                ", aposta='" + jogo + '\'' +
                 '}';
     }
 

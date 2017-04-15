@@ -37,7 +37,7 @@ public class PinJson implements Jsonable, Convertable<Pin> {
 
     public static PinJson of(Pin pin) {
 
-        List<Long> palpites = pin.getPalpitesPin().stream().map(p -> p.getTaxa()).collect(Collectors.toList());
+        List<Long> palpites = pin.getPalpitesPin().stream().map(p -> p.getTaxa().getId()).collect(Collectors.toList());
 
         return new PinJson(
                 pin.getId().toString(),

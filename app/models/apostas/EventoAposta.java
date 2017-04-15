@@ -6,9 +6,11 @@ import javax.persistence.*;
 import javax.swing.text.html.Option;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Entity
 @Table( name = "evento_apostas")
@@ -144,5 +146,9 @@ public class EventoAposta implements Apostavel<Evento>, Serializable{
 
     public static EventoAposta of(Evento e) {
         return new EventoAposta(e);
+    }
+
+    public List<Taxa> getTaxasAtivas() {
+        return getTaxas().stream().filter(t -> t.isVisivel() && t.getTaxa().compareTo(BigDecimal.ONE) > 0).collect(Collectors.toList());
     }
 }

@@ -16,13 +16,14 @@ public class PalpitePin implements Serializable{
     @Column(name = "palpite_pin_id",updatable = false)
     private Long id;
 
-    @Column(name = "taxa_id")
-    private Long taxa;
+    @OneToOne
+    @JoinColumn(name = "taxa_id")
+    private Taxa taxa;
 
     public PalpitePin() {
     }
 
-    public PalpitePin(Long taxa) {
+    public PalpitePin(Taxa taxa) {
         this.taxa = taxa;
     }
 
@@ -34,11 +35,11 @@ public class PalpitePin implements Serializable{
         this.id = id;
     }
 
-    public Long getTaxa() {
+    public Taxa getTaxa() {
         return taxa;
     }
 
-    public void setTaxa(Long taxa) {
+    public void setTaxa(Taxa taxa) {
         this.taxa = taxa;
     }
 }

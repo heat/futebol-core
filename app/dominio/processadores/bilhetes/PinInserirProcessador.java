@@ -38,7 +38,7 @@ public class PinInserirProcessador implements Processador<Tenant, Pin>{
             validador.validate(pin);
         }
 
-        List<Long> taxas = pin.getPalpitesPin().stream().map(p -> p.getTaxa()).collect(Collectors.toList());
+        List<Long> taxas = pin.getPalpitesPin().stream().map(p -> p.getTaxa().getId()).collect(Collectors.toList());
         List<EventoAposta> eventosAposta = eventoApostaRepository.buscarPorTaxas(tenant, taxas);
         pin.setExpiraEm(getMenorDataEvento(eventosAposta));
 

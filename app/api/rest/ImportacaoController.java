@@ -258,8 +258,11 @@ public class ImportacaoController extends ApplicationController {
                 if(odd.isPresent()) {
                     Odd oddPresente = odd.get();
                     BigDecimal valorTaxa = BigDecimal.valueOf(n.getValue().asDouble());
-                    Taxa t = new Taxa(tenant.get(), oddPresente, valorTaxa, conversorOdd.linha(oddName) );
-                    j.addTaxa(t);
+
+                    if (valorTaxa.compareTo(BigDecimal.ONE) > 0){
+                        Taxa t = new Taxa(tenant.get(), oddPresente, valorTaxa, conversorOdd.linha(oddName) );
+                        j.addTaxa(t);
+                    }
                 }
             });
             return j;

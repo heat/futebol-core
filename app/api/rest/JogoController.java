@@ -26,6 +26,7 @@ import play.mvc.With;
 import repositories.*;
 
 import javax.persistence.NoResultException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,9 +81,9 @@ public class JogoController extends ApplicationController {
 
         todos.forEach(eventoAposta -> {
             builder.comEntidade(JogoJson.of(eventoAposta));
-            /*eventoAposta.getTaxas().stream()
+            eventoAposta.getTaxasAtivas().stream()
                     .filter(p -> p.isFavorita()).collect(Collectors.toList())
-                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJogoJson.TIPO, TaxaJogoJson.of(taxaAposta, eventoAposta.getId())));*/
+                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJogoJson.TIPO, TaxaJogoJson.of(taxaAposta, eventoAposta.getId())));
         });
 
         List<Campeonato> campeonatos = todos.stream()
@@ -122,7 +123,7 @@ public class JogoController extends ApplicationController {
         // usa o builder
         ObjectJson.JsonBuilder<TaxaJogoJson> builder = ObjectJson.build(TaxaJogoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
-        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJogoJson.of(taxa, evento)));
+        eventoAposta.getTaxasAtivas().forEach( taxa -> builder.comEntidade(TaxaJogoJson.of(taxa, evento)));
         JsonNode retorno = builder.build();
         return created(retorno);
 
