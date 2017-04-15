@@ -51,6 +51,12 @@ public class AbaixoNumeroGolsOdd extends Odd<NumeroGolsMercado.Posicao> {
         return NumeroGolsMercado.Posicao.ABAIXO;
     }
 
+    @Override
+    public Calculadora getCalculadora(Taxa taxa) {
+
+        return new CalculadoraL(taxa.getLinha());
+    }
+
     public class CalculadoraL implements Calculadora<ResultadoFutebol> {
         final BigDecimal linha;
         public CalculadoraL(BigDecimal linha) {

@@ -12,6 +12,7 @@ import models.apostas.mercado.ResultadoFinalMercado;
 import models.apostas.odd.resultados.dupla.CasaEmpateApostaDuplaOdd;
 import models.apostas.odd.resultados.dupla.CasaForaApostaDuplaOdd;
 import models.apostas.odd.resultados.dupla.EmpateForaApostaDuplaOdd;
+import models.apostas.odd.resultados.exato.ResultadoExatoOdd;
 import models.apostas.odd.resultados.gols.AbaixoNumeroGolsOdd;
 import models.apostas.odd.resultados.gols.AcimaNumeroGolsOdd;
 import models.apostas.odd.resultados.handicap.CasaHandicapAsiaticoOdd;
@@ -302,6 +303,149 @@ public class Global extends GlobalSettings {
                     new AbaixoNumeroGolsOdd("numero-gols.abaixo");
             em.persist(abaixoNumeroGolsOdd);
 
+            ResultadoExatoOdd resultadoExatoOdd0x0 =
+                    new ResultadoExatoOdd("resultado-exato.c0x0", ResultadoExatoMercado.Posicao.c0x0);
+            em.persist(resultadoExatoOdd0x0);
+
+            ResultadoExatoOdd resultadoExatoOdd0x1 =
+                    new ResultadoExatoOdd("resultado-exato.c0x1", ResultadoExatoMercado.Posicao.c0x1);
+            em.persist(resultadoExatoOdd0x1);
+
+            ResultadoExatoOdd resultadoExatoOdd0x2 =
+                    new ResultadoExatoOdd("resultado-exato.c0x2", ResultadoExatoMercado.Posicao.c0x2);
+            em.persist(resultadoExatoOdd0x2);
+
+            ResultadoExatoOdd resultadoExatoOdd0x3 =
+                    new ResultadoExatoOdd("resultado-exato.c0x3", ResultadoExatoMercado.Posicao.c0x3);
+            em.persist(resultadoExatoOdd0x3);
+
+            ResultadoExatoOdd resultadoExatoOdd0x4 =
+                    new ResultadoExatoOdd("resultado-exato.c0x4", ResultadoExatoMercado.Posicao.c0x4);
+            em.persist(resultadoExatoOdd0x4);
+
+            ResultadoExatoOdd resultadoExatoOdd0x5 =
+                    new ResultadoExatoOdd("resultado-exato.c0x5", ResultadoExatoMercado.Posicao.c0x5);
+            em.persist(resultadoExatoOdd0x5);
+
+            ResultadoExatoOdd resultadoExatoOdd1x0 =
+                    new ResultadoExatoOdd("resultado-exato.c1x0", ResultadoExatoMercado.Posicao.c1x0);
+            em.persist(resultadoExatoOdd1x0);
+
+            ResultadoExatoOdd resultadoExatoOdd1x1 =
+                    new ResultadoExatoOdd("resultado-exato.c1x1", ResultadoExatoMercado.Posicao.c1x1);
+            em.persist(resultadoExatoOdd1x1);
+
+            ResultadoExatoOdd resultadoExatoOdd1x2 =
+                    new ResultadoExatoOdd("resultado-exato.c1x2", ResultadoExatoMercado.Posicao.c1x2);
+            em.persist(resultadoExatoOdd1x2);
+
+            ResultadoExatoOdd resultadoExatoOdd1x3 =
+                    new ResultadoExatoOdd("resultado-exato.c1x3", ResultadoExatoMercado.Posicao.c1x3);
+            em.persist(resultadoExatoOdd1x3);
+
+            ResultadoExatoOdd resultadoExatoOdd1x4 =
+                    new ResultadoExatoOdd("resultado-exato.c1x4", ResultadoExatoMercado.Posicao.c1x4);
+            em.persist(resultadoExatoOdd1x4);
+
+            ResultadoExatoOdd resultadoExatoOdd1x5 =
+                    new ResultadoExatoOdd("resultado-exato.c1x5", ResultadoExatoMercado.Posicao.c1x5);
+            em.persist(resultadoExatoOdd1x5);
+
+            ResultadoExatoOdd resultadoExatoOdd2x0 =
+                    new ResultadoExatoOdd("resultado-exato.c2x0", ResultadoExatoMercado.Posicao.c2x0);
+            em.persist(resultadoExatoOdd2x0);
+
+            ResultadoExatoOdd resultadoExatoOdd2x1 =
+                    new ResultadoExatoOdd("resultado-exato.c2x1", ResultadoExatoMercado.Posicao.c2x1);
+            em.persist(resultadoExatoOdd2x1);
+
+            ResultadoExatoOdd resultadoExatoOdd2x2 =
+                    new ResultadoExatoOdd("resultado-exato.c2x2", ResultadoExatoMercado.Posicao.c2x2);
+            em.persist(resultadoExatoOdd2x2);
+
+            ResultadoExatoOdd resultadoExatoOdd2x3 =
+                    new ResultadoExatoOdd("resultado-exato.c2x3", ResultadoExatoMercado.Posicao.c2x3);
+            em.persist(resultadoExatoOdd2x3);
+
+            ResultadoExatoOdd resultadoExatoOdd2x4 =
+                    new ResultadoExatoOdd("resultado-exato.c2x4", ResultadoExatoMercado.Posicao.c2x4);
+            em.persist(resultadoExatoOdd2x4);
+
+            ResultadoExatoOdd resultadoExatoOdd2x5 =
+                    new ResultadoExatoOdd("resultado-exato.c2x5", ResultadoExatoMercado.Posicao.c2x5);
+            em.persist(resultadoExatoOdd2x5);
+
+            ResultadoExatoOdd resultadoExatoOdd3x0 =
+                    new ResultadoExatoOdd("resultado-exato.c3x0", ResultadoExatoMercado.Posicao.c3x0);
+            em.persist(resultadoExatoOdd3x0);
+
+            ResultadoExatoOdd resultadoExatoOdd3x1 =
+                    new ResultadoExatoOdd("resultado-exato.c3x1", ResultadoExatoMercado.Posicao.c3x1);
+            em.persist(resultadoExatoOdd3x1);
+
+            ResultadoExatoOdd resultadoExatoOdd3x2 =
+                    new ResultadoExatoOdd("resultado-exato.c3x2", ResultadoExatoMercado.Posicao.c3x2);
+            em.persist(resultadoExatoOdd3x2);
+
+            ResultadoExatoOdd resultadoExatoOdd3x3 =
+                    new ResultadoExatoOdd("resultado-exato.c3x3", ResultadoExatoMercado.Posicao.c3x3);
+            em.persist(resultadoExatoOdd3x3);
+
+            ResultadoExatoOdd resultadoExatoOdd3x4 =
+                    new ResultadoExatoOdd("resultado-exato.c3x4", ResultadoExatoMercado.Posicao.c3x4);
+            em.persist(resultadoExatoOdd3x4);
+
+            ResultadoExatoOdd resultadoExatoOdd3x5 =
+                    new ResultadoExatoOdd("resultado-exato.c3x5", ResultadoExatoMercado.Posicao.c3x5);
+            em.persist(resultadoExatoOdd3x5);
+
+            ResultadoExatoOdd resultadoExatoOdd4x0 =
+                    new ResultadoExatoOdd("resultado-exato.c4x0", ResultadoExatoMercado.Posicao.c4x0);
+            em.persist(resultadoExatoOdd4x0);
+
+            ResultadoExatoOdd resultadoExatoOdd4x1 =
+                    new ResultadoExatoOdd("resultado-exato.c4x1", ResultadoExatoMercado.Posicao.c4x1);
+            em.persist(resultadoExatoOdd4x1);
+
+            ResultadoExatoOdd resultadoExatoOdd4x2 =
+                    new ResultadoExatoOdd("resultado-exato.c4x2", ResultadoExatoMercado.Posicao.c4x2);
+            em.persist(resultadoExatoOdd4x2);
+
+            ResultadoExatoOdd resultadoExatoOdd4x3 =
+                    new ResultadoExatoOdd("resultado-exato.c4x3", ResultadoExatoMercado.Posicao.c4x3);
+            em.persist(resultadoExatoOdd4x3);
+
+            ResultadoExatoOdd resultadoExatoOdd4x4 =
+                    new ResultadoExatoOdd("resultado-exato.c4x4", ResultadoExatoMercado.Posicao.c4x4);
+            em.persist(resultadoExatoOdd4x4);
+
+            ResultadoExatoOdd resultadoExatoOdd4x5 =
+                    new ResultadoExatoOdd("resultado-exato.c4x5", ResultadoExatoMercado.Posicao.c4x5);
+            em.persist(resultadoExatoOdd4x5);
+
+            ResultadoExatoOdd resultadoExatoOdd5x0 =
+                    new ResultadoExatoOdd("resultado-exato.c5x0", ResultadoExatoMercado.Posicao.c5x0);
+            em.persist(resultadoExatoOdd5x0);
+
+            ResultadoExatoOdd resultadoExatoOdd5x1 =
+                    new ResultadoExatoOdd("resultado-exato.c5x1", ResultadoExatoMercado.Posicao.c5x1);
+            em.persist(resultadoExatoOdd5x1);
+
+            ResultadoExatoOdd resultadoExatoOdd5x2 =
+                    new ResultadoExatoOdd("resultado-exato.c5x2", ResultadoExatoMercado.Posicao.c5x2);
+            em.persist(resultadoExatoOdd5x2);
+
+            ResultadoExatoOdd resultadoExatoOdd5x3 =
+                    new ResultadoExatoOdd("resultado-exato.c5x3", ResultadoExatoMercado.Posicao.c5x3);
+            em.persist(resultadoExatoOdd5x3);
+
+            ResultadoExatoOdd resultadoExatoOdd5x4 =
+                    new ResultadoExatoOdd("resultado-exato.c5x4", ResultadoExatoMercado.Posicao.c5x4);
+            em.persist(resultadoExatoOdd5x4);
+
+            ResultadoExatoOdd resultadoExatoOdd5x5 =
+                    new ResultadoExatoOdd("resultado-exato.c5x5", ResultadoExatoMercado.Posicao.c5x5);
+            em.persist(resultadoExatoOdd5x5);
 
             dummyData(em);
 
@@ -409,9 +553,10 @@ public class Global extends GlobalSettings {
 
         usuario.setPlanoComissao(planoComissaoBilhete);
 
-
+        List<String> favoritas = Arrays.asList("resultado-final.casa", "resultado-final.empate", "resultado-final.fora");
         odds.forEach(o -> {
-            OddConfiguracao oddConfiguracao = new OddConfiguracao(Tenant.SYSBET.get(), o, true, BigDecimal.ZERO, 1L);
+            boolean favorita = favoritas.contains(o.getCodigo());
+            OddConfiguracao oddConfiguracao = new OddConfiguracao(Tenant.SYSBET.get(), o, favorita, BigDecimal.ZERO, 1L);
             em.persist(oddConfiguracao);
         });
 

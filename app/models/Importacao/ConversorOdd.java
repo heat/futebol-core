@@ -78,6 +78,42 @@ public class ConversorOdd {
         map.put("oddAbaixo25", "numero-gols.abaixo");
         map.put("oddAbaixo35", "numero-gols.abaixo");
         map.put("oddAbaixo45", "numero-gols.abaixo");
+        map.put("oddResultado00", "resultado-exato.c0x0");
+        map.put("oddResultado01", "resultado-exato.c0x1");
+        map.put("oddResultado02", "resultado-exato.c0x2");
+        map.put("oddResultado03", "resultado-exato.c0x3");
+        map.put("oddResultado04", "resultado-exato.c0x4");
+        map.put("oddResultado05", "resultado-exato.c0x5");
+        map.put("oddResultado10", "resultado-exato.c1x0");
+        map.put("oddResultado11", "resultado-exato.c1x1");
+        map.put("oddResultado12", "resultado-exato.c1x2");
+        map.put("oddResultado13", "resultado-exato.c1x3");
+        map.put("oddResultado14", "resultado-exato.c1x4");
+        map.put("oddResultado15", "resultado-exato.c1x5");
+        map.put("oddResultado20", "resultado-exato.c2x0");
+        map.put("oddResultado21", "resultado-exato.c2x1");
+        map.put("oddResultado22", "resultado-exato.c2x2");
+        map.put("oddResultado23", "resultado-exato.c2x3");
+        map.put("oddResultado24", "resultado-exato.c2x4");
+        map.put("oddResultado25", "resultado-exato.c2x5");
+        map.put("oddResultado30", "resultado-exato.c3x0");
+        map.put("oddResultado31", "resultado-exato.c3x1");
+        map.put("oddResultado32", "resultado-exato.c3x2");
+        map.put("oddResultado33", "resultado-exato.c3x3");
+        map.put("oddResultado34", "resultado-exato.c3x4");
+        map.put("oddResultado35", "resultado-exato.c3x5");
+        map.put("oddResultado40", "resultado-exato.c4x0");
+        map.put("oddResultado41", "resultado-exato.c4x1");
+        map.put("oddResultado42", "resultado-exato.c4x2");
+        map.put("oddResultado43", "resultado-exato.c4x3");
+        map.put("oddResultado44", "resultado-exato.c4x4");
+        map.put("oddResultado45", "resultado-exato.c4x5");
+        map.put("oddResultado50", "resultado-exato.c5x0");
+        map.put("oddResultado51", "resultado-exato.c5x1");
+        map.put("oddResultado52", "resultado-exato.c5x2");
+        map.put("oddResultado53", "resultado-exato.c5x3");
+        map.put("oddResultado54", "resultado-exato.c5x4");
+        map.put("oddResultado55", "resultado-exato.c5x5");
     }
 
     private void carregaMapLinhas(){
@@ -103,3 +139,4 @@ public class ConversorOdd {
 
     }
 }
+
