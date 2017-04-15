@@ -51,7 +51,7 @@ GET      /jogos/:id/taxas               api.rest.JogoController.buscar(id: Long)
 
 GET      /apostas/:id                   api.rest.EventoApostaController.buscar(id: Long)
 
-GET      /jogos/:id                     api.rest.EventoApostaController.buscar(id: Long)
+GET      /jogos/:id                     api.rest.JogoController.buscar(id: Long)
 
 POST     /apostas                       api.rest.EventoApostaController.inserir
 
@@ -60,6 +60,8 @@ POST     /apostas/:id                   api.rest.EventoApostaController.atualiza
 #------- CRUD de taxas
 
 GET      /taxas                         api.rest.TaxaController.buscar(aposta: Long)
+
+GET      /jogotaxas/:id                 api.rest.TaxaJogoController.buscar(id: Long)
 
 POST     /taxas                         api.rest.TaxaController.inserir
 

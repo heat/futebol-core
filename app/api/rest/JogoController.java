@@ -80,9 +80,9 @@ public class JogoController extends ApplicationController {
 
         todos.forEach(eventoAposta -> {
             builder.comEntidade(JogoJson.of(eventoAposta));
-            eventoAposta.getTaxas().stream()
+            /*eventoAposta.getTaxas().stream()
                     .filter(p -> p.isFavorita()).collect(Collectors.toList())
-                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJson.TIPO, TaxaJson.of(taxaAposta, eventoAposta.getId())));
+                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJogoJson.TIPO, TaxaJogoJson.of(taxaAposta, eventoAposta.getId())));*/
         });
 
         List<Campeonato> campeonatos = todos.stream()

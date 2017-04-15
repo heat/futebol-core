@@ -17,6 +17,7 @@ import models.financeiro.Conta;
 import models.seguranca.RegistroAplicativo;
 import models.seguranca.Usuario;
 import models.vo.Tenant;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
@@ -65,6 +66,9 @@ public class PinController extends ApplicationController {
         JsonNode json = request().body().asJson();
         PinJson pinJson = Json.fromJson(json.get("pin"), PinJson.class);
 
+        if (pinJson.palpites.isEmpty())
+            return badRequest("Pin não possui palpites.");
+
         Tenant tenant = getTenantAppCode();
 
         Pin pin = new Pin();
@@ -87,8 +91,10 @@ public class PinController extends ApplicationController {
             return status(Http.Status.UNPROCESSABLE_ENTITY, ex.getMessage());
         }
 
+        String codigo = StringUtils.leftPad(pin.getId().toString(), 4, "0");
+
         ((ObjectNode) json.path("pin")).removeAll()
-                .put("id", pin.getId());
+                .put("id", codigo);
 
         return ok(json);
 

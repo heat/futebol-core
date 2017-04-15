@@ -227,10 +227,12 @@ public class BilheteController extends ApplicationController {
 
         FiltroBilhete filtro = new FiltroBilhete(inicio, termino, aposta, dono, event);
 
+        boolean full = profile.getPermissions().contains(Permissao.BILHETE_DETALHE);
+
         List<Bilhete> bilhetes = bilheteRepository.todos(getTenant(), usuario, filtro);
         ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         bilhetes.forEach(bilhete ->{
-            builder.comEntidade(BilheteJson.of(bilhete, profile.getUsername()));
+            builder.comEntidade(BilheteJson.of(bilhete, full));
         });
         JsonNode retorno = builder.build();
         return ok(retorno);

@@ -23,7 +23,7 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
     public BigDecimal valorAposta;
     public String criadoEm;
     public String login;
-    public BigDecimal comissao;
+    public BigDecimal valorComissao;
     public List<Long> palpites;
 
     public BilheteJson() {
@@ -40,7 +40,7 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
         this.criadoEm = criadoEm;
     }
 
-    public BilheteJson(String id, String codigo, Bilhete.Situacao situacao, String cliente,BigDecimal valorPremio, BigDecimal valorAposta, String criadoEm, BigDecimal comissao, List<Palpite> palpites, String username) {
+    public BilheteJson(String id, String codigo, Bilhete.Situacao situacao, String cliente,BigDecimal valorPremio, BigDecimal valorAposta, String criadoEm, BigDecimal valorComissao, List<Palpite> palpites, String username) {
         this.id = id;
         this.codigo = codigo;
         this.situacao = situacao;
@@ -50,7 +50,7 @@ public class BilheteJson implements Jsonable, Convertable<Bilhete> {
         this.palpites = palpites.stream().map(p -> p.getId()).collect(Collectors.toList());
         this.criadoEm = criadoEm;
         this.login = username;
-        this.comissao = comissao;
+        this.valorComissao = valorComissao;
     }
 
     @Override
