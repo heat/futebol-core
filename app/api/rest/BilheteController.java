@@ -1,10 +1,7 @@
 package api.rest;
 
 import actions.TenantAction;
-import api.json.BilheteJson;
-import api.json.ObjectJson;
-import api.json.OddJson;
-import api.json.PalpiteJson;
+import api.json.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -20,7 +17,6 @@ import filters.FiltroBilhete;
 import models.apostas.OddConfiguracao;
 import models.financeiro.comissao.Comissao;
 import models.apostas.EventoAposta;
-import models.apostas.Odd;
 import models.apostas.Taxa;
 import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
@@ -34,7 +30,6 @@ import models.vo.Tenant;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
-import play.api.http.HttpChunk;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -44,10 +39,7 @@ import play.mvc.With;
 import repositories.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @With(TenantAction.class)
@@ -255,7 +247,33 @@ public class BilheteController extends ApplicationController {
         boolean full = profile.get().getPermissions().contains(Permissao.BILHETE_DETALHE);
 
         ObjectJson.JsonBuilder<BilheteJson> builder = ObjectJson.build(BilheteJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
-        builder.comEntidade(BilheteJson.of(bilheteOptional.get(), full));
+        builder.comEntidade(BilheteJson.of(bilheteOptional.get(), full))
+                .comLink("detalhes", "bilhetes/" + bilhete.getCodigo() + "/detalhes");
+
+        JsonNode retorno = builder.build();
+
+        return ok(retorno);
+    }
+
+    @Secure(clients = "headerClient, anonymousClient")
+    @Transactional
+    public Result detalhe(String codigo) {
+
+        Optional<Bilhete> bilheteOptional = bilheteRepository.buscar(getTenant(), codigo);
+
+        if (!bilheteOptional.isPresent()) {
+            return notFound("Bilhete não encontrado!");
+        }
+
+        Bilhete bilhete = bilheteOptional.get();
+
+        Map<Long, Palpite> palpiteMap = new HashMap<>();
+        List<Long> taxas = bilhete.getPalpites().stream().map(p -> p.getTaxa().getId()).collect(Collectors.toList());
+        List<EventoAposta> eventoApostas = eventoApostaRepository.buscarPorTaxas(getTenant(), taxas);
+        bilhete.getPalpites().forEach(p -> palpiteMap.put(p.getTaxa().getEventoAposta(), p));
+
+        ObjectJson.JsonBuilder<PalpiteDetalheJson> builder = ObjectJson.build(PalpiteDetalheJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        eventoApostas.forEach(ev -> builder.comEntidade(PalpiteDetalheJson.of(ev, palpiteMap.get(ev.getId()))));
 
         JsonNode retorno = builder.build();
 

@@ -80,6 +80,8 @@ DELETE   /bilhetes/:id                  api.rest.BilheteController.cancelar(id: 
 
 GET      /bilhetes/:codigo/impressao    api.rest.BilheteController.imprimir(codigo: String)
 
+GET      /bilhetes/:codigo/detalhes     api.rest.BilheteController.detalhe(codigo: String)
+
 GET     /palpites                       api.rest.BilheteController.buscarPalpites(bilhete: String)
 
 # ------- CRUD de usuarios
