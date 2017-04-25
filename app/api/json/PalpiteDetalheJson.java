@@ -1,7 +1,9 @@
 package api.json;
 
+import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.bilhetes.Palpite;
+import models.eventos.Evento;
 import services.DataService;
 
 import java.io.Serializable;
@@ -19,13 +21,14 @@ public class PalpiteDetalheJson implements Serializable, Convertable<Palpite>, J
     public final String criadoEm;
     public final BigDecimal taxa;
     public final Palpite.Status situacao;
+    public final Evento.Situacao situacaoEvento;
     public final Long odd;
     public final Long resultadoCasaIntervalo;
     public final Long resultadoCasaFinal;
     public final Long resultadoForaIntervalo;
     public final Long resultadoForaFinal;
 
-    public PalpiteDetalheJson(String id, String campeonato, String casa, String fora, String dataEvento, String criadoEm, BigDecimal taxa, Palpite.Status situacao, Long odd, Long resultadoCasaIntervalo, Long resultadoCasaFinal, Long resultadoForaIntervalo, Long resultadoForaFinal) {
+    public PalpiteDetalheJson(String id, String campeonato, String casa, String fora, String dataEvento, String criadoEm, BigDecimal taxa, Palpite.Status situacao, Evento.Situacao situacaoEvento, Long odd, Long resultadoCasaIntervalo, Long resultadoCasaFinal, Long resultadoForaIntervalo, Long resultadoForaFinal) {
         this.id = id;
         this.campeonato = campeonato;
         this.casa = casa;
@@ -34,6 +37,7 @@ public class PalpiteDetalheJson implements Serializable, Convertable<Palpite>, J
         this.criadoEm = criadoEm;
         this.taxa = taxa;
         this.situacao = situacao;
+        this.situacaoEvento = situacaoEvento;
         this.odd = odd;
         this.resultadoCasaIntervalo = resultadoCasaIntervalo;
         this.resultadoCasaFinal = resultadoCasaFinal;
@@ -51,6 +55,7 @@ public class PalpiteDetalheJson implements Serializable, Convertable<Palpite>, J
                 DataService.toString(eventoAposta.getEvento().getDataEvento()),
                 palpite.getValorTaxa(),
                 palpite.getStatus(),
+                eventoAposta.getEvento().getSituacao(),
                 palpite.getTaxa().getOdd().getId(),
                 eventoAposta.getEvento().getResultadoFutebol().casaPrimeiroTempo.getPontos(),
                 eventoAposta.getEvento().getResultadoFutebol().casaSegundoTempo.getPontos(),
