@@ -13,16 +13,19 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
 
     public static final String TIPO = "odds";
 
-    public final Long id;
-    public final String codigo;
-    public final String nome;
-    public final String descricao;
-    public final String abreviacao;
-    public final Boolean favorita;
-    public final Boolean visivel;
-    public final BigDecimal linha;
-    public final Long prioridade;
-    public final String mercado;
+    public Long id;
+    public String codigo;
+    public String nome;
+    public String descricao;
+    public String abreviacao;
+    public Boolean favorita;
+    public Boolean visivel;
+    public BigDecimal linha;
+    public Long prioridade;
+    public String mercado;
+
+    public OddJson() {
+    }
 
     public OddJson(Long id, String nome, String descricao, String abreviacao, Boolean favorita, Boolean visivel,
                    BigDecimal linha, Long prioridade, String mercado, String codigo) {
