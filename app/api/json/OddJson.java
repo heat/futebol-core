@@ -53,6 +53,12 @@ public class OddJson implements Serializable, Convertable<Odd>, Jsonable {
         return new OddRef(this.id);
     }
 
+    public OddConfiguracao toConfiguracao() {
+
+        return new OddConfiguracao(favorita,
+                (visivel ? OddConfiguracao.Situacao.A : OddConfiguracao.Situacao.I), linha, prioridade);
+    }
+
     @Override
     public String type() {
         return TIPO;

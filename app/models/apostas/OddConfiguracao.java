@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 @Table(name = "configuracao_odd")
 public class OddConfiguracao implements Serializable {
 
-    enum Situacao {
-        A("ATIVA");
+    public enum Situacao {
+        A("ATIVA"), I("INATIVA");
 
         private final String situacao;
 
@@ -58,6 +58,13 @@ public class OddConfiguracao implements Serializable {
         this.prioridade = prioridade;
     }
 
+    public OddConfiguracao(Boolean favorita, Situacao situacao, BigDecimal linhaFavorita, Long prioridade) {
+        this.favorita = favorita;
+        this.situacao = situacao;
+        this.linhaFavorita = linhaFavorita;
+        this.prioridade = prioridade;
+    }
+
     public Long getIdOdd() {
         return this.odd.getId();
     }
@@ -95,5 +102,25 @@ public class OddConfiguracao implements Serializable {
     }
     public boolean isVisivel() {
         return situacao == Situacao.A ;
+    }
+
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
+    }
+
+    public void setFavorita(Boolean favorita) {
+        this.favorita = favorita;
+    }
+
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
+    }
+
+    public void setLinhaFavorita(BigDecimal linhaFavorita) {
+        this.linhaFavorita = linhaFavorita;
+    }
+
+    public void setPrioridade(Long prioridade) {
+        this.prioridade = prioridade;
     }
 }

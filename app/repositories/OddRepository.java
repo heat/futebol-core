@@ -11,6 +11,7 @@ import play.db.jpa.JPAApi;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -53,6 +54,20 @@ public class OddRepository implements Repository<Long, Odd>{
         });
     }
 
+    public CompletableFuture<OddConfiguracao> atualizarConfiguracao(Tenant tenant, Long id, OddConfiguracao o) {
+        EntityManager em = jpaApi.em();
+        Optional<OddConfiguracao> oddConfiguracaoOptional = buscarConfiguracao(tenant, id);
+        if(!oddConfiguracaoOptional.isPresent())
+            throw new NoResultException("Parametro não encontrado");
+        OddConfiguracao oddConfiguracao = oddConfiguracaoOptional.get();
+        oddConfiguracao.setFavorita(o.getFavorita());
+        oddConfiguracao.setLinhaFavorita(o.getLinhaFavorita());
+        oddConfiguracao.setPrioridade(o.getPrioridade());
+        oddConfiguracao.setSituacao(o.getSituacao());
+        em.merge(oddConfiguracao);
+        return CompletableFuture.completedFuture(oddConfiguracao);
+    }
+
     @Override
     public CompletableFuture<Odd> inserir(Tenant tenant, Odd odd) {
 
@@ -78,5 +93,26 @@ public class OddRepository implements Repository<Long, Odd>{
         Query query = em.createQuery("SELECT o FROM OddConfiguracao o WHERE o.tenant = :tenant ");
         query.setParameter("tenant", tenant.get());
         return query.getResultList();
+    }
+
+    public Optional<OddConfiguracao> buscarConfiguracao(Tenant tenant, Long id) {
+
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<OddConfiguracao> query = em.createQuery("SELECT o FROM OddConfiguracao o WHERE o.tenant = :tenant AND o.id = :id", OddConfiguracao.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("id", id);
+
+            OddConfiguracao oddConfiguracao = query.getSingleResult();
+
+            return Optional.ofNullable(oddConfiguracao);
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 }

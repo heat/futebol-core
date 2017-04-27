@@ -124,7 +124,9 @@ PUT     /parametros/:id                api.rest.ParametroController.atualizar(id
 
 GET     /odds                          api.rest.OddController.todos
 
-POST    /saldos                       api.rest.SaldoController.inserir
+PUT     /odds/:id                      api.rest.OddController.atualizar(id: Long)
+
+POST    /saldos                        api.rest.SaldoController.inserir
 
 POST    /transferencia                 api.rest.TransferenciaController.inserir
 
