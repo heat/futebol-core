@@ -7,7 +7,9 @@ import dominio.validadores.Validador;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -39,12 +41,38 @@ public class ValidadorRepository implements Repository<Long, Validador> {
 
     @Override
     public Optional<Validador> buscar(Tenant tenant, Long id) {
-        return null;
+
+        try {
+            EntityManager em = jpaApi.em();
+            TypedQuery<Validador> query = em.createQuery("SELECT v FROM Validador v WHERE v.idTenant = :tenant and v.id = :id", Validador.class);
+            query.setParameter("tenant", tenant.get());
+            query.setParameter("id", id);
+
+            Validador validador = query.getSingleResult();
+
+            return Optional.ofNullable(validador);
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @Override
     public CompletableFuture<Validador> atualizar(Tenant tenant, Long id, Validador updetable) {
-        return null;
+        EntityManager em = jpaApi.em();
+        Optional<Validador> validadorOptional = buscar(tenant, id);
+        if(!validadorOptional.isPresent())
+            throw new NoResultException("Parametro não encontrado");
+        Validador validador = validadorOptional.get();
+        validador.setValorDecimal(updetable.getValorDecimal());
+        validador.setValorInteiro(updetable.getValorInteiro());
+        validador.setValorLogico(updetable.getValorLogico());
+        validador.setValorTexto(updetable.getValorTexto());
+        em.merge(validador);
+        return CompletableFuture.completedFuture(validador);
     }
 
     @Override
@@ -58,5 +86,13 @@ public class ValidadorRepository implements Repository<Long, Validador> {
     @Override
     public CompletableFuture<Confirmacao> excluir(Tenant tenant, Long id) {
         return null;
+    }
+
+    public List<Validador> todosEditaveis(Tenant tenant) {
+        EntityManager em = jpaApi.em();
+        Query query = em.createQuery("SELECT v FROM Validador v WHERE v.idTenant = :idtenant AND v.situacao = 'E'");
+        query.setParameter("idtenant", tenant.get());
+        List<Validador> validadores = query.getResultList();
+        return validadores;
     }
 }

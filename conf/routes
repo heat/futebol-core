@@ -114,6 +114,12 @@ GET      /pins/:id                     api.rest.PinController.buscar(id: Long)
 
 POST    /importacaos                   api.rest.ImportacaoController.inserir
 
+# ------ Parametros
+
+GET     /parametros                    api.rest.ParametroController.todos
+
+PUT     /parametros/:id                api.rest.ParametroController.atualizar(id: Long)
+
 # ------ ODD
 
 GET     /odds                          api.rest.OddController.todos
