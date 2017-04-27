@@ -2,6 +2,7 @@ import dominio.processadores.bilhetes.BilheteCancelarProcessador;
 import dominio.processadores.bilhetes.BilheteInserirProcessador;
 import dominio.processadores.eventos.*;
 import dominio.processadores.usuarios.PerfilAtualizarProcessador;
+import dominio.validadores.Validador;
 import dominio.validadores.bilhete.*;
 import dominio.validadores.eventos.*;
 import dominio.validadores.usuarios.PerfilLocalidadeValidador;
@@ -52,7 +53,6 @@ public class Global extends GlobalSettings {
         jpaApi.withTransaction((em) -> {
 
             //dummyData(em);
-            em.createQuery("DELETE FROM Validador v").executeUpdate();
             em.createQuery("DELETE FROM Resultado v").executeUpdate();
             em.createQuery("DELETE FROM Importacao t").executeUpdate();
             em.createQuery("DELETE FROM Lancamento t").executeUpdate();
@@ -74,194 +74,6 @@ public class Global extends GlobalSettings {
             em.createQuery("DELETE FROM PlanoComissao t").executeUpdate();
             em.createQuery("DELETE FROM OddConfiguracao v").executeUpdate();
             em.createQuery("DELETE FROM Odd v").executeUpdate();
-            // é apenas uam capa pois a delegação da validação esta para o StringRegexValidador
-            CampeonatoNomeValidator campeonatoNomeValidator = new CampeonatoNomeValidator(Tenant.SYSBET.get(),
-                    CampeonatoInserirProcessador.REGRA,
-                    null,
-                    true,  // utilizamos o campo logico para indicar se é necessário validar
-                    null,
-                    ".+"); // utilizamos o campo string para montar um Regex de validação
-            em.persist(campeonatoNomeValidator);
-            TimeStringValidador timeInserirStringValidador = new TimeStringValidador(Tenant.SYSBET.get(),
-                    TimeInserirProcessador.REGRA,
-                    null,
-                    true,
-                    null,
-                    ".+");
-            em.persist(timeInserirStringValidador);
-            TimeStringValidador timeAtualizarStringValidador = new TimeStringValidador(Tenant.SYSBET.get(),
-                    TimeAtualizarProcessador.REGRA,
-                    null,
-                    true,
-                    null,
-                    ".+");
-            em.persist(timeAtualizarStringValidador);
-            EventoDataValidador eventoInserirDataValidador = new EventoDataValidador(Tenant.SYSBET.get(),
-                    // Esse é um exemplo onde a mesma regra está para dois processadores diferentes
-                    EventoInserirProcessador.REGRA,
-                    null,
-                    true,
-                    null,
-                    null
-                    );
-            em.persist(eventoInserirDataValidador);
-            EventoDataValidador eventoAtualizarDataValidador = new EventoDataValidador(Tenant.SYSBET.get(),
-                    EventoAtualizarProcessador.REGRA,
-                    null,
-                    true,
-                    null,
-                    null
-            );
-            em.persist(eventoAtualizarDataValidador);
-            EventoTimesDiferenteValidador eventoTimesDiferenteValidador = new EventoTimesDiferenteValidador(Tenant.SYSBET.get(),
-                    EventoInserirProcessador.REGRA,
-                    null,
-                    true,
-                    null,
-                    null);
-            em.persist(eventoTimesDiferenteValidador);
-            VerificaTodosMomentosValidador verificaTodosMomentosValidador =
-                    new VerificaTodosMomentosValidador(Tenant.SYSBET.get(),
-                    FinalizarEventoProcessador.REGRA,
-                    null,
-                    true,
-                    null,
-                    null);
-            em.persist(verificaTodosMomentosValidador);
-            CodigoBilhetePolitica codigoBilhetePolitica =
-                    new CodigoBilhetePolitica( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            null,
-                            "xxx-xxxx-xxx-00");
-            em.persist(codigoBilhetePolitica);
-
-            PerfilLocalidadeValidador perfilLocalidadeValidador =
-                    new PerfilLocalidadeValidador( Tenant.SYSBET.get(),
-                            PerfilAtualizarProcessador.REGRA,
-                            null,
-                            true,
-                            null,
-                            null);
-            em.persist(perfilLocalidadeValidador);
-
-            TempoCancelamentoValidador tempoCancelamentoValidador =
-                    new TempoCancelamentoValidador( Tenant.SYSBET.get(),
-                            BilheteCancelarProcessador.REGRA,
-                            0L,
-                            null,
-                            null,
-                            null);
-            em.persist(tempoCancelamentoValidador);
-
-            ValorMinimoApostaValidador valorMinimoApostaValidador =
-                    new ValorMinimoApostaValidador( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            null,
-                            BigDecimal.TEN,
-                            null);
-            em.persist(valorMinimoApostaValidador);
-
-            HabilitadoApostasValidador habilitadoApostasValidador =
-                    new HabilitadoApostasValidador( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            null,
-                            null);
-            em.persist(habilitadoApostasValidador);
-
-            ValorMaximoApostaValidador valorMaximoApostaValidador =
-                    new ValorMaximoApostaValidador( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            null,
-                            BigDecimal.valueOf(1000),
-                            null);
-            em.persist(valorMaximoApostaValidador);
-
-            QtdMinimaPalpitesValidador qtdMinimaPalpitesValidador =
-                    new QtdMinimaPalpitesValidador( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            1L,
-                            null,
-                            null,
-                            null);
-            em.persist(qtdMinimaPalpitesValidador);
-
-            QtdMaximaPalpitesValidador qtdMaximaPalpitesValidador =
-                    new QtdMaximaPalpitesValidador( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            10L,
-                            null,
-                            null,
-                            null);
-            em.persist(qtdMaximaPalpitesValidador);
-
-            HabilitadoUsuarioApostasVal habilitadoUsuarioApostasValidador =
-                    new HabilitadoUsuarioApostasVal( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            null,
-                            null);
-            em.persist(habilitadoUsuarioApostasValidador);
-
-            HabilitadoRevendedorApostasVal habilitadoRevendedorApostasValidador =
-                    new HabilitadoRevendedorApostasVal( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            null,
-                            null);
-            em.persist(habilitadoRevendedorApostasValidador);
-
-            HabilitadoAdminApostasVal habilitadoAdministradorApostasValidador =
-                    new HabilitadoAdminApostasVal( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            null,
-                            null);
-            em.persist(habilitadoAdministradorApostasValidador);
-
-            HabilitadoSupervisorApostasVal habilitadoSupervisorApostasValidador =
-                    new HabilitadoSupervisorApostasVal( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            null,
-                            null);
-            em.persist(habilitadoSupervisorApostasValidador);
-
-            TempoLimiteApostasValidador tempoLimiteApostasValidador =
-                    new TempoLimiteApostasValidador( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            0L,
-                            null,
-                            null,
-                            null);
-            em.persist(tempoLimiteApostasValidador);
-
-            PremioMaximoPolitica premioMaximoPolitica =
-                    new PremioMaximoPolitica( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            BigDecimal.valueOf(10000),
-                            null);
-            em.persist(premioMaximoPolitica);
-
-            TaxaMaximaApostaPolitica taxaMaximaApostaPolitica =
-                    new TaxaMaximaApostaPolitica( Tenant.SYSBET.get(),
-                            BilheteInserirProcessador.REGRA,
-                            null,
-                            true,
-                            BigDecimal.valueOf(100),
-                            null);
-            em.persist(taxaMaximaApostaPolitica);
 
             CasaResultadoFinalOdd casaResultadoFinalOdd =
                     new CasaResultadoFinalOdd("resultado-final.casa");
