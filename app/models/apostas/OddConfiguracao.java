@@ -123,4 +123,12 @@ public class OddConfiguracao implements Serializable {
     public void setPrioridade(Long prioridade) {
         this.prioridade = prioridade;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setOdd(Odd odd) {
+        this.odd = odd;
+    }
 }

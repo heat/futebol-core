@@ -65,6 +65,11 @@ public class OddRepository implements Repository<Long, Odd>{
         oddConfiguracao.setPrioridade(o.getPrioridade());
         oddConfiguracao.setSituacao(o.getSituacao());
         em.merge(oddConfiguracao);
+
+        o.setId(oddConfiguracao.getId());
+        o.setOdd(oddConfiguracao.get());
+        o.setTenant(oddConfiguracao.getTenant());
+
         return CompletableFuture.completedFuture(oddConfiguracao);
     }
 
@@ -95,14 +100,13 @@ public class OddRepository implements Repository<Long, Odd>{
         return query.getResultList();
     }
 
-    public Optional<OddConfiguracao> buscarConfiguracao(Tenant tenant, Long id) {
-
+    public Optional<OddConfiguracao> buscarConfiguracao(Tenant tenant, Long idOdd) {
 
         try {
             EntityManager em = jpaApi.em();
-            TypedQuery<OddConfiguracao> query = em.createQuery("SELECT o FROM OddConfiguracao o WHERE o.tenant = :tenant AND o.id = :id", OddConfiguracao.class);
+            TypedQuery<OddConfiguracao> query = em.createQuery("SELECT o FROM OddConfiguracao o WHERE o.tenant = :tenant AND o.odd.id = :id", OddConfiguracao.class);
             query.setParameter("tenant", tenant.get());
-            query.setParameter("id", id);
+            query.setParameter("id", idOdd);
 
             OddConfiguracao oddConfiguracao = query.getSingleResult();
 
