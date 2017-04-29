@@ -13,7 +13,9 @@ import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Evento;
 import models.eventos.Resultado;
+import models.eventos.futebol.ResultadoFutebol;
 import models.vo.Chave;
+import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -25,6 +27,7 @@ import repositories.ValidadorRepository;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +105,7 @@ public class ResultadoController extends ApplicationController {
         // usa o builder
         ObjectJson.JsonBuilder<ResultadoJson> builder = ObjectJson.build(ResultadoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
-        resultados.forEach( resultado -> builder.comEntidade(ResultadoJson.of(resultado)));
+        resultados.forEach( resultado -> builder.comEntidade(ResultadoJson.of(evento, resultado)));
 
         JsonNode retorno = builder.build();
 
@@ -111,10 +114,31 @@ public class ResultadoController extends ApplicationController {
 
     @Secure(clients = "headerClient")
     @Transactional
-    public Result todos() {
+    public Result todos(Long eventoId) {
 
-        List todos = resultadoRepository.todos(getTenant());
-        return ok("Resultado Cadastrado - retornar json corretamente");
+        if(eventoId == null || eventoId <= 0) {
+            badRequest("deve ser informado um padrao de busca");
+        }
+
+        Tenant tenant = getTenant();
+        Optional<Evento> _e = eventoRepository.buscar(tenant, eventoId);
+        if(!_e.isPresent()) {
+            return notFound();
+        }
+
+        Evento evento = _e.get();
+
+        List<Resultado> resultados = evento.getResultados();
+
+        // usa o builder
+        ObjectJson.JsonBuilder<ResultadoJson> builder = ObjectJson.build(ResultadoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        //adiciona as entidades
+
+        resultados  = ResultadoFutebol.merge(resultados, ResultadoFutebol._default(evento));
+        resultados.forEach( resultado -> builder.comEntidade(ResultadoJson.of(evento, resultado)));
+
+
+        return ok(builder.build());
     }
 
     @Secure(clients = "headerClient")

@@ -1,5 +1,6 @@
 package api.json;
 
+import models.eventos.Evento;
 import models.eventos.Resultado;
 import models.eventos.Time;
 
@@ -10,6 +11,10 @@ public class ResultadoJson implements Jsonable, Convertable<Resultado>{
 
     public static final String TIPO = "resultados";
 
+    public String id;
+
+    public Long evento;
+
     public Long time;
 
     public Resultado.Momento momento;
@@ -19,7 +24,9 @@ public class ResultadoJson implements Jsonable, Convertable<Resultado>{
     public ResultadoJson() {
     }
 
-    public ResultadoJson(Long time, Resultado.Momento momento, Long pontos) {
+    public ResultadoJson(String id, Long evento, Long time, Resultado.Momento momento, Long pontos) {
+        this.id = id;
+        this.evento = evento;
         this.time = time;
         this.momento = momento;
         this.pontos = pontos;
@@ -45,12 +52,12 @@ public class ResultadoJson implements Jsonable, Convertable<Resultado>{
                 '}';
     }
 
-    public static ResultadoJson of(Resultado resultado) {
+    public static ResultadoJson of(Evento evento, Resultado resultado) {
 
-        return new ResultadoJson( resultado.getTime().getId(), resultado.getMomento(), resultado.getPontos());
+        return new ResultadoJson(resultado.getId().toString(), evento.getId(), resultado.getTime().getId(), resultado.getMomento(), resultado.getPontos());
     }
 
-    public static List<Jsonable> of(List<Resultado> resultados) {
-        return resultados.stream().map( c -> ResultadoJson.of(c) ).collect(Collectors.toList());
+    public static List<Jsonable> of(Evento evento, List<Resultado> resultados) {
+        return resultados.stream().map( c -> ResultadoJson.of(evento, c) ).collect(Collectors.toList());
     }
 }
