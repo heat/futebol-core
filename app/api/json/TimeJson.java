@@ -41,4 +41,22 @@ public class TimeJson implements Serializable, Convertable<Time>, Jsonable {
     public Time to() {
         return new Time(null, nome);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TimeJson timeJson = (TimeJson) o;
+
+        if (!id.equals(timeJson.id)) return false;
+        return nome.equals(timeJson.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + nome.hashCode();
+        return result;
+    }
 }

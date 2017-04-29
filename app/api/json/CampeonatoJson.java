@@ -41,4 +41,22 @@ public class CampeonatoJson implements Serializable, Convertable<Campeonato>, Js
     public Campeonato to() {
         return new Campeonato(null, nome);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CampeonatoJson that = (CampeonatoJson) o;
+
+        if (!id.equals(that.id)) return false;
+        return nome.equals(that.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + nome.hashCode();
+        return result;
+    }
 }
