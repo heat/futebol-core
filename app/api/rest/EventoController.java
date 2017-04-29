@@ -1,10 +1,7 @@
 package api.rest;
 
 import actions.TenantAction;
-import api.json.CampeonatoJson;
-import api.json.EventoJson;
-import api.json.ObjectJson;
-import api.json.TimeJson;
+import api.json.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.ApplicationController;
@@ -145,6 +142,7 @@ public class EventoController extends ApplicationController{
             return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
         }
         EventoJson eventoJson = EventoJson.of(eventoRepository.buscar(getTenant(), id).get());
+        //TODO tem que fazer a parte de exibir o evento gerado
         return ok(Json.newObject());
     }
 
@@ -162,10 +160,19 @@ public class EventoController extends ApplicationController{
         ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         // adiciona os eventos
 
+        ObjectJson.RelationalJsonBuilder<TimeJson> timebuilder = builder.comRelacionamento(TimeJson.TIPO);
+        ObjectJson.RelationalJsonBuilder<CampeonatoJson> campeonatobuilder = builder.comRelacionamento(CampeonatoJson.TIPO);
+
         eventos.stream().map(EventoJson::of).forEach(builder::comEntidade);
         // adiciona os relacionamentos
-        campeonatos.stream().map(CampeonatoJson::of).forEach(builder.<CampeonatoJson>comRelacionamento(CampeonatoJson.TIPO)::comEntidade);
-        campeonatos.forEach(campeonato -> builder.comRelacionamento(CampeonatoJson.TIPO, CampeonatoJson.of(campeonato)));
+        eventos.stream().forEach( evento -> {
+            TimeJson casa = TimeJson.of(evento.getCasa());
+            TimeJson fora = TimeJson.of(evento.getFora());
+            CampeonatoJson campeonato = CampeonatoJson.of(evento.getCampeonato());
+
+            timebuilder.comEntidade(casa).comEntidade(fora);
+            campeonatobuilder.comEntidade(campeonato);
+        });
 
         return ok(builder.build());
     }
@@ -179,13 +186,22 @@ public class EventoController extends ApplicationController{
             return notFound("Evento não encontrado!");
         }
         Evento evento = eventoOptional.get();
-        EventoJson jsonEvento = EventoJson.of(evento);
-        CampeonatoJson jsonCampeonato = CampeonatoJson.of(evento.getCampeonato());
 
-        ObjectNode root = Json.newObject();
-        root.set("evento", Json.toJson(jsonEvento));
-        root.set("campeonato", Json.toJson(jsonCampeonato));
-        return ok(root);
+        ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+        // adiciona os eventos
+
+        builder.comEntidade(EventoJson.of(evento));
+        ObjectJson.RelationalJsonBuilder<TimeJson> timebuilder = builder.comRelacionamento(TimeJson.TIPO);
+        ObjectJson.RelationalJsonBuilder<CampeonatoJson> campeonatobuilder = builder.comRelacionamento(CampeonatoJson.TIPO);
+
+            TimeJson casa = TimeJson.of(evento.getCasa());
+            TimeJson fora = TimeJson.of(evento.getFora());
+            CampeonatoJson campeonato = CampeonatoJson.of(evento.getCampeonato());
+
+            timebuilder.comEntidade(casa).comEntidade(fora);
+            campeonatobuilder.comEntidade(campeonato);
+
+        return ok(builder.build());
     }
 
     @Secure(clients = "headerClient")
