@@ -7,10 +7,8 @@ import models.eventos.Evento;
 import play.Configuration;
 import play.api.Play;
 import play.libs.Json;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class ObjectJson {
 
@@ -205,7 +203,7 @@ public class ObjectJson {
 
     public static class RelationalJsonBuilder<T extends Jsonable> extends JsonBuilder<T> {
 
-        List<T> jsons = new ArrayList<T>();
+        Set<T> jsons = new HashSet<T>();
 
         public RelationalJsonBuilder(String tipo) {
             super(tipo);
