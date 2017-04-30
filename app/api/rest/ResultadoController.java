@@ -5,16 +5,14 @@ import api.json.ObjectJson;
 import api.json.ResultadoJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.ApplicationController;
-import dominio.processadores.apostas.AtualizarBilhetesFinalizacaoPartidaProcessador;
 import dominio.processadores.apostas.AtualizarPalpitesProcessador;
 import dominio.processadores.apostas.FinalizarPartidasProcessador;
-import dominio.processadores.eventos.FinalizarEventoProcessador;
+import dominio.processadores.eventos.AtualizarResultadoProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.eventos.Evento;
 import models.eventos.Resultado;
 import models.eventos.futebol.ResultadoFutebol;
-import models.vo.Chave;
 import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
@@ -27,29 +25,28 @@ import repositories.ValidadorRepository;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @With(TenantAction.class)
 public class ResultadoController extends ApplicationController {
 
     ResultadoRepository resultadoRepository;
-    FinalizarEventoProcessador finalizarEventoProcessador;
+    AtualizarResultadoProcessador atualizarResultadoProcessador;
     ValidadorRepository validadorRepository;
     EventoRepository eventoRepository;
     FinalizarPartidasProcessador finalizarPartidasProcessador;
 
     @Inject
     public ResultadoController(ResultadoRepository resultadoRepository, PlaySessionStore playSessionStore,
-                               FinalizarEventoProcessador finalizarEventoProcessador,
+                               AtualizarResultadoProcessador atualizarResultadoProcessador,
                                ValidadorRepository validadorRepository, EventoRepository eventoRepository,
                                FinalizarPartidasProcessador finalizarPartidasProcessador) {
         super(playSessionStore);
         this.resultadoRepository = resultadoRepository;
-        this.finalizarEventoProcessador = finalizarEventoProcessador;
+        this.atualizarResultadoProcessador = atualizarResultadoProcessador;
         this.validadorRepository = validadorRepository;
         this.eventoRepository = eventoRepository;
         this.finalizarPartidasProcessador = finalizarPartidasProcessador;
@@ -59,57 +56,44 @@ public class ResultadoController extends ApplicationController {
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir(Long idEvento) throws IOException {
+    public Result inserir(Long idresultado) throws IOException {
 
         JsonNode body = Controller.request()
                 .body()
                 .asJson();
 
-        List<Resultado> resultados = new ArrayList<>();
+        Tenant tenant = getTenant();
 
-        body.get("resultados").forEach( resultadoJson -> {
-            ResultadoJson t = Json.fromJson(resultadoJson, ResultadoJson.class);
-            resultados.add(t.to());
-        });
+        ResultadoJson resultado = Json.fromJson(body.get("resultado"), ResultadoJson.class);
 
-        if(!Optional.ofNullable(resultados).isPresent())
-            return notFound("Lista de resultados não pode ser vazia!");
+        Long idEvento = resultado.evento;
 
-        List<Validador> validadoresEventos = validadorRepository.todos(getTenant(), FinalizarEventoProcessador.REGRA);
+        Resultado entidade = resultado.to(tenant);
+
+        List<Validador> validadoresEventos = validadorRepository.todos(getTenant(), AtualizarResultadoProcessador.REGRA);
         List<Validador> validadoresPalpites = validadorRepository.todos(getTenant(), AtualizarPalpitesProcessador.REGRA);
         List<Validador> validadoresBilhetes = validadorRepository.todos(getTenant(), AtualizarPalpitesProcessador.REGRA);
 
         Optional<Evento> eventoOptional = eventoRepository.buscar(getTenant(), idEvento);
+
         if(!eventoOptional.isPresent())
             return notFound("Evento não encontrado");
 
-        Evento evento = eventoOptional.get();
-        for(Resultado resultado: resultados){
-            evento.addResultado(resultado);
+            try {
+                Evento ev = atualizarResultadoProcessador.executar(entidade, eventoOptional.get(), validadoresEventos)
+                .get();
+
+                Optional<Resultado> ra = ev.getResultados().stream().filter( r -> r.getId() == idresultado).findFirst();
+                ObjectJson.JsonBuilder<ResultadoJson> builder = ObjectJson.build(ResultadoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+                builder.comEntidade(ResultadoJson.of(ev, ra.get()));
+                return ok(builder.build());
+
+        } catch (ValidadorExcpetion   ex) {
+            return status(Http.Status.UNPROCESSABLE_ENTITY, ex.getMessage());
+        } catch (ExecutionException|InterruptedException e) {
+            return status(Http.Status.INTERNAL_SERVER_ERROR);
         }
 
-        Chave chave = Chave.of(getTenant(), idEvento);
-        try {
-
-            finalizarEventoProcessador.executar(chave, evento, validadoresEventos)
-                    .thenCompose( eventoFinalizado ->
-                            finalizarPartidasProcessador.executar(chave, eventoFinalizado, validadoresPalpites)
-                    ).thenApply( eventoFinalizado -> {
-                        return eventoFinalizado;
-                    });
-
-        } catch (ValidadorExcpetion validadorExcpetion) {
-            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
-        }
-
-        // usa o builder
-        ObjectJson.JsonBuilder<ResultadoJson> builder = ObjectJson.build(ResultadoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
-        //adiciona as entidades
-        resultados.forEach( resultado -> builder.comEntidade(ResultadoJson.of(evento, resultado)));
-
-        JsonNode retorno = builder.build();
-
-        return created(retorno);
     }
 
     @Secure(clients = "headerClient")

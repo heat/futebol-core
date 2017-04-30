@@ -56,13 +56,17 @@ public class EventoRepository implements Repository<Long, Evento>{
     public CompletableFuture<Evento> atualizar(Tenant tenant, Long id, Evento e) {
 
         EntityManager em = jpaApi.em();
+        if(em.contains(e)) {
+            em.persist(e);
+            return CompletableFuture.completedFuture(e);
+        }
         Optional<Evento> eventoOptional = buscar(tenant, id);
         if(!eventoOptional.isPresent())
             throw new NoResultException("Evento não encontrado");
         Evento evento = eventoOptional.get();
         evento.setDataEvento(e.getDataEvento());
-        em.merge(e);
-        return CompletableFuture.completedFuture(e);
+        em.merge(evento);
+        return CompletableFuture.completedFuture(evento);
     }
 
     public CompletableFuture<Evento> finalizar(Tenant tenant, Long id, Evento e) {

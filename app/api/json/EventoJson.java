@@ -64,7 +64,7 @@ public class EventoJson implements Convertable<Evento>, Jsonable {
         CalendarDeserializer deserializer = new CalendarDeserializer();
         Evento evento = null;
         try {
-            evento = new Evento(null, Campeonato.ref(campeonato), Time.ref(Long.valueOf(casa)), Time.ref(Long.valueOf(fora)),
+            evento = new Evento(null, Campeonato.ref(campeonato), Time.ref(null, Long.valueOf(casa)), Time.ref(null, Long.valueOf(fora)),
                     deserializer.deserialize(dataEvento), modalidade);
             evento.setSituacao(situacao);
             return evento;

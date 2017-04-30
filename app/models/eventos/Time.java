@@ -52,6 +52,11 @@ public class Time implements Serializable {
     }
 
 
+    public Time(Long tenant, Long idtime) {
+        this.tenant = tenant;
+        this.id = idtime;
+    }
+
     public Time(Long tenant, String nome) {
         this.tenant = tenant;
         this.nome = nome;
@@ -99,7 +104,7 @@ public class Time implements Serializable {
         return result;
     }
 
-    public static Time ref(Long time) {
-        return new Time(time);
+    public static Time ref(Long tenant, Long time) {
+        return new Time(tenant, time);
     }
 }

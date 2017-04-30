@@ -25,6 +25,7 @@ import models.bilhetes.Bilhete;
 import models.bilhetes.Palpite;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
+import models.eventos.Resultado;
 import models.eventos.Time;
 import models.financeiro.Conta;
 import models.financeiro.comissao.ParametroComissao;
@@ -300,8 +301,13 @@ public class Global extends GlobalSettings {
         evento.setDataEvento(dataJogo);
         evento.setModalidade(Evento.Modalidade.FUTEBOL);
 
+
         em.persist(evento);
 
+        evento.addResultado(new Resultado(Tenant.SYSBET.get(), Resultado.Momento.I, 0L, palmeiras));
+        evento.addResultado(new Resultado(Tenant.SYSBET.get(), Resultado.Momento.I, 0L, coritiba));
+        evento.addResultado(new Resultado(Tenant.SYSBET.get(), Resultado.Momento.F, 0L, palmeiras));
+        evento.addResultado(new Resultado(Tenant.SYSBET.get(), Resultado.Momento.F, 0L, coritiba));
         List<Odd> odds = em.createQuery("SELECT o FROM Odd o ").getResultList();
 
         EventoAposta eventoAposta = new EventoAposta(evento);

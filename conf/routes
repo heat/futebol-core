@@ -29,6 +29,10 @@ POST     /eventos/:id                api.rest.EventoController.atualizar(id: Lon
 DELETE   /eventos/:id                api.rest.EventoController.excluir(id: Long)
 
 # ------- CRUD de resultados
+
+GET      /resultados                    api.rest.ResultadoController.todos(evento: Long ?= 0L)
+
+PUT      /resultados/:idEvento          api.rest.ResultadoController.inserir(idEvento: Long)
 POST     /resultados/:idEvento          api.rest.ResultadoController.inserir(idEvento: Long)
 
 # ------- CRUD de times

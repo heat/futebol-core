@@ -9,10 +9,7 @@ import models.vo.Tenant;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Entity
@@ -85,7 +82,7 @@ public class Evento implements Serializable {
 
     @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="evento_id", nullable = false, updatable = true, insertable = true)
-    private List<Resultado> resultados;
+    private List<Resultado> resultados =new ArrayList<>();
 
     @Enumerated(EnumType.STRING )
     @Column(name = "situacao")
@@ -106,6 +103,7 @@ public class Evento implements Serializable {
         this.fora = fora;
         this.dataEvento = dataEvento;
         this.modalidade = modalidade;
+        this.resultados = new ArrayList<>();
     }
 
     public Long getId() {
@@ -163,7 +161,7 @@ public class Evento implements Serializable {
     }
 
     public void addResultado(Resultado resultado){
-        this.resultados.add(resultado);
+        this.getResultados().add(resultado);
     }
 
     public Situacao getSituacao() {
