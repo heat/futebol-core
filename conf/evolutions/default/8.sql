@@ -79,6 +79,7 @@ CREATE TABLE public.solicitacao_saldo
   conta_id INTEGER NOT NULL,
   criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   valor DECIMAL(10,2) NOT NULL,
+  tipo CHAR(1) NOT NULL,
   CONSTRAINT solicitacao_saldo_pk PRIMARY KEY (solicitacao_saldo_id),
   CONSTRAINT solicitacao_saldo_conta_fk FOREIGN KEY (conta_id)
   REFERENCES public.contas (conta_id) MATCH SIMPLE

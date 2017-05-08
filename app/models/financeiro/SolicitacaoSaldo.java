@@ -8,6 +8,19 @@ import java.util.Calendar;
 @Table(name = "solicitacao_saldo")
 public class SolicitacaoSaldo {
 
+    public enum TipoSolicitacaoSaldo {
+        D("DEPOSITO"),
+        E("EMPRESTIMO"),
+        N("NETELLER"),
+        P("PAYPAL");
+
+        private String situacao;
+
+        TipoSolicitacaoSaldo(String situacao) {
+            this.situacao = situacao;
+        }
+    }
+
     @Id
     @SequenceGenerator(name="solicitacao_saldo_id_seq", sequenceName = "solicitacao_saldo_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "solicitacao_saldo_id_seq")
@@ -22,12 +35,16 @@ public class SolicitacaoSaldo {
     @Column(name = "criado_em")
     private Calendar criadoEm = Calendar.getInstance();
 
+    @Enumerated(EnumType.STRING)
+    private TipoSolicitacaoSaldo tipo;
+
     public SolicitacaoSaldo() {
     }
 
-    public SolicitacaoSaldo(Long solicitante, BigDecimal valor) {
+    public SolicitacaoSaldo(Long solicitante, BigDecimal valor, TipoSolicitacaoSaldo tipo) {
         this.solicitante = solicitante;
         this.valor = valor;
+        this.tipo = tipo;
     }
 
     public Long getId() {
@@ -44,5 +61,9 @@ public class SolicitacaoSaldo {
 
     public Calendar getCriadoEm() {
         return criadoEm;
+    }
+
+    public TipoSolicitacaoSaldo getTipo() {
+        return tipo;
     }
 }

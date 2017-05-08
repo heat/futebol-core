@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 public class Saldo {
 
     private BigDecimal saldo;
+    private BigDecimal emprestimo;
 
     public Saldo() {
     }
@@ -21,5 +22,13 @@ public class Saldo {
 
     public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
+    }
+
+    public BigDecimal getEmprestimo() {
+        return emprestimo;
+    }
+
+    public void setEmprestimo(BigDecimal emprestimo) {
+        this.emprestimo = emprestimo;
     }
 }

@@ -9,6 +9,7 @@ import models.financeiro.Conta;
 import models.financeiro.Saldo;
 import models.financeiro.SolicitacaoSaldo;
 import models.financeiro.credito.CompraBilheteCredito;
+import models.financeiro.credito.EmprestimoSaldoCredito;
 import models.financeiro.debito.AdicionarSaldoDebito;
 import models.seguranca.Usuario;
 import models.vo.Chave;
@@ -49,13 +50,25 @@ public class AdicionarSaldoProcessador implements Processador<Chave, Solicitacao
 
         Conta conta = contaOptional.get();
 
-        AdicionarSaldoDebito lancamento = new AdicionarSaldoDebito();
-        lancamento.setDataLancamento(Calendar.getInstance());
-        lancamento.setValor(solicitacaoSaldo.getValor());
-        lancamento.setOrigem(solicitacaoSaldo);
+        AdicionarSaldoDebito lancamentoAdicionarSaldo = new AdicionarSaldoDebito();
+        lancamentoAdicionarSaldo.setDataLancamento(Calendar.getInstance());
+        lancamentoAdicionarSaldo.setValor(solicitacaoSaldo.getValor());
+        lancamentoAdicionarSaldo.setOrigem(solicitacaoSaldo);
         BigDecimal saldoAtual = conta.getSaldo().getSaldo().add(solicitacaoSaldo.getValor());
-        lancamento.setSaldo(new Saldo(saldoAtual));
-        conta.addLancamento(lancamento);
+        lancamentoAdicionarSaldo.setSaldo(new Saldo(saldoAtual));
+
+        conta.addLancamento(lancamentoAdicionarSaldo);
+
+        if (solicitacaoSaldo.getTipo() == SolicitacaoSaldo.TipoSolicitacaoSaldo.E){
+            EmprestimoSaldoCredito lancamentoEmprestimo = new EmprestimoSaldoCredito();
+            lancamentoEmprestimo.setDataLancamento(Calendar.getInstance());
+            lancamentoEmprestimo.setValor(solicitacaoSaldo.getValor());
+            lancamentoEmprestimo.setOrigem(solicitacaoSaldo);
+            Saldo saldo = new Saldo();
+            saldo.setEmprestimo(conta.getSaldo().getEmprestimo().add(solicitacaoSaldo.getValor()));
+            lancamentoEmprestimo.setSaldo(saldo);
+            conta.addLancamento(lancamentoAdicionarSaldo);
+        }
 
         contaRepository.inserirSolicitacaoSaldo(solicitacaoSaldo);
         contaRepository.atualizar(conta);

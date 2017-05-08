@@ -1,47 +1,32 @@
 package api.rest;
 
 import actions.TenantAction;
-import api.json.CampeonatoJson;
-import api.json.Jsonable;
 import api.json.ObjectJson;
 import api.json.SolicitacaoSaldoJson;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Strings;
 import controllers.ApplicationController;
-import dominio.processadores.eventos.CampeonatoAtualizarProcessador;
-import dominio.processadores.eventos.CampeonatoInserirProcessador;
 import dominio.processadores.financeiro.AdicionarSaldoProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
-import filters.Paginacao;
-import models.eventos.Campeonato;
 import models.financeiro.Conta;
-import models.financeiro.Saldo;
 import models.financeiro.SolicitacaoSaldo;
-import models.financeiro.debito.AdicionarSaldoDebito;
 import models.vo.Chave;
-import models.vo.Tenant;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.play.PlayWebContext;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
-import repositories.CampeonatoRepository;
 import repositories.ContaRepository;
 import repositories.TenantRepository;
 import repositories.ValidadorRepository;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
-import static play.libs.Json.toJson;
 
 @With(TenantAction.class)
 public class SaldoController extends ApplicationController {
@@ -68,10 +53,9 @@ public class SaldoController extends ApplicationController {
     public Result inserir() {
 
         JsonNode json = request().body().asJson();
-        Long usuario = json.findPath("usuario").longValue();
-        BigDecimal valor = json.findPath("valor").decimalValue();
+        SolicitacaoSaldoJson solicitacaoSaldoJson = Json.fromJson(json.get("saldo"), SolicitacaoSaldoJson.class);
 
-        Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), usuario);
+        Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), solicitacaoSaldoJson.solicitante);
 
         if (!contaOptional.isPresent()){
             return badRequest("Conta não encontrada.");
@@ -79,7 +63,7 @@ public class SaldoController extends ApplicationController {
 
         Chave chave = Chave.of(getTenant(), contaOptional.get().getId());
 
-        SolicitacaoSaldo solicitacaoSaldo = new SolicitacaoSaldo(chave.getId(), valor);
+        SolicitacaoSaldo solicitacaoSaldo = solicitacaoSaldoJson.to(chave.getId());
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), AdicionarSaldoProcessador.REGRA);
 

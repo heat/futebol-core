@@ -26,6 +26,7 @@ CREATE TABLE public.lancamentos (
                 conta_id INTEGER NOT NULL,
                 valor DECIMAL(10,2) NOT NULL,
                 saldo DECIMAL(10,2) NOT NULL,
+                emprestimo DECIMAL(10,2) NOT NULL,
                 dtype VARCHAR(31) NOT NULL,
                 criado_em TIMESTAMP NOT NULL,
 		origem_bilhete INTEGER,

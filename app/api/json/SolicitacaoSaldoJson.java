@@ -13,21 +13,20 @@ public class SolicitacaoSaldoJson implements Convertable<SolicitacaoSaldo>, Json
     public static final String TIPO = "saldos";
 
     public String id;
-
     public Long solicitante;
-
     public String dataSolicitacao;
-
     public BigDecimal valor;
+    public SolicitacaoSaldo.TipoSolicitacaoSaldo tipo;
 
     public SolicitacaoSaldoJson() {
     }
 
-    public SolicitacaoSaldoJson(String id, Long solicitante, BigDecimal valor, String dataSolicitacao) {
+    public SolicitacaoSaldoJson(String id, Long solicitante, BigDecimal valor, String dataSolicitacao, SolicitacaoSaldo.TipoSolicitacaoSaldo tipo) {
         this.id = id;
         this.solicitante = solicitante;
         this.valor = valor;
         this.dataSolicitacao = dataSolicitacao;
+        this.tipo = tipo;
     }
 
     @Override
@@ -39,11 +38,15 @@ public class SolicitacaoSaldoJson implements Convertable<SolicitacaoSaldo>, Json
 
         return new SolicitacaoSaldoJson(String.valueOf(solicitacaoSaldo.getId()), solicitacaoSaldo.getSolicitante(),
                 solicitacaoSaldo.getValor(),
-                DataService.toString(solicitacaoSaldo.getCriadoEm()));
+                DataService.toString(solicitacaoSaldo.getCriadoEm()), solicitacaoSaldo.getTipo());
     }
 
     @Override
     public SolicitacaoSaldo to() {
         return null;
+    }
+
+    public SolicitacaoSaldo to(Long idConta) {
+        return new SolicitacaoSaldo(idConta, valor, tipo);
     }
 }
