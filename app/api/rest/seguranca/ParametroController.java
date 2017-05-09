@@ -1,4 +1,4 @@
-package api.rest;
+package api.rest.seguranca;
 
 import actions.TenantAction;
 import api.json.*;

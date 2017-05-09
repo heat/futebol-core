@@ -1,4 +1,4 @@
-package api.rest;
+package api.rest.admin;
 
 import actions.TenantAction;
 import api.json.CampeonatoJson;

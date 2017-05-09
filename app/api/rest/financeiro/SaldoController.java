@@ -1,4 +1,4 @@
-package api.rest;
+package api.rest.financeiro;
 
 import actions.TenantAction;
 import api.json.ObjectJson;

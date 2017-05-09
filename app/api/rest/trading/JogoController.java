@@ -1,8 +1,7 @@
-package api.rest;
+package api.rest.trading;
 
 import actions.TenantAction;
-import api.json.ObjectJson;
-import api.json.TaxaJson;
+import api.json.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import controllers.ApplicationController;
@@ -13,6 +12,7 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.apostas.EventoAposta;
 import models.apostas.Odd;
 import models.apostas.Taxa;
+import models.eventos.Campeonato;
 import models.seguranca.RegistroAplicativo;
 import models.vo.Tenant;
 import org.pac4j.play.java.Secure;
@@ -26,11 +26,13 @@ import play.mvc.With;
 import repositories.*;
 
 import javax.persistence.NoResultException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @With(TenantAction.class)
-public class TaxaController extends ApplicationController {
+public class JogoController extends ApplicationController {
 
     TaxaRepository taxaRepository;
     TaxaInserirProcessador inserirProcessador;
@@ -42,7 +44,7 @@ public class TaxaController extends ApplicationController {
 
     @Inject
 
-    public TaxaController(PlaySessionStore playSessionStore, TaxaRepository taxaRepository,
+    public JogoController(PlaySessionStore playSessionStore, TaxaRepository taxaRepository,
                           TaxaInserirProcessador inserirProcessador, TaxaAtualizarProcessador atualizarProcessador,
                           ValidadorRepository validadorRepository, EventoApostaRepository eventoApostaRepository,
                           OddRepository oddRepository, TenantRepository tenantRepository) {
@@ -57,51 +59,8 @@ public class TaxaController extends ApplicationController {
 
     }
 
-
-    @Secure(clients = "headerClient")
     @Transactional
-    @BodyParser.Of(BodyParser.Json.class)
-    public Result inserir() {
-
-        JsonNode body = Controller.request()
-                .body()
-                .asJson();
-
-        TaxaJson taxaJson = Json.fromJson(body.get("taxa"), TaxaJson.class);
-        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(getTenant(), taxaJson.aposta);
-
-        if(!eventoApostaOptional.isPresent())
-            return badRequest("Aposta não encontrada!");
-
-        EventoAposta eventoAposta = eventoApostaOptional.get();
-        Taxa taxa = taxaJson.to();
-
-        try {
-
-
-            Optional<Odd> oddOptional = oddRepository.buscar(getTenant(),taxaJson.odd);
-            if(oddOptional.isPresent()) {
-                taxa.setOdd(oddOptional.get());
-            }
-            taxa.setTenant(getTenant().get());
-            eventoAposta.addTaxa(taxa);
-
-            List<Validador> validadores = validadorRepository.todos(getTenant(), TaxaInserirProcessador.REGRA);
-
-            inserirProcessador.executar(getTenant(), eventoAposta, validadores);
-        } catch (ValidadorExcpetion ex) {
-            return internalServerError("definir melhor o erro");
-        }
-        // usa o builder
-        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
-        builder.comEntidade(TaxaJson.of(taxa, taxaJson.aposta));
-        JsonNode retorno = builder.build();
-        return created(retorno);
-    }
-
-    @Secure(clients = "headerClient")
-    @Transactional
-    public Result buscar(Long aposta) {
+    public Result todos() {
 
         Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
 
@@ -117,31 +76,56 @@ public class TaxaController extends ApplicationController {
 
         Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
 
+        List<EventoAposta> todos = eventoApostaRepository.todos(tenant);
+        ObjectJson.JsonBuilder<JogoJson> builder = ObjectJson.build(JogoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
 
-        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(tenant, aposta);
+        todos.forEach(eventoAposta -> {
+            builder.comEntidade(JogoJson.of(eventoAposta));
+            eventoAposta.getTaxasAtivas().stream()
+                    .filter(p -> p.isFavorita()).collect(Collectors.toList())
+                    .forEach(taxaAposta -> builder.comRelacionamento(TaxaJogoJson.TIPO, TaxaJogoJson.of(taxaAposta, eventoAposta.getId())));
+        });
+
+        List<Campeonato> campeonatos = todos.stream()
+                .map(eventoAposta -> eventoAposta.getEvento().getCampeonato())
+                .distinct()
+                .collect(Collectors.toList());
+
+        // adiciona os relacionamentos
+        campeonatos.forEach(campeonato -> builder.comRelacionamento(CampeonatoJson.TIPO, CampeonatoJson.of(campeonato)));
+
+        return ok(builder.build());
+    }
+
+    @Transactional
+    public Result buscar(Long evento) {
+
+        Optional<String> appKeyOptional = Optional.ofNullable(request().getHeader("X-AppCode"));
+
+        if (!appKeyOptional.isPresent()){
+            return badRequest("Key not found.");
+        }
+
+        Optional<RegistroAplicativo> registroAplicativoOptional = tenantRepository.buscar(appKeyOptional.get());
+
+        if (!registroAplicativoOptional.isPresent()){
+            return notFound("Aplicativo não registrado.");
+        }
+
+        Tenant tenant = Tenant.of(registroAplicativoOptional.get().getTenant());
+
+        Optional<EventoAposta> eventoApostaOptional = eventoApostaRepository.buscar(tenant, evento);
 
         if(!eventoApostaOptional.isPresent())
             return badRequest("Aposta não encontrada!");
 
         EventoAposta eventoAposta = eventoApostaOptional.get();
         // usa o builder
-        ObjectJson.JsonBuilder<TaxaJson> builder = ObjectJson.build(TaxaJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        ObjectJson.JsonBuilder<TaxaJogoJson> builder = ObjectJson.build(TaxaJogoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
         //adiciona as entidades
-        eventoAposta.getTaxas().forEach( taxa -> builder.comEntidade(TaxaJson.of(taxa, aposta)));
+        eventoAposta.getTaxasAtivas().forEach( taxa -> builder.comEntidade(TaxaJogoJson.of(taxa, evento)));
         JsonNode retorno = builder.build();
         return created(retorno);
 
     }
-
-    @Secure(clients = "headerClient")
-    @Transactional
-    public Result excluir(Long id) {
-        try {
-            taxaRepository.excluir(getTenant(), id);
-            return noContent(); // padrao para quando exclui uma entidade
-        } catch (NoResultException e) {
-            return notFound(e.getMessage());
-        }
-    }
-
 }
