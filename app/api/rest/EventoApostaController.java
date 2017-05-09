@@ -85,6 +85,7 @@ public class EventoApostaController extends ApplicationController {
         return created(jsonNode);
     }
 
+    @Deprecated
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)

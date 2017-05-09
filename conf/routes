@@ -2,78 +2,103 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Segurança
+
 POST    /autenticacaos              api.rest.UsuarioController.authenticar
 
 GET     /logout                      @org.pac4j.play.ApplicationLogoutController.logout
 
-# ------ CRUD de campeonatos
-GET      /campeonatos                api.rest.CampeonatoController.todos(nome: String ?= "", q: String ?= "", page: Integer ?= 0, limit: Integer ?= 0)
+GET     /parametros                    api.rest.ParametroController.todos
 
-GET      /campeonatos/:id            api.rest.CampeonatoController.buscar(id: Long)
+PUT     /parametros/:id                api.rest.ParametroController.atualizar(id: Long)
 
-POST     /campeonatos                api.rest.CampeonatoController.inserir
+POST     /usuarios                      api.rest.UsuarioController.inserir
 
-PUT      /campeonatos/:id            api.rest.CampeonatoController.atualizar(id: Long)
+GET     /usuarios                       api.rest.UsuarioController.todos
 
-DELETE   /campeonatos/:id            api.rest.CampeonatoController.excluir(id: Long)
+POST     /usuarios/:id                  api.rest.UsuarioController.atualizar(id: Long)
 
-# ------- CRUD de eventos
-GET      /eventos                    api.rest.EventoController.todos
+DELETE   /usuarios/:id                  api.rest.UsuarioController.cancelar(id: Long)
 
-GET      /eventos/:id                api.rest.EventoController.buscar(id: Long)
+## Usuario corrente
+GET     /usuarios/0                     api.rest.UsuarioController.usuario
 
-POST     /eventos                    api.rest.EventoController.inserir
+GET     /perfils/0                       api.rest.PerfilController.perfil
 
-POST     /eventos/:id                api.rest.EventoController.atualizar(id: Long)
+PUT     /perfils/0                       api.rest.PerfilController.atualizar
 
-DELETE   /eventos/:id                api.rest.EventoController.excluir(id: Long)
+POST    /senhas                         api.rest.UsuarioController.alterarSenha
 
-# ------- CRUD de resultados
+# Rotas de gerenciamento de eventos esportivos
 
-GET      /resultados                    api.rest.ResultadoController.todos(evento: Long ?= 0L)
+GET      /campeonatos         api.rest.CampeonatoController.todos(nome: String ?= "", q: String ?= "", page: Integer ?= 0, limit: Integer ?= 0)
 
-PUT      /resultados/:idEvento          api.rest.ResultadoController.inserir(idEvento: Long)
-POST     /resultados/:idEvento          api.rest.ResultadoController.inserir(idEvento: Long)
+GET      /campeonatos/:id     api.rest.CampeonatoController.buscar(id: Long)
 
-# ------- CRUD de times
-GET      /times                         api.rest.TimeController.todos(nome: String ?= "", q: String ?= "", page: Integer ?= 0, limit: Integer ?= 0)
+POST     /campeonatos         api.rest.CampeonatoController.inserir
 
-GET      /times/:id                     api.rest.TimeController.buscar(id: Long)
+PUT      /campeonatos/:id     api.rest.CampeonatoController.atualizar(id: Long)
 
-POST     /times                         api.rest.TimeController.inserir
+DELETE   /campeonatos/:id     api.rest.CampeonatoController.excluir(id: Long)
 
-PUT      /times/:id                     api.rest.TimeController.atualizar(id: Long)
+GET      /times               api.rest.TimeController.todos(nome: String ?= "", q: String ?= "", page: Integer ?= 0, limit: Integer ?= 0)
 
-DELETE   /times/:id                     api.rest.TimeController.excluir(id: Long)
+GET      /times/:id           api.rest.TimeController.buscar(id: Long)
 
-# ------- CRUD de evento_apostas
+POST     /times               api.rest.TimeController.inserir
+
+PUT      /times/:id           api.rest.TimeController.atualizar(id: Long)
+
+DELETE   /times/:id           api.rest.TimeController.excluir(id: Long)
+
+GET      /eventos             api.rest.EventoController.todos
+
+GET      /eventos/:id         api.rest.EventoController.buscar(id: Long)
+
+POST     /eventos             api.rest.EventoController.inserir
+
+POST     /eventos/:id         api.rest.EventoController.atualizar(id: Long)
+
+DELETE   /eventos/:id         api.rest.EventoController.excluir(id: Long)
+
+GET      /resultados          api.rest.ResultadoController.todos(evento: Long ?= 0L)
+
+PUT      /resultados/:id      api.rest.ResultadoController.inserir(id: Long)
+
+
+# Rotas de gerenciamento administrativo de apostas
+
+GET     /odds                          api.rest.OddController.todos
+
+PUT     /odds/:id                      api.rest.OddController.atualizar(id: Long)
+
 GET      /apostas                       api.rest.EventoApostaController.todos
-
-GET      /jogos                         api.rest.JogoController.todos
-
-GET      /jogos/:id/taxas               api.rest.JogoController.buscar(id: Long)
 
 GET      /apostas/:id                   api.rest.EventoApostaController.buscar(id: Long)
 
-GET      /jogos/:id                     api.rest.JogoController.buscar(id: Long)
-
 POST     /apostas                       api.rest.EventoApostaController.inserir
 
+## Esta depreciado
 POST     /apostas/:id                   api.rest.EventoApostaController.atualizar(id: Long)
-
-#------- CRUD de taxas
 
 GET      /taxas                         api.rest.TaxaController.buscar(aposta: Long)
 
-GET      /jogotaxas/:id                 api.rest.TaxaJogoController.buscar(id: Long)
-
 POST     /taxas                         api.rest.TaxaController.inserir
-
-#PUT      /taxas/:id                     api.rest.TaxaController.atualizar(id: Long)
 
 DELETE   /taxas/:id                     api.rest.TaxaController.excluir(id: Long)
 
-# ------- CRUD de bilhetes
+POST    /importacaos                   api.rest.ImportacaoController.inserir
+
+# Rota de operações em apostas
+
+GET      /jogos                         api.rest.JogoController.todos
+
+GET      /jogos/:id                     api.rest.JogoController.buscar(id: Long)
+
+GET      /jogos/:id/taxas               api.rest.JogoController.buscar(id: Long)
+
+GET      /jogotaxas/:id                 api.rest.TaxaJogoController.buscar(id: Long)
+
 GET      /bilhetes                      api.rest.BilheteController.todos(inicio: String ?= null, termino: String ?= null, aposta: String ?= null, dono: String ?= null, evento: String ?= null)
 
 GET      /bilhetes/:codigo              api.rest.BilheteController.buscar(codigo: String)
@@ -88,58 +113,15 @@ GET      /bilhetes/:codigo/detalhes     api.rest.BilheteController.detalhe(codig
 
 GET     /palpites                       api.rest.BilheteController.buscarPalpites(bilhete: String)
 
-# ------- CRUD de usuarios
-
-POST     /usuarios                      api.rest.UsuarioController.inserir
-
-POST     /usuarios/:id                  api.rest.UsuarioController.atualizar(id: Long)
-
-DELETE   /usuarios/:id                  api.rest.UsuarioController.cancelar(id: Long)
-
-GET     /usuarios/0                     api.rest.UsuarioController.usuario
-
-GET     /usuarios                       api.rest.UsuarioController.todos
-
-POST    /senhas                         api.rest.UsuarioController.alterarSenha
-
-
-#---------- CRUD perfil
-GET     /perfils/0                       api.rest.PerfilController.perfil
-
-PUT     /perfils/0                       api.rest.PerfilController.atualizar
-
-
-# ------- CRUD de PIN
 POST     /pins                         api.rest.PinController.inserir
 
 GET      /pins/:id                     api.rest.PinController.buscar(id: Long)
 
-# ------ Importacao
-
-POST    /importacaos                   api.rest.ImportacaoController.inserir
-
-# ------ Parametros
-
-GET     /parametros                    api.rest.ParametroController.todos
-
-PUT     /parametros/:id                api.rest.ParametroController.atualizar(id: Long)
-
-# ------ ODD
-
-GET     /odds                          api.rest.OddController.todos
-
-PUT     /odds/:id                      api.rest.OddController.atualizar(id: Long)
+# Sistema fianceiro
 
 POST    /saldos                        api.rest.SaldoController.inserir
 
 POST    /transferencia                 api.rest.TransferenciaController.inserir
-
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
