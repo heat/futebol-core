@@ -18,9 +18,6 @@ GET     /usuarios                       api.rest.seguranca.UsuarioController.tod
 
 POST     /usuarios/:id                  api.rest.seguranca.UsuarioController.atualizar(id: Long)
 
-POST    /finalizacao-evento             api.rest.admin.EventoController.finalizar
-
-# ------- CRUD de resultados
 DELETE   /usuarios/:id                  api.rest.seguranca.UsuarioController.cancelar(id: Long)
 
 ## Usuario corrente
@@ -68,6 +65,7 @@ GET      /resultados          api.rest.admin.ResultadoController.todos(evento: L
 
 PUT      /resultados/:id      api.rest.admin.ResultadoController.inserir(id: Long)
 
+POST    /finalizacao-evento             api.rest.admin.EventoController.finalizar
 
 # Rotas de gerenciamento administrativo de apostas
 

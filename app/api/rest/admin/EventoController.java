@@ -2,6 +2,7 @@ package api.rest.admin;
 
 import actions.TenantAction;
 import api.json.*;
+import api.json.admin.SolicitacaoFinalizacaoJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.ApplicationController;
@@ -11,17 +12,24 @@ import dominio.processadores.eventos.EventoFinalizarProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
+import models.Importacao.Importacao;
 import models.apostas.Apostavel;
 import models.apostas.EventoAposta;
 import models.eventos.Campeonato;
 import models.eventos.Evento;
 import models.eventos.Time;
 import models.vo.Chave;
+import models.vo.EntidadeNaoEncontrada;
+import models.vo.Tenant;
 import org.hibernate.exception.ConstraintViolationException;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.play.PlayWebContext;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
+import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
+import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.BodyParser;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -29,12 +37,16 @@ import play.mvc.With;
 import repositories.*;
 
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @With(TenantAction.class)
@@ -49,15 +61,20 @@ public class EventoController extends ApplicationController{
     ValidadorRepository validadorRepository;
     CampeonatoRepository campeonatoRepository;
     TimeRepository timeRepository;
+
+    JPAApi jpa;
+    HttpExecutionContext ec;
+
     @Inject
     public EventoController(EventoRepository eventoRepository, PlaySessionStore playSessionStore,
                             EventoInserirProcessador inserirProcessador, EventoAtualizarProcessador atualizarProcessador,
                             ValidadorRepository validadorRepository, CampeonatoRepository campeonatoRepository,
                             TimeRepository timeRepository, EventoApostaRepository eventoApostaRepository,
                             EventoApostaInserirProcessador eventoApostaInserirProcessador,
-                            EventoFinalizarProcessador finalizarProcessador) {
+                            EventoFinalizarProcessador finalizarProcessador,
+                            HttpExecutionContext ec,
+                            JPAApi jpa) {
         super(playSessionStore);
-
         this.eventoRepository = eventoRepository;
         this.inserirProcessador = inserirProcessador;
         this.atualizarProcessador = atualizarProcessador;
@@ -67,6 +84,8 @@ public class EventoController extends ApplicationController{
         this.eventoApostaRepository = eventoApostaRepository;
         this.eventoApostaInserirProcessador = eventoApostaInserirProcessador;
         this.finalizarProcessador = finalizarProcessador;
+        this.ec = ec;
+        this.jpa = jpa;
     }
 
     @Secure(clients = "headerClient")
@@ -237,39 +256,43 @@ public class EventoController extends ApplicationController{
     @Secure(clients = "headerClient")
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public Result finalizar() {
+    public CompletionStage<Result> finalizar() {
 
         JsonNode json = request().body().asJson();
-        Long idEvento = json.get("evento").get("id").asLong();
+        final Executor ex = ec.current();
+
+        final Tenant tenant = getTenant();
+        final SolicitacaoFinalizacaoJson solicitacao = Json.fromJson(json.get("finalizacao-evento"), SolicitacaoFinalizacaoJson.class);
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), EventoFinalizarProcessador.REGRA);
-        Optional<Evento> eventoOptional = eventoRepository.buscar(getTenant(), idEvento);
-        Evento evento = eventoOptional.get();
 
-        if (eventoOptional.isPresent()){
-            return notFound("Evento não encontrado!");
-        }
+        // Tenta buscar o evento
+        CompletableFuture<Optional<Evento>> promise = CompletableFuture
+                .completedFuture(eventoRepository.buscar(tenant, solicitacao.evento));
 
-        try {
-            finalizarProcessador.executar(getTenant(), evento, validadores);
-
-        } catch (ValidadorExcpetion validadorExcpetion) {
-            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
-        } catch (PersistenceException e) {
-            return status(Http.Status.UNPROCESSABLE_ENTITY, e.getMessage());
-        }
-
-        EventoJson eventoJson = EventoJson.of(evento);
-
-        CampeonatoJson campeonatoJson = CampeonatoJson.of(evento.getCampeonato());
-        ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
-
-        JsonNode retorno = builder.comEntidade(eventoJson)
-                .comRelacionamento(CampeonatoJson.TIPO, campeonatoJson)
-                .comRelacionamento(TimeJson.TIPO, TimeJson.of(evento.getCasa()))
-                .comRelacionamento(TimeJson.TIPO, TimeJson.of(evento.getFora()))
-                .build();
-
-        return created(retorno);
+        return    promise.thenApply( opt -> {
+                if(!opt.isPresent())
+                    throw new EntidadeNaoEncontrada("Não encontrado entidade de id " + solicitacao.id);
+                return opt.orElse(null);
+            }).thenComposeAsync( ev -> {
+                return jpa.withTransaction(() ->{
+                    return finalizarProcessador.executar(tenant, ev, validadores);
+                });
+            }, ex).thenApply( ev -> {
+                // monta a entidade de retorno
+                solicitacao.id = UUID.randomUUID().toString();
+                solicitacao.autor = getProfile().get().getUsername();
+                solicitacao.processadoEm = Calendar.getInstance();
+                return solicitacao;
+        }).thenApply( sol -> {
+            ObjectJson.JsonBuilder<Jsonable> builder = ObjectJson.build(SolicitacaoFinalizacaoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+            builder.comEntidade(sol);
+            return builder.build();
+        }).thenApply( r -> {
+            return created(r);
+        }).exceptionally( t -> {
+            t.printStackTrace();
+            return internalServerError(t.getCause().toString());
+        });
     }
 }
