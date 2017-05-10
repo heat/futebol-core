@@ -260,4 +260,11 @@ public class Bilhete implements Serializable {
             }
         });
     }
+
+    public boolean isPremiado() {
+
+        return getPalpites().stream().filter(p -> p.getStatus() == Palpite.Status.C).count() == getPalpites().size();
+
+    }
+
 }

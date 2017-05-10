@@ -18,6 +18,9 @@ GET     /usuarios                       api.rest.seguranca.UsuarioController.tod
 
 POST     /usuarios/:id                  api.rest.seguranca.UsuarioController.atualizar(id: Long)
 
+POST    /finalizacao-evento             api.rest.admin.EventoController.finalizar
+
+# ------- CRUD de resultados
 DELETE   /usuarios/:id                  api.rest.seguranca.UsuarioController.cancelar(id: Long)
 
 ## Usuario corrente

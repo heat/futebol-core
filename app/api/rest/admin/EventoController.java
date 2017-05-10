@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.ApplicationController;
 import dominio.processadores.apostas.EventoApostaInserirProcessador;
 import dominio.processadores.eventos.EventoAtualizarProcessador;
+import dominio.processadores.eventos.EventoFinalizarProcessador;
 import dominio.processadores.eventos.EventoInserirProcessador;
 import dominio.validadores.Validador;
 import dominio.validadores.exceptions.ValidadorExcpetion;
@@ -41,6 +42,7 @@ public class EventoController extends ApplicationController{
 
     EventoRepository eventoRepository;
     EventoInserirProcessador inserirProcessador;
+    EventoFinalizarProcessador finalizarProcessador;
     EventoApostaInserirProcessador eventoApostaInserirProcessador;
     EventoApostaRepository eventoApostaRepository;
     EventoAtualizarProcessador atualizarProcessador;
@@ -52,7 +54,8 @@ public class EventoController extends ApplicationController{
                             EventoInserirProcessador inserirProcessador, EventoAtualizarProcessador atualizarProcessador,
                             ValidadorRepository validadorRepository, CampeonatoRepository campeonatoRepository,
                             TimeRepository timeRepository, EventoApostaRepository eventoApostaRepository,
-                            EventoApostaInserirProcessador eventoApostaInserirProcessador) {
+                            EventoApostaInserirProcessador eventoApostaInserirProcessador,
+                            EventoFinalizarProcessador finalizarProcessador) {
         super(playSessionStore);
 
         this.eventoRepository = eventoRepository;
@@ -63,6 +66,7 @@ public class EventoController extends ApplicationController{
         this.timeRepository = timeRepository;
         this.eventoApostaRepository = eventoApostaRepository;
         this.eventoApostaInserirProcessador = eventoApostaInserirProcessador;
+        this.finalizarProcessador = finalizarProcessador;
     }
 
     @Secure(clients = "headerClient")
@@ -230,4 +234,42 @@ public class EventoController extends ApplicationController{
         }
     }
 
+    @Secure(clients = "headerClient")
+    @Transactional
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result finalizar() {
+
+        JsonNode json = request().body().asJson();
+        Long idEvento = json.get("evento").get("id").asLong();
+
+        List<Validador> validadores = validadorRepository.todos(getTenant(), EventoFinalizarProcessador.REGRA);
+        Optional<Evento> eventoOptional = eventoRepository.buscar(getTenant(), idEvento);
+        Evento evento = eventoOptional.get();
+
+        if (eventoOptional.isPresent()){
+            return notFound("Evento não encontrado!");
+        }
+
+        try {
+            finalizarProcessador.executar(getTenant(), evento, validadores);
+
+        } catch (ValidadorExcpetion validadorExcpetion) {
+            return status(Http.Status.UNPROCESSABLE_ENTITY, validadorExcpetion.getMessage());
+        } catch (PersistenceException e) {
+            return status(Http.Status.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+
+        EventoJson eventoJson = EventoJson.of(evento);
+
+        CampeonatoJson campeonatoJson = CampeonatoJson.of(evento.getCampeonato());
+        ObjectJson.JsonBuilder<EventoJson> builder = ObjectJson.build(EventoJson.TIPO, ObjectJson.JsonBuilderPolicy.OBJECT);
+
+        JsonNode retorno = builder.comEntidade(eventoJson)
+                .comRelacionamento(CampeonatoJson.TIPO, campeonatoJson)
+                .comRelacionamento(TimeJson.TIPO, TimeJson.of(evento.getCasa()))
+                .comRelacionamento(TimeJson.TIPO, TimeJson.of(evento.getFora()))
+                .build();
+
+        return created(retorno);
+    }
 }
