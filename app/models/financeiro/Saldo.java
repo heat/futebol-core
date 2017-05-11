@@ -31,4 +31,8 @@ public class Saldo {
     public void setEmprestimo(BigDecimal emprestimo) {
         this.emprestimo = emprestimo;
     }
+
+    public BigDecimal getFechamento(){
+        return saldo.subtract(emprestimo);
+    }
 }
