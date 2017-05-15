@@ -160,9 +160,13 @@ DROP TABLE IF EXISTS solicitacao_saldo CASCADE;
 
 DROP TABLE IF EXISTS transferencia_saldo CASCADE;
 
+DROP TABLE IF EXISTS solicitacao_financeira CASCADE;
+
 DROP SEQUENCE IF EXISTS public.transferencia_saldo_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.solicitacao_saldo_id_seq CASCADE;
+
+DROP SEQUENCE IF EXISTS public.solicitacao_financeira_id_seq CASCADE;
 
 DROP SEQUENCE IF EXISTS public.importacao_id_seq CASCADE;
 
