@@ -1,6 +1,7 @@
 package api.rest.financeiro;
 
 import actions.TenantAction;
+import api.json.FechamentoJson;
 import api.json.ObjectJson;
 import api.json.SolicitacaoSaldoJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +13,12 @@ import dominio.validadores.exceptions.ValidadorExcpetion;
 import models.financeiro.Conta;
 import models.financeiro.Lancamento;
 import models.financeiro.SolicitacaoSaldo;
+import models.financeiro.TipoLancamento;
+import models.financeiro.credito.EmprestimoSaldoCredito;
+import models.financeiro.credito.FechamentoCredito;
+import models.seguranca.Usuario;
 import models.vo.Chave;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.Secure;
 import org.pac4j.play.store.PlaySessionStore;
 import play.db.jpa.Transactional;
@@ -30,6 +36,7 @@ import services.DataService;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @With(TenantAction.class)
 public class FechamentoController extends ApplicationController {
@@ -63,8 +70,12 @@ public class FechamentoController extends ApplicationController {
         }
 
         Conta conta = contaOptional.get();
-        //TODO: Ajustar logica para pegar ultimo lancamento menor igual a data passada
-        Lancamento lancamento = conta.getLancamentos().stream().filter(l -> l.getDataLancamento().compareTo(dataFechamento) == 0).findFirst().get();
+
+        if (conta.getLancamentos().isEmpty()){
+            return badRequest("Não existe lancamentos");
+        }
+
+        Lancamento lancamento = conta.getLancamentos().stream().sorted( (v, d) -> v.getDataLancamento().compareTo(d.getDataLancamento())).findFirst().get();
 
         BigDecimal valorFechamento = lancamento.getSaldo().getFechamento();
 
@@ -73,5 +84,35 @@ public class FechamentoController extends ApplicationController {
         fechamentos.put("valor", valorFechamento.toString());
 
         return created(Json.toJson(fechamentos));
+    }
+
+    @Secure(clients = "headerClient")
+    @Transactional
+    public Result fechamentos() {
+
+
+        CommonProfile profile = getProfile().get();
+
+        Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), Long.parseLong(profile.getId()));
+
+        if (!contaOptional.isPresent()){
+            return badRequest("Conta não encontrada.");
+        }
+
+        Conta conta = contaOptional.get();
+        if (conta.getLancamentos().isEmpty()){
+            return badRequest("Não existe lancamentos");
+        }
+        List<Lancamento> lancamentos = conta.getLancamentos().stream().filter(l -> l instanceof FechamentoCredito).collect(Collectors.toList());
+
+        ObjectJson.JsonBuilder<FechamentoJson> builder = ObjectJson.build(FechamentoJson.TIPO, ObjectJson.JsonBuilderPolicy.COLLECTION);
+        lancamentos.forEach(lancamento ->{
+            builder.comEntidade(FechamentoJson.of(lancamento));
+        });
+
+        JsonNode retorno = builder.build();
+
+        return ok(retorno);
+
     }
 }

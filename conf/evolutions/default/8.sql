@@ -86,6 +86,26 @@ CREATE TABLE public.solicitacao_saldo
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+CREATE SEQUENCE public.solicitacao_financeira_id_seq;
+
+CREATE TABLE public.solicitacao_financeira
+(
+  solicitacao_financeira_id INTEGER NOT NULL DEFAULT nextval('public.solicitacao_financeira_id_seq'),
+  dtype VARCHAR(31) NOT NULL,
+  usuario_id INTEGER NOT NULL,
+  conta_id INTEGER NOT NULL,
+  criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  valor DECIMAL(10,2) NOT NULL,
+  tipo CHAR(1) NOT NULL DEFAULT 'D',
+  CONSTRAINT solicitacao_financeira_pk PRIMARY KEY (solicitacao_financeira_id),
+  CONSTRAINT solicitacao_financeira_conta_fk FOREIGN KEY (conta_id)
+  REFERENCES public.contas (conta_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT solicitacao_financeira_usuario_fk FOREIGN KEY (usuario_id)
+  REFERENCES public.usuarios (usuario_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
 CREATE SEQUENCE public.transferencia_saldo_id_seq;
 
 CREATE TABLE public.transferencia_saldo

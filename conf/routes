@@ -123,5 +123,7 @@ POST    /transferencia                 api.rest.financeiro.TransferenciaControll
 
 GET     /fechamento-simulacaos/:id     api.rest.financeiro.FechamentoController.simulacao(id: String)
 
+GET     /fechamentos                   api.rest.financeiro.FechamentoController.fechamentos
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
