@@ -51,4 +51,7 @@ public abstract class SolicitacaoFinanceira {
         return criadoEm;
     }
 
+    public void setConta(Conta conta) {
+        this.conta = conta;
+    }
 }

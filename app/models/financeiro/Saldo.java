@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 @Embeddable
 public class Saldo {
 
-    private BigDecimal saldo;
-    private BigDecimal emprestimo;
+    private BigDecimal saldo = BigDecimal.ZERO;
+    private BigDecimal emprestimo = BigDecimal.ZERO;
 
     public Saldo() {
     }

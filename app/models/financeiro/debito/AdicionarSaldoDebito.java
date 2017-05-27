@@ -1,10 +1,7 @@
 package models.financeiro.debito;
 
 import models.bilhetes.Bilhete;
-import models.financeiro.Conta;
-import models.financeiro.Lancamento;
-import models.financeiro.SolicitacaoSaldo;
-import models.financeiro.TipoLancamento;
+import models.financeiro.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,14 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
-public class AdicionarSaldoDebito extends Lancamento<SolicitacaoSaldo> implements Debito {
+public class AdicionarSaldoDebito extends Lancamento<SolicitacaoFinanceira> implements Debito {
 
     @OneToOne
-    @JoinColumn(name = "origem_solicitacao_saldo")
-    public SolicitacaoSaldo origem;
+    @JoinColumn(name = "origem_solicitacao_financeira")
+    public SolicitacaoFinanceira origem;
 
     @Override
-    public SolicitacaoSaldo getOrigem() {
+    public SolicitacaoFinanceira getOrigem() {
         return origem;
     }
 
@@ -28,7 +25,7 @@ public class AdicionarSaldoDebito extends Lancamento<SolicitacaoSaldo> implement
         return this;
     }
 
-    public void setOrigem(SolicitacaoSaldo origem) {
+    public void setOrigem(SolicitacaoFinanceira origem) {
         this.origem = origem;
     }
 }

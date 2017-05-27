@@ -7,7 +7,8 @@ import java.util.Calendar;
 @Entity
 public class SolicitacaoSaldo extends SolicitacaoFinanceira {
 
-    public SolicitacaoSaldo(Long idConta, BigDecimal valor, TipoSolicitacaoSaldo tipo) {
+    public SolicitacaoSaldo(Long solicitante, BigDecimal valor, TipoSolicitacaoSaldo tipo) {
+        super(solicitante, valor);
     }
 
     public TipoSolicitacaoSaldo getTipo() {

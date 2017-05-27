@@ -43,10 +43,6 @@ public class SolicitacaoSaldoJson implements Convertable<SolicitacaoSaldo>, Json
 
     @Override
     public SolicitacaoSaldo to() {
-        return null;
-    }
-
-    public SolicitacaoSaldo to(Long idConta) {
-        return new SolicitacaoSaldo(idConta, valor, tipo);
+        return new SolicitacaoSaldo(solicitante, valor, tipo);
     }
 }

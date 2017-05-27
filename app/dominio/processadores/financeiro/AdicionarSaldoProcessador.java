@@ -42,13 +42,15 @@ public class AdicionarSaldoProcessador implements Processador<Chave, Solicitacao
             validador.validate(solicitacaoSaldo);
         }
 
-        Optional<Conta> contaOptional = contaRepository.buscarPorId(chave.getTenant(), solicitacaoSaldo.getSolicitante());
+        Optional<Conta> contaOptional = contaRepository.buscar(chave.getTenant(), solicitacaoSaldo.getSolicitante());
 
         if (!contaOptional.isPresent()){
             throw new ValidadorExcpetion("Conta não encontrada.");
         }
 
         Conta conta = contaOptional.get();
+
+        solicitacaoSaldo.setConta(conta);
 
         AdicionarSaldoDebito lancamentoAdicionarSaldo = new AdicionarSaldoDebito();
         lancamentoAdicionarSaldo.setDataLancamento(Calendar.getInstance());

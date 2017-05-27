@@ -24,9 +24,9 @@ CREATE SEQUENCE public.lancamentos_lancamento_id_seq;
 CREATE TABLE public.lancamentos (
                 lancamento_id INTEGER NOT NULL DEFAULT nextval('public.lancamentos_lancamento_id_seq'),
                 conta_id INTEGER NOT NULL,
-                valor DECIMAL(10,2) NOT NULL,
-                saldo DECIMAL(10,2) NOT NULL,
-                emprestimo DECIMAL(10,2) NOT NULL,
+                valor DECIMAL(10,2) NOT NULL DEFAULT 0,
+                saldo DECIMAL(10,2) NOT NULL DEFAULT 0,
+                emprestimo DECIMAL(10,2) NOT NULL DEFAULT 0,
                 dtype VARCHAR(31) NOT NULL,
                 criado_em TIMESTAMP NOT NULL,
 		origem_bilhete INTEGER,

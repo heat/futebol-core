@@ -55,15 +55,10 @@ public class SaldoController extends ApplicationController {
         JsonNode json = request().body().asJson();
         SolicitacaoSaldoJson solicitacaoSaldoJson = Json.fromJson(json.get("saldo"), SolicitacaoSaldoJson.class);
 
-        Optional<Conta> contaOptional = contaRepository.buscar(getTenant(), solicitacaoSaldoJson.solicitante);
+        Long usuarioId = Long.parseLong(getProfile().get().getId());
+        Chave chave = Chave.of(getTenant(), usuarioId);
 
-        if (!contaOptional.isPresent()){
-            return badRequest("Conta não encontrada.");
-        }
-
-        Chave chave = Chave.of(getTenant(), contaOptional.get().getId());
-
-        SolicitacaoSaldo solicitacaoSaldo = solicitacaoSaldoJson.to(chave.getId());
+        SolicitacaoSaldo solicitacaoSaldo = solicitacaoSaldoJson.to();
 
         List<Validador> validadores = validadorRepository.todos(getTenant(), AdicionarSaldoProcessador.REGRA);
 
