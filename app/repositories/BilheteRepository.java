@@ -155,4 +155,16 @@ public class BilheteRepository implements Repository<Long, Bilhete> {
 
         return query.getResultList();
     }
+
+    public List<Bilhete> todos(Tenant tenant, Usuario usuario) {
+        EntityManager em = jpaApi.em();
+
+        Query query = em.createQuery("FROM Bilhete as b WHERE b.tenant = :tenant AND b.usuario.id = :usuario");
+        query.setParameter("tenant", tenant.get());
+        query.setParameter("usuario", usuario.getId());
+
+        List<Bilhete> bilhetes = query.getResultList();
+
+        return bilhetes;
+    }
 }

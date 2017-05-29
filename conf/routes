@@ -125,5 +125,7 @@ GET     /fechamento-simulacaos/:id     api.rest.financeiro.FechamentoController.
 
 GET     /fechamentos                   api.rest.financeiro.FechamentoController.fechamentos
 
+GET     /movimentacaos/:usuario        api.rest.financeiro.MovimentacaoController.todos(usuario: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
