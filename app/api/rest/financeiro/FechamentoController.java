@@ -75,7 +75,7 @@ public class FechamentoController extends ApplicationController {
             return badRequest("Não existe lancamentos");
         }
 
-        Lancamento lancamento = conta.getLancamentos().stream().sorted( (v, d) -> v.getDataLancamento().compareTo(d.getDataLancamento())).findFirst().get();
+        Lancamento lancamento = conta.getLancamentos().stream().sorted( (v, d) -> d.getDataLancamento().compareTo(v.getDataLancamento())).findFirst().get();
 
         BigDecimal valorFechamento = lancamento.getSaldo().getFechamento();
 

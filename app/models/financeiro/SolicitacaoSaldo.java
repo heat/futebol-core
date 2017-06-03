@@ -11,6 +11,9 @@ public class SolicitacaoSaldo extends SolicitacaoFinanceira {
         super(solicitante, valor);
     }
 
+    public SolicitacaoSaldo() {
+    }
+
     public TipoSolicitacaoSaldo getTipo() {
         return null;
     }

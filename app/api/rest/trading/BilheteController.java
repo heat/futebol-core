@@ -96,9 +96,9 @@ public class BilheteController extends ApplicationController {
         List<Taxa> taxas = taxaRepository.buscar(getTenant(), bilheteJson.palpites);
         List<Palpite> palpites = new ArrayList<>();
         BigDecimal valorPremio = bilheteJson.valorAposta;
-        Double somaTaxas = taxas.stream().mapToDouble(t -> t.getTaxa().doubleValue()).sum();
+        Double multTaxas = taxas.stream().mapToDouble(t -> t.getTaxa().doubleValue()).reduce(1, (a, b) -> a * b);
 
-        valorPremio = valorPremio.multiply(BigDecimal.valueOf(somaTaxas));
+        valorPremio = valorPremio.multiply(BigDecimal.valueOf(multTaxas));
 
         taxas.forEach(t -> {
             Palpite palpite = new Palpite(getTenant().get(), t, t.getTaxa(), Palpite.Status.A);
